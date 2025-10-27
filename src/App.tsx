@@ -5,7 +5,9 @@ import {
   AuthHome,
   BusinessSetup,
   BusinessSetup2,
+  CreateBill,
   Home,
+  Invoice,
   Login,
   Onboarding,
   OtpVerify,
@@ -42,28 +44,26 @@ const App = () => {
   const AppStack = () => {
     return (
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Invoice"
         screenOptions={{
+          animation: 'shift',
           headerShown: false,
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontFamily: fonts.onSemiBold,
-            justifyContent: 'center',
-            alignItems: 'center',
-          },
           tabBarStyle: {
+            height: 85,
             justifyContent: 'center',
             alignItems: 'center',
             paddingTop: 10,
-            paddingBottom: 10,
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontFamily: fonts.onMedium,
+            marginTop: 1,
           },
           tabBarItemStyle: {
             justifyContent: 'center',
             alignItems: 'center',
           },
           tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.border,
-          animation: 'shift',
           tabBarButton: props => (
             <TouchableWithoutFeedback onPress={props.onPress}>
               <View {...props} />
@@ -98,8 +98,11 @@ const App = () => {
         />
         <Tab.Screen
           name="Create"
-          component={Home}
+          component={CreateBill}
           options={{
+            tabBarStyle: {
+              display: 'none',
+            },
             tabBarIcon: ({focused, color}) => (
               <View style={styles.createTabParent}>
                 <Image
@@ -115,7 +118,7 @@ const App = () => {
         />
         <Tab.Screen
           name="Invoice"
-          component={Home}
+          component={Invoice}
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
@@ -169,6 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: 50 / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    // marginTop: 15
+    marginTop: 10,
   },
 });

@@ -9,6 +9,12 @@ import BusinessSetup2 from './AuthScreens/BusinessSetup2';
 // HOME
 import Home from './Home/Home';
 
+// INVOICE
+import Invoice from './Invoice/Invoice';
+
+// CREATE BILL
+import CreateBill from './CreateBill/CreateBill';
+
 export {
   Onboarding,
   AuthHome,
@@ -17,4 +23,6 @@ export {
   BusinessSetup,
   BusinessSetup2,
   Home,
+  Invoice,
+  CreateBill
 };

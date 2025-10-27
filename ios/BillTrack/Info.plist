@@ -55,6 +55,12 @@
 		<string>Onest-Regular.ttf</string>
 		<string>Onest-SemiBold.ttf</string>
 		<string>Onest-Thin.ttf</string>
+		<string>Inter_18pt-Bold.ttf</string>
+		<string>Inter_18pt-Light.ttf</string>
+		<string>Inter_18pt-Medium.ttf</string>
+		<string>Inter_18pt-Regular.ttf</string>
+		<string>Inter_18pt-SemiBold.ttf</string>
+		<string>Inter_18pt-Thin.ttf</string>
 	</array>
 </dict>
 </plist>

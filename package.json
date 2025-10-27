@@ -13,6 +13,7 @@
     "@gorhom/bottom-sheet": "^5.1.6",
     "@react-native-vector-icons/fontawesome": "^12.3.0",
     "@react-native-vector-icons/ionicons": "^12.3.0",
+    "@react-native-vector-icons/lucide": "^12.3.0",
     "@react-native-vector-icons/material-icons": "^12.3.0",
     "@react-native-vector-icons/octicons": "^20.3.0",
     "@react-navigation/bottom-tabs": "^7.5.0",

@@ -8,6 +8,10 @@ import DottedDivider from './Dividers/DottedDivider';
 
 // HEADERS
 import PrimaryHeader from './Headers/PrimaryHeader';
+import SecondaryHeader from './Headers/SecondaryHeader';
+
+// CARDS
+import InvoiceCard from './Cards/InvoiceCard';
 
 export {
   SimpleTextInput,
@@ -16,4 +20,6 @@ export {
   SearchInput,
   DottedDivider,
   PrimaryHeader,
+  SecondaryHeader,
+  InvoiceCard,
 };
