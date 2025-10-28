@@ -1,5 +1,8 @@
 import {Image, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   AuthHome,
@@ -8,6 +11,7 @@ import {
   CreateBill,
   Home,
   Invoice,
+  InvoiceDetails,
   Login,
   Onboarding,
   OtpVerify,
@@ -41,10 +45,24 @@ const App = () => {
     );
   };
 
+  const InvoiceStack = () => {
+    return (
+      <Stack.Navigator
+        initialRouteName="Invoice"
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right'
+        }}>
+        <Stack.Screen name="Invoice" component={Invoice} />
+        <Stack.Screen name="InvoiceDetails" component={InvoiceDetails} />
+      </Stack.Navigator>
+    );
+  };
+
   const AppStack = () => {
     return (
       <Tab.Navigator
-        initialRouteName="Invoice"
+        initialRouteName="Home"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
@@ -77,7 +95,10 @@ const App = () => {
             tabBarIcon: ({focused, color}) => (
               <Image
                 source={require('./../asset/images/hometab.png')}
-                style={[styles.tabbarIcon, {tintColor: focused ? color : ''}]}
+                style={[
+                  styles.tabbarIcon,
+                  {tintColor: focused ? color : 'gray'},
+                ]}
                 resizeMode="contain"
               />
             ),
@@ -90,7 +111,10 @@ const App = () => {
             tabBarIcon: ({focused, color}) => (
               <Image
                 source={require('./../asset/images/producttab.png')}
-                style={[styles.tabbarIcon, {tintColor: focused ? color : ''}]}
+                style={[
+                  styles.tabbarIcon,
+                  {tintColor: focused ? color : 'gray'},
+                ]}
                 resizeMode="contain"
               />
             ),
@@ -118,15 +142,33 @@ const App = () => {
         />
         <Tab.Screen
           name="Invoice"
-          component={Invoice}
-          options={{
-            tabBarIcon: ({focused, color}) => (
-              <Image
-                source={require('./../asset/images/invoicetab.png')}
-                style={[styles.tabbarIcon, {tintColor: focused ? color : ''}]}
-                resizeMode="contain"
-              />
-            ),
+          component={InvoiceStack}
+          options={({route}) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? 'Invoice';
+            console.info(routeName);
+            return {
+              tabBarIcon: ({focused, color}) => (
+                <Image
+                  source={require('./../asset/images/invoicetab.png')}
+                  style={[
+                    styles.tabbarIcon,
+                    {tintColor: focused ? color : 'gray'},
+                  ]}
+                  resizeMode="contain"
+                />
+              ),
+              tabBarStyle:
+                routeName === 'InvoiceDetails'
+                  ? {
+                      display: 'none',
+                    }
+                  : {
+                      height: 85,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingTop: 10,
+                    },
+            };
           }}
         />
         <Tab.Screen
@@ -136,7 +178,10 @@ const App = () => {
             tabBarIcon: ({focused, color}) => (
               <Image
                 source={require('./../asset/images/accounttab.png')}
-                style={[styles.tabbarIcon, {tintColor: focused ? color : ''}]}
+                style={[
+                  styles.tabbarIcon,
+                  {tintColor: focused ? color : 'gray'},
+                ]}
                 resizeMode="contain"
               />
             ),

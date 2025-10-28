@@ -1,34 +1,30 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {memo, useCallback} from 'react';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 
-const RadioInput = ({
-  value,
-  label,
-  setValue,
-  isSelected = false,
-  height = 30,
-}) => {
-  return (
-    <TouchableOpacity
-      style={[styles.container, {height: height}]}
-      onPress={() => {
-        setValue(value);
-      }}>
-      <Text style={[styles.label, isSelected && {color: colors.primary}]}>
-        {label}
-      </Text>
-      <View
-        style={[
-          styles.selectContainer,
-          isSelected && {borderColor: colors.primary},
-        ]}>
-        {isSelected && <View style={[styles.innerSelect]} />}
-      </View>
-    </TouchableOpacity>
-  );
-};
+const RadioInput = memo(
+  ({value, label, setValue, isSelected = false, height = 30}) => {
+    return (
+      <TouchableOpacity
+        style={[styles.container, {height: height}]}
+        onPress={() => {
+          setValue(value);
+        }}>
+        <Text style={[styles.label, isSelected && {color: colors.primary}]}>
+          {label}
+        </Text>
+        <View
+          style={[
+            styles.selectContainer,
+            isSelected && {borderColor: colors.primary},
+          ]}>
+          {isSelected && <View style={[styles.innerSelect]} />}
+        </View>
+      </TouchableOpacity>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

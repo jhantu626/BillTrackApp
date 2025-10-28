@@ -6,7 +6,7 @@ import {colors} from '../../utils/colors';
 const Layout = ({children}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: colors.primaryBackground}}>
-      <StatusBar backgroundColor={'#fff'} barStyle={'dark-content'} />
+      <StatusBar backgroundColor={'#ffffff'} barStyle={'dark-content'} />
       {children}
     </SafeAreaView>
   );

@@ -11,6 +11,7 @@ import Home from './Home/Home';
 
 // INVOICE
 import Invoice from './Invoice/Invoice';
+import InvoiceDetails from './Invoice/InvoiceDetails';
 
 // CREATE BILL
 import CreateBill from './CreateBill/CreateBill';
@@ -24,5 +25,6 @@ export {
   BusinessSetup2,
   Home,
   Invoice,
-  CreateBill
+  CreateBill,
+  InvoiceDetails,
 };

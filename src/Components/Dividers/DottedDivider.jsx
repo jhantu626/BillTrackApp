@@ -16,7 +16,7 @@ const DottedDivider = ({marginVertical = 10, borderWidth = 0.6}) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 1,
+    // height: 1,
     borderStyle: 'dashed',
     borderColor: colors.border,
   },

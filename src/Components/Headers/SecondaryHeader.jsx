@@ -10,6 +10,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from '../../utils/fonts';
+import {useNavigation} from '@react-navigation/native';
 
 const SecondaryHeader = ({
   title = 'Title',
@@ -17,10 +18,15 @@ const SecondaryHeader = ({
   isQuestion = true,
   isNotification = true,
 }) => {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        <TouchableOpacity style={styles.backButton}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => {
+            navigation.goBack();
+          }}>
           <Ionicons name="arrow-back" size={24} color={colors.primary} />
         </TouchableOpacity>
         <Text style={styles.title}>{title}</Text>

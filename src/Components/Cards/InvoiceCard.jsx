@@ -5,9 +5,10 @@ import {colors} from '../../utils/colors';
 import DottedDivider from '../Dividers/DottedDivider';
 import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import {useNavigation} from '@react-navigation/native';
 
 const InvoiceCard = ({invoice}) => {
-  console.info(invoice);
+  const navigation = useNavigation();
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -43,7 +44,11 @@ const InvoiceCard = ({invoice}) => {
             Print
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.subBottomContainer}>
+        <TouchableOpacity
+          style={styles.subBottomContainer}
+          onPress={() => {
+            navigation.navigate('InvoiceDetails');
+          }}>
           <Lucide name="eye" size={20} color={'#00000090'} />
           <Text style={[{color: '#00000090'}, styles.subBottomContainerText]}>
             Details
