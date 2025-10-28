@@ -1,5 +1,5 @@
 import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   DottedDivider,
@@ -38,8 +38,14 @@ const Invoice = () => {
     [],
   );
 
-  const handleOpenBottomSheet = () => bottomSheetRef.current?.snapToIndex(1);
-  const handleCloseBottomSheet = () => bottomSheetRef.current?.snapToIndex(-1);
+  const handleOpenBottomSheet = useCallback(
+    () => bottomSheetRef.current?.snapToIndex(1),
+    [],
+  );
+  const handleCloseBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.close();
+    console.info('close');
+  }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -75,7 +81,9 @@ const Invoice = () => {
         <BottomSheetView style={{flex: 1, gap: 10}}>
           <View style={styles.bottomSheetTop}>
             <Text style={styles.bottomSheetTopText}>Sorting</Text>
-            <TouchableOpacity style={styles.closeButton}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={handleCloseBottomSheet}>
               <Ionicons name="close" size={26} color={colors.primary} />
             </TouchableOpacity>
           </View>
