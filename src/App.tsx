@@ -45,6 +45,26 @@ const App = () => {
     );
   };
 
+  const HomeStack = () => {
+    return (
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+        }}>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen
+          name="InvoiceDetails"
+          component={InvoiceDetails}
+          options={{
+            animation: 'slide_from_bottom',
+          }}
+        />
+      </Stack.Navigator>
+    );
+  };
+
   const InvoiceStack = () => {
     return (
       <Stack.Navigator
@@ -54,7 +74,13 @@ const App = () => {
           animation: 'slide_from_right',
         }}>
         <Stack.Screen name="Invoice" component={Invoice} />
-        <Stack.Screen name="InvoiceDetails" component={InvoiceDetails} />
+        <Stack.Screen
+          name="InvoiceDetails"
+          component={InvoiceDetails}
+          options={{
+            animation: 'slide_from_bottom',
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -90,7 +116,7 @@ const App = () => {
         }}>
         <Tab.Screen
           name="Home"
-          component={Home}
+          component={HomeStack}
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
