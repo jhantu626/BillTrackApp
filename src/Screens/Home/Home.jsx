@@ -29,7 +29,11 @@ const Home = () => {
   return (
     <Layout>
       <PrimaryHeader />
-      <ScrollView style={{flex: 1}}>
+      <ScrollView
+        style={{flex: 1}}
+        contentContainerStyle={{
+          paddingBottom: 30,
+        }}>
         <HomeChartComponent
           selectedPriod={selectedPriod}
           handleChangePriod={handleChangePriod}
