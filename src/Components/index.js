@@ -13,6 +13,10 @@ import SecondaryHeader from './Headers/SecondaryHeader';
 // CARDS
 import InvoiceCard from './Cards/InvoiceCard';
 
+// CHARTS
+import SalesAreaChart from './Charts/SalesAreaChart';
+import HomeChartComponent from './Charts/HomeChartComponent';
+
 export {
   SimpleTextInput,
   BottomSheetInput,
@@ -22,4 +26,6 @@ export {
   PrimaryHeader,
   SecondaryHeader,
   InvoiceCard,
+  SalesAreaChart,
+  HomeChartComponent,
 };
