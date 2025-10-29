@@ -5,52 +5,53 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {memo, useCallback} from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from '../../utils/fonts';
 import {useNavigation} from '@react-navigation/native';
 
-const SecondaryHeader = ({
-  title = 'Title',
-  isSearch = true,
-  isQuestion = true,
-  isNotification = true,
-}) => {
-  const navigation = useNavigation();
-  return (
-    <View style={styles.container}>
-      <View style={styles.leftContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Ionicons name="arrow-back" size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <Text style={styles.title}>{title}</Text>
+const SecondaryHeader = memo(
+  ({
+    title = 'Title',
+    isSearch = true,
+    isQuestion = true,
+    isNotification = true,
+  }) => {
+    const navigation = useNavigation();
+    const handleBack = useCallback(() => {
+      navigation.goBack();
+    }, [navigation]);
+    return (
+      <View style={styles.container}>
+        <View style={styles.leftContainer}>
+          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+            <Ionicons name="arrow-back" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        <View style={styles.rightContainer}>
+          {isSearch && (
+            <Pressable>
+              <Ionicons name="search" size={22} />
+            </Pressable>
+          )}
+          {isQuestion && (
+            <Pressable>
+              <Octicons name="question" size={22} />
+            </Pressable>
+          )}
+          {isNotification && (
+            <Pressable>
+              <Octicons name="bell" size={22} />
+            </Pressable>
+          )}
+        </View>
       </View>
-      <View style={styles.rightContainer}>
-        {isSearch && (
-          <Pressable>
-            <Ionicons name="search" size={22} />
-          </Pressable>
-        )}
-        {isQuestion && (
-          <Pressable>
-            <Octicons name="question" size={22} />
-          </Pressable>
-        )}
-        {isNotification && (
-          <Pressable>
-            <Octicons name="bell" size={22} />
-          </Pressable>
-        )}
-      </View>
-    </View>
-  );
-};
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

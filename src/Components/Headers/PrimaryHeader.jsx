@@ -1,10 +1,10 @@
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 
-const PrimaryHeader = () => {
+const PrimaryHeader = memo(() => {
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
@@ -23,7 +23,7 @@ const PrimaryHeader = () => {
       </TouchableOpacity>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

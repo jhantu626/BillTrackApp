@@ -51,7 +51,7 @@ const Home = () => {
             </TouchableOpacity>
           </View>
           {invoice.map((item, index) => (
-            <InvoiceCard invoice={item} />
+            <InvoiceCard invoice={item} key={index+"invoice_card"} />
           ))}
         </View>
       </ScrollView>

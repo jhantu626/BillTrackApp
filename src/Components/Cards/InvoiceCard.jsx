@@ -1,5 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import DottedDivider from '../Dividers/DottedDivider';
@@ -7,7 +7,7 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 
-const InvoiceCard = ({invoice}) => {
+const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   return (
     <View style={styles.mainContainer}>
@@ -57,7 +57,7 @@ const InvoiceCard = ({invoice}) => {
       </View>
     </View>
   );
-};
+});
 
 export default InvoiceCard;
 
