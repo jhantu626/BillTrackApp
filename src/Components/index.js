@@ -12,6 +12,8 @@ import SecondaryHeader from './Headers/SecondaryHeader';
 
 // CARDS
 import InvoiceCard from './Cards/InvoiceCard';
+import CreateBillBottom from './Cards/CreateBillBottom';
+import BillProductCard from './Cards/BillProductCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -28,4 +30,6 @@ export {
   InvoiceCard,
   SalesAreaChart,
   HomeChartComponent,
+  CreateBillBottom,
+  BillProductCard,
 };

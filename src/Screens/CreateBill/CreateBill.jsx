@@ -1,4 +1,6 @@
 import {
+  Dimensions,
+  FlatList,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,89 +10,50 @@ import {
 } from 'react-native';
 import React from 'react';
 import {Layout} from '../Layout';
-import {SecondaryHeader} from '../../Components';
-import {fonts} from '../../utils/fonts';
-import {colors} from '../../utils/colors';
-import Ionicons from '@react-native-vector-icons/ionicons';
+import {
+  BillProductCard,
+  CreateBillBottom,
+  SecondaryHeader,
+} from '../../Components';
+
+const {width: screenWidth} = Dimensions.get('window');
+const NUM_COLUMNS = 3;
+const HORIZONTAL_PADDING = 16;
+const GAP_BETWEEN_ITEMS = 10;
+
+const ITEM_WIDTH =
+  (screenWidth -
+    HORIZONTAL_PADDING * 2 -
+    GAP_BETWEEN_ITEMS * (NUM_COLUMNS - 1)) /
+  NUM_COLUMNS;
 
 const CreateBill = () => {
   return (
     <Layout>
       <SecondaryHeader title="Create Bill" />
-      <ScrollView style={{flex: 1}}></ScrollView>
-      <View style={styles.bottomContainer}>
-        <View style={styles.bottomContainerSub}>
-          <Text style={styles.bottomCOntainerTitle}>Total Amount</Text>
-          <Text style={styles.bottomCOntainerValue}>₹ 4350.00</Text>
-        </View>
-        <View style={styles.bottomContainerSub}>
-          <Text style={styles.bottomCOntainerTitle}>Item's Quantity</Text>
-          <Text style={styles.bottomCOntainerValue}>5</Text>
-        </View>
-        <View style={styles.bottomButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.bottomButton,
-              {
-                backgroundColor: colors.sucess + 15,
-              },
-            ]}>
-            <Text style={[styles.bottomButtonText, {color: colors.sucess}]}>
-              CASH
-            </Text>
-            <Ionicons name="caret-down" size={8} color={colors.sucess} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomButton}>
-            <Text style={[styles.bottomButtonText, {color: '#fff'}]}>SAVE</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <FlatList
+        style={{flex: 1}}
+        contentContainerStyle={styles.container}
+        data={Array.from({length: 15})}
+        keyExtractor={(_, index) => index + '_create_bill_item'}
+        renderItem={({item}, index) => <BillProductCard width={ITEM_WIDTH} />}
+        numColumns={3}
+        columnWrapperStyle={styles.columnWrapperStyle}
+      />
+      <CreateBillBottom />
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  bottomContainer: {
-    backgroundColor: '#fff',
-    width: '100%',
-    // height: 100,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  container: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 20,
+    marginTop: 10,
+    paddingBottom: 20
   },
-  bottomContainerSub: {
-    gap: 5,
-  },
-  bottomCOntainerTitle: {
-    fontSize: 10,
-    fontFamily: fonts.inRegular,
-    color: '#00000080',
-  },
-  bottomCOntainerValue: {
-    fontSize: 16,
-    fontFamily: fonts.inBold,
-    color: '#000',
-  },
-  bottomButtonContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'center',
-  },
-  bottomButton: {
-    height: 31,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    gap: 5,
-  },
-  bottomButtonText: {
-    fontSize: 12,
-    fontFamily: fonts.inBold,
+  columnWrapperStyle: {
+    gap: GAP_BETWEEN_ITEMS,
+    marginBottom: 16,
   },
 });
 
