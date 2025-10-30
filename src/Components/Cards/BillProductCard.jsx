@@ -3,6 +3,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -60,7 +61,10 @@ const BillProductCard = memo(
       <View style={[styles.container, {width: width}]}>
         <TouchableOpacity
           style={{width: '100%'}}
-          onPress={() => increaseDecrease('increase')}>
+          onPress={() => increaseDecrease('increase')}
+          onLongPress={() => {
+            ToastAndroid.show('Long Press', ToastAndroid.SHORT);
+          }}>
           <Image
             style={[styles.image, {height: imageHeight}]}
             source={

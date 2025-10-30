@@ -68,7 +68,7 @@ const App = () => {
   const InvoiceStack = () => {
     return (
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="Invoice"
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',

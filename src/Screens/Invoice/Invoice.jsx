@@ -75,9 +75,12 @@ const Invoice = () => {
         snapPoints={snapPonts}
         index={-1}
         backdropComponent={renderBackdrop}
+        handleComponent={() => null}
         animationConfigs={{
           duration: 300,
-        }}>
+        }}
+        backgroundStyle={{borderRadius: 0}}
+        enableOverDrag={false}>
         <BottomSheetView style={{flex: 1, gap: 10}}>
           <View style={styles.bottomSheetTop}>
             <Text style={styles.bottomSheetTopText}>Sorting</Text>

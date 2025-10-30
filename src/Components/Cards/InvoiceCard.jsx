@@ -1,5 +1,4 @@
 import {
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,8 +16,9 @@ import {useNavigation} from '@react-navigation/native';
 // const {width} = Dimensions.get('screen');
 
 const InvoiceCard = memo(({invoice}) => {
-  const {width} = useWindowDimensions();
   const navigation = useNavigation();
+  const {width} = useWindowDimensions();
+
 
   const sizes = useMemo(() => {
     const tsText = width * 0.036;
