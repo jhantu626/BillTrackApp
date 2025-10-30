@@ -57,18 +57,20 @@ const BillProductCard = memo(
     );
 
     return (
-      <Pressable
-        style={[styles.container, {width: width}]}
-        onPress={() => increaseDecrease('increase')}>
-        <Image
-          style={[styles.image, {height: imageHeight}]}
-          source={
-            item?.image
-              ? item.image
-              : require('./../../../asset/images/emptyimg.jpg')
-          }
-          resizeMode="cover"
-        />
+      <View style={[styles.container, {width: width}]}>
+        <TouchableOpacity
+          style={{width: '100%'}}
+          onPress={() => increaseDecrease('increase')}>
+          <Image
+            style={[styles.image, {height: imageHeight}]}
+            source={
+              item?.image
+                ? item.image
+                : require('./../../../asset/images/emptyimg.jpg')
+            }
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
         <Text
           style={[styles.titleText, {fontSize: titleFontSize}]}
           numberOfLines={1}>
@@ -96,7 +98,7 @@ const BillProductCard = memo(
             <Text style={styles.countText}>{count}</Text>
           </View>
         )}
-      </Pressable>
+      </View>
     );
   },
 );
@@ -137,8 +139,8 @@ const styles = StyleSheet.create({
   },
   countContainer: {
     position: 'absolute',
-    width: 26,
-    height: 26,
+    width: 30,
+    height: 30,
     borderRadius: 26 / 2,
     right: -5,
     top: -5,
