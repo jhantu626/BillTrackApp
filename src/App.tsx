@@ -68,7 +68,7 @@ const App = () => {
   const InvoiceStack = () => {
     return (
       <Stack.Navigator
-        initialRouteName="Invoice"
+        initialRouteName="Home"
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -88,7 +88,7 @@ const App = () => {
   const AppStack = () => {
     return (
       <Tab.Navigator
-        initialRouteName="Create"
+        initialRouteName="Home"
         screenOptions={{
           animation: 'shift',
           headerShown: false,

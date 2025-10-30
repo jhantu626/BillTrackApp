@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import React, {memo, useMemo} from 'react';
@@ -10,9 +11,11 @@ import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
-const {width} = Dimensions.get('screen');
+// const {width} = Dimensions.get('screen');
 
 const CreateBillBottom = memo(({totalAmount = 0, totalQuanity = 0}) => {
+  const {width} = useWindowDimensions();
+
   const sizes = useMemo(() => {
     const bottomContainerPaddingH = width * 0.042;
     const bottomContainerPaddingV = width * 0.05;
@@ -73,7 +76,7 @@ const CreateBillBottom = memo(({totalAmount = 0, totalQuanity = 0}) => {
         <Text
           style={[
             styles.bottomCOntainerValue,
-            {fontSize: sizes.bottomCOntainerValue,textAlign: 'right'},
+            {fontSize: sizes.bottomCOntainerValue, textAlign: 'right'},
           ]}>
           {totalQuanity}
         </Text>

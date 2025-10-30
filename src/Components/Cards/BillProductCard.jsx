@@ -139,8 +139,8 @@ const styles = StyleSheet.create({
   },
   countContainer: {
     position: 'absolute',
-    width: 30,
-    height: 30,
+    width: 26,
+    height: 26,
     borderRadius: 26 / 2,
     right: -5,
     top: -5,
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.sucess,
   },
   countText: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: fonts.inBold,
     color: '#fff',
   },

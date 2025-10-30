@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import React, {memo, useMemo} from 'react';
@@ -13,9 +14,10 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 
-const {width} = Dimensions.get('screen');
+// const {width} = Dimensions.get('screen');
 
 const InvoiceCard = memo(({invoice}) => {
+  const {width} = useWindowDimensions();
   const navigation = useNavigation();
 
   const sizes = useMemo(() => {
