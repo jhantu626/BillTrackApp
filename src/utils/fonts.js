@@ -13,4 +13,7 @@ const fonts = {
   inThin: 'Inter_18pt-Thin',
 };
 
+
+
+
 export {fonts};
