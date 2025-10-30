@@ -6,65 +6,100 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useMemo} from 'react';
+import React, {memo, useCallback, useMemo, useState} from 'react';
 import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 
-const BillProductCard = memo(({width = 113, item}) => {
-  const PADDING = 8;
-  console.info(JSON.stringify(item));
+const BillProductCard = memo(
+  ({width = 113, item, setQuantity, setTotalPrice}) => {
+    const PADDING = 8;
+    const [count, setCount] = useState(item?.count || 0);
 
-  useMemo(() => {
-    imageWidth = width - PADDING * 2;
-    imageHeight = (imageWidth * 3) / 4;
-    titleFontSize = width * 0.106;
-    priceFontSize = width * 0.124;
-    buttonSize = width * 0.177;
-    iconSize = width * 0.088;
-    bottomMarginTop = width * 0.177;
-  }, [width]);
+    useMemo(() => {
+      imageWidth = width - PADDING * 2;
+      imageHeight = (imageWidth * 3) / 4;
+      titleFontSize = width * 0.106;
+      priceFontSize = width * 0.124;
+      buttonSize = width * 0.177;
+      iconSize = width * 0.088;
+      bottomMarginTop = width * 0.177;
+    }, [width]);
 
-  return (
-    <Pressable style={[styles.container, {width: width}]}>
-      <Image
-        style={[styles.image, {height: imageHeight}]}
-        source={
-          item?.image
-            ? item.image
-            : require('./../../../asset/images/emptyimg.jpg')
+    const increaseDecrease = useCallback(
+      way => {
+        const isIncrease = way === 'increase';
+
+        if (isIncrease) {
+          item.count = (item.count || 0) + 1;
+          setCount(prev => {
+            if (prev === 0) {
+              setQuantity(q => q + 1);
+            }
+            return prev + 1;
+          });
+          setTotalPrice(prev => prev + item.price);
+        } else {
+          if (item.count > 0) {
+            item.count -= 1;
+            setCount(prev => {
+              const newCount = prev - 1;
+              if (newCount === 0) {
+                setQuantity(q => q - 1);
+              }
+              setTotalPrice(p => p - item.price);
+              return newCount;
+            });
+          }
         }
-        resizeMode="cover"
-      />
-      <Text
-        style={[styles.titleText, {fontSize: titleFontSize}]}
-        numberOfLines={1}>
-        {item?.title}
-      </Text>
-      <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
-        <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
-          ₹{item.price}
+      },
+      [item, setQuantity, setTotalPrice],
+    );
+
+    return (
+      <Pressable
+        style={[styles.container, {width: width}]}
+        onPress={() => increaseDecrease('increase')}>
+        <Image
+          style={[styles.image, {height: imageHeight}]}
+          source={
+            item?.image
+              ? item.image
+              : require('./../../../asset/images/emptyimg.jpg')
+          }
+          resizeMode="cover"
+        />
+        <Text
+          style={[styles.titleText, {fontSize: titleFontSize}]}
+          numberOfLines={1}>
+          {item?.title}
         </Text>
-        <TouchableOpacity
-          style={[
-            styles.buttonIcon,
-            {
-              width: buttonSize,
-              height: buttonSize,
-              borderRadius: buttonSize * 0.15,
-            },
-          ]}>
-          <Lucide name="minus" color={'#fff'} size={iconSize} />
-        </TouchableOpacity>
-      </View>
-      {item?.count > 0 && (
-        <View style={styles.countContainer}>
-          <Text style={styles.countText}>{item.count}</Text>
+        <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
+          <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
+            ₹{item.price}
+          </Text>
+          <TouchableOpacity
+            onPress={() => increaseDecrease('descrease')}
+            style={[
+              styles.buttonIcon,
+              {
+                width: buttonSize,
+                height: buttonSize,
+                borderRadius: buttonSize * 0.15,
+              },
+            ]}>
+            <Lucide name="minus" color={'#fff'} size={iconSize} />
+          </TouchableOpacity>
         </View>
-      )}
-    </Pressable>
-  );
-});
+        {count > 0 && (
+          <View style={styles.countContainer}>
+            <Text style={styles.countText}>{count}</Text>
+          </View>
+        )}
+      </Pressable>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

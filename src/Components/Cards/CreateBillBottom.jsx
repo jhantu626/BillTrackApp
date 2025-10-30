@@ -4,16 +4,18 @@ import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
-const CreateBillBottom = memo(() => {
+const CreateBillBottom = memo(({totalAmount = 0, totalQuanity = 0}) => {
   return (
     <View style={styles.bottomContainer}>
       <View style={styles.bottomContainerSub}>
         <Text style={styles.bottomCOntainerTitle}>Total Amount</Text>
-        <Text style={styles.bottomCOntainerValue}>₹ 4350.00</Text>
+        <Text style={styles.bottomCOntainerValue}>
+          ₹ {totalAmount.toFixed(2)}
+        </Text>
       </View>
       <View style={styles.bottomContainerSub}>
         <Text style={styles.bottomCOntainerTitle}>Item's Quantity</Text>
-        <Text style={styles.bottomCOntainerValue}>5</Text>
+        <Text style={styles.bottomCOntainerValue}>{totalQuanity}</Text>
       </View>
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity

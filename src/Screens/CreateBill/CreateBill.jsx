@@ -1,14 +1,5 @@
-import {
-  Dimensions,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  Touchable,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React from 'react';
+import {Dimensions, FlatList, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BillProductCard,
@@ -29,6 +20,8 @@ const ITEM_WIDTH =
   NUM_COLUMNS;
 
 const CreateBill = () => {
+  const [quantity, setQuantity] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
   return (
     <Layout>
       <SecondaryHeader title="Create Bill" />
@@ -38,12 +31,17 @@ const CreateBill = () => {
         data={products}
         keyExtractor={(_, index) => index + '_create_bill_item'}
         renderItem={({item}, index) => (
-          <BillProductCard width={ITEM_WIDTH} item={item} />
+          <BillProductCard
+            width={ITEM_WIDTH}
+            item={item}
+            setQuantity={setQuantity}
+            setTotalPrice={setTotalPrice}
+          />
         )}
         numColumns={3}
         columnWrapperStyle={styles.columnWrapperStyle}
       />
-      <CreateBillBottom />
+      <CreateBillBottom totalQuanity={quantity} totalAmount={totalPrice} />
     </Layout>
   );
 };

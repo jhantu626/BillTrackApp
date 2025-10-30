@@ -88,7 +88,7 @@ const App = () => {
   const AppStack = () => {
     return (
       <Tab.Navigator
-        initialRouteName="Create"
+        initialRouteName="Home"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
