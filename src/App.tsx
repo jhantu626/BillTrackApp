@@ -171,7 +171,6 @@ const App = () => {
           component={InvoiceStack}
           options={({route}) => {
             const routeName = getFocusedRouteNameFromRoute(route) ?? 'Invoice';
-            console.info(routeName);
             return {
               tabBarIcon: ({focused, color}) => (
                 <Image

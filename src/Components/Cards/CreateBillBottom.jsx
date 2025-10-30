@@ -1,10 +1,10 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
-import { fonts } from '../../utils/fonts';
-import { colors } from '../../utils/colors';
+import React, {memo} from 'react';
+import {fonts} from '../../utils/fonts';
+import {colors} from '../../utils/colors';
 import Ionicons from '@react-native-vector-icons/ionicons';
 
-const CreateBillBottom = () => {
+const CreateBillBottom = memo(() => {
   return (
     <View style={styles.bottomContainer}>
       <View style={styles.bottomContainerSub}>
@@ -34,7 +34,7 @@ const CreateBillBottom = () => {
       </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   bottomContainer: {
