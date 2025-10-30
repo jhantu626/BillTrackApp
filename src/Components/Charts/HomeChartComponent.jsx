@@ -1,85 +1,79 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {memo} from 'react';
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {memo, useMemo} from 'react';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import SalesAreaChart from './SalesAreaChart';
 
+const {width} = Dimensions.get('screen');
+
 const HomeChartComponent = memo(({selectedPriod, handleChangePriod}) => {
+  const sizes = useMemo(() => {
+    const selectedText = width * 0.032;
+    const salesText = width * 0.036;
+    const salesAmount = width * 0.062;
+    const salesPercentageText = width * 0.03;
+    const iconSize = width * 0.032;
+
+    return {
+      selectedText,
+      salesText,
+      salesAmount,
+      salesPercentageText,
+      iconSize,
+    };
+  }, [width]);
+
   return (
     <View style={styles.container}>
       <View style={styles.selectableContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            handleChangePriod('Today');
-          }}
-          style={[
-            styles.selectable,
-            selectedPriod === 'Today' && {
-              backgroundColor: '#fff',
-              borderRadius: 5,
-              borderWidth: 0.5,
-              borderColor: colors.primary,
-            },
-          ]}>
-          <Text
+        {['Today', 'Week', 'Month'].map(period => (
+          <TouchableOpacity
+            key={period}
+            onPress={() => handleChangePriod(period)}
             style={[
-              styles.selectedText,
-              selectedPriod === 'Today' && {color: colors.primary},
+              styles.selectable,
+              selectedPriod === period && {
+                backgroundColor: '#fff',
+                borderRadius: 5,
+                borderWidth: 0.5,
+                borderColor: colors.primary,
+              },
             ]}>
-            Today
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            handleChangePriod('Week');
-          }}
-          style={[
-            styles.selectable,
-            selectedPriod === 'Week' && {
-              backgroundColor: '#fff',
-              borderRadius: 5,
-              borderWidth: 0.5,
-              borderColor: colors.primary,
-            },
-          ]}>
-          <Text
-            style={[
-              styles.selectedText,
-              selectedPriod === 'Week' && {color: colors.primary},
-            ]}>
-            Week
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            handleChangePriod('Month');
-          }}
-          style={[
-            styles.selectable,
-            selectedPriod === 'Month' && {
-              backgroundColor: '#fff',
-              borderRadius: 5,
-              borderWidth: 0.5,
-              borderColor: colors.primary,
-            },
-          ]}>
-          <Text
-            style={[
-              styles.selectedText,
-              selectedPriod === 'Month' && {color: colors.primary},
-            ]}>
-            Month
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.selectedText,
+                {fontSize: sizes.selectedText},
+                selectedPriod === period && {color: colors.primary},
+              ]}>
+              {period}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
       <View style={styles.salesContainer}>
-        <Text style={styles.salesText}>{selectedPriod}'s Sales</Text>
+        <Text style={[styles.salesText, {fontSize: sizes.salesText}]}>
+          {selectedPriod}'s Sales
+        </Text>
         <View style={styles.sales}>
-          <Text style={styles.salesAmount}>₹ 5104.00</Text>
+          <Text style={[styles.salesAmount, {fontSize: sizes.salesAmount}]}>
+            ₹ 5104.00
+          </Text>
           <View style={styles.salesPercentage}>
             <Ionicons name="arrow-up" size={12} color={colors.sucess} />
-            <Text style={styles.salesPercentageText}>1.3% increased</Text>
+            <Text
+              style={[
+                styles.salesPercentageText,
+                {fontSize: sizes.salesPercentageText},
+              ]}>
+              1.3% increased
+            </Text>
           </View>
         </View>
       </View>
@@ -132,17 +126,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   salesText: {
-    fontSize: 14,
+    // fontSize: 14,
     fontFamily: fonts.inMedium,
     color: '#00000090',
   },
   salesAmount: {
-    fontSize: 24,
+    // fontSize: 24,
     fontFamily: fonts.inBold,
     color: '#000',
   },
   salesPercentageText: {
-    fontSize: 12,
+    // fontSize: 12,
     fontFamily: fonts.inMedium,
     color: colors.sucess,
   },

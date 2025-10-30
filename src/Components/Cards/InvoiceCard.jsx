@@ -54,7 +54,9 @@ const InvoiceCard = memo(({invoice}) => {
         </Text>
         <View style={styles.right}>
           <View style={styles.paidContainer}>
-            <Text style={styles.paidText}>{invoice?.status}</Text>
+            <Text style={[styles.paidText, {fontSize: sizes.paidText}]}>
+              {invoice?.status}
+            </Text>
           </View>
           <Text style={[styles.priceText, {fontSize: sizes.priceText}]}>
             ₹ {invoice?.amount}
@@ -151,7 +153,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   numberText: {
-    fontSize: 12,
+    // fontSize: 12,
     fontFamily: fonts.inRegular,
     color: '#00000080',
   },
@@ -165,20 +167,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 3,
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
   },
   paidText: {
-    fontSize: 8,
+    // fontSize: 8,
     fontFamily: fonts.inSemiBold,
     color: colors.sucess,
   },
   priceText: {
-    fontSize: 14,
+    // fontSize: 14,
     fontFamily: fonts.inSemiBold,
     color: '#000000',
   },
   dateText: {
-    fontSize: 10,
+    // fontSize: 10,
     fontFamily: fonts.inRegular,
     color: '#00000080',
     textDecorationLine: 'underline',
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   subBottomContainerText: {
-    fontSize: 12,
+    // fontSize: 12,
     fontFamily: fonts.inBold,
   },
 });
