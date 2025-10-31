@@ -20,6 +20,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
+import {memo, useMemo} from 'react';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -27,7 +28,15 @@ const App = () => {
   const Stack = createNativeStackNavigator();
   const Tab = createBottomTabNavigator();
 
-  const AuthStack = () => {
+  const icons = {
+    Home: require('./../asset/images/hometab.png'),
+    Invoice: require('./../asset/images/invoicetab.png'),
+    CreateBill: require('./../asset/images/createtab.png'),
+    Product: require('./../asset/images/producttab.png'),
+    Account: require('./../asset/images/accounttab.png'),
+  };
+
+  const AuthStack = memo(() => {
     return (
       <Stack.Navigator
         initialRouteName="Login"
@@ -43,9 +52,9 @@ const App = () => {
         <Stack.Screen name="BusinessSetup2" component={BusinessSetup2} />
       </Stack.Navigator>
     );
-  };
+  });
 
-  const HomeStack = () => {
+  const HomeStack = memo(() => {
     return (
       <Stack.Navigator
         initialRouteName="Home"
@@ -59,13 +68,14 @@ const App = () => {
           component={InvoiceDetails}
           options={{
             animation: 'slide_from_bottom',
+            animationDuration: 200,
           }}
         />
       </Stack.Navigator>
     );
-  };
+  });
 
-  const InvoiceStack = () => {
+  const InvoiceStack = memo(() => {
     return (
       <Stack.Navigator
         initialRouteName="Invoice"
@@ -79,13 +89,14 @@ const App = () => {
           component={InvoiceDetails}
           options={{
             animation: 'slide_from_bottom',
+            animationDuration: 200,
           }}
         />
       </Stack.Navigator>
     );
-  };
+  });
 
-  const AppStack = () => {
+  const AppStack = memo(() => {
     return (
       <Tab.Navigator
         initialRouteName="Home"
@@ -101,7 +112,7 @@ const App = () => {
           tabBarLabelStyle: {
             fontSize: 12,
             fontFamily: fonts.onMedium,
-            marginTop: 1,
+            // marginTop: 1,
           },
           tabBarItemStyle: {
             justifyContent: 'center',
@@ -120,7 +131,7 @@ const App = () => {
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
-                source={require('./../asset/images/hometab.png')}
+                source={icons.Home}
                 style={[
                   styles.tabbarIcon,
                   {tintColor: focused ? color : 'gray'},
@@ -136,7 +147,7 @@ const App = () => {
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
-                source={require('./../asset/images/producttab.png')}
+                source={icons.Product}
                 style={[
                   styles.tabbarIcon,
                   {tintColor: focused ? color : 'gray'},
@@ -156,7 +167,7 @@ const App = () => {
             tabBarIcon: ({focused, color}) => (
               <View style={styles.createTabParent}>
                 <Image
-                  source={require('./../asset/images/createtab.png')}
+                  source={icons.CreateBill}
                   style={[styles.tabbarIcon, {tintColor: '#fff'}]}
                   resizeMode="contain"
                 />
@@ -174,7 +185,7 @@ const App = () => {
             return {
               tabBarIcon: ({focused, color}) => (
                 <Image
-                  source={require('./../asset/images/invoicetab.png')}
+                  source={icons.Invoice}
                   style={[
                     styles.tabbarIcon,
                     {tintColor: focused ? color : 'gray'},
@@ -202,7 +213,8 @@ const App = () => {
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
-                source={require('./../asset/images/accounttab.png')}
+                // source={require('./../asset/images/accounttab.png')}
+                source={icons.Account}
                 style={[
                   styles.tabbarIcon,
                   {tintColor: focused ? color : 'gray'},
@@ -214,21 +226,21 @@ const App = () => {
         />
       </Tab.Navigator>
     );
-  };
+  });
 
-  const AppNav = () => {
+  const AppNav = memo(() => {
     const authToken = true;
     return (
       <NavigationContainer>
         {authToken ? <AppStack /> : <AuthStack />}
       </NavigationContainer>
     );
-  };
+  });
 
   return <AppNav />;
 };
 
-export default App;
+export default memo(App);
 
 const styles = StyleSheet.create({
   tabbarIcon: {
