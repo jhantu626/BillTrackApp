@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
 import {fonts} from '../../utils/fonts';
@@ -101,143 +101,326 @@ const InvoiceDetails = () => {
         isSearch={false}
       />
       <ScrollView style={{flex: 1}} contentContainerStyle={{paddingBottom: 20}}>
-        <View style={styles.container}>
-          <View style={styles.topContainer}>
+        <View
+          style={[
+            styles.container,
+            {
+              paddingBottom: sizes.containerPaddingBottom,
+              marginTop: sizes.containerMarginTop,
+            },
+          ]}>
+          <View
+            style={[
+              styles.topContainer,
+              {
+                paddingVertical: sizes.topContainerPaddingVertical,
+                gap: sizes.topContainerGap,
+              },
+            ]}>
             <Image
               source={invoiceData.businessLogo}
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text style={styles.businessText}>{invoiceData.businessName}</Text>
+            <Text
+              style={[
+                styles.businessText,
+                {fontSize: sizes.businessTextFontSize},
+              ]}>
+              {invoiceData.businessName}
+            </Text>
             <View style={styles.topKeyValueStyle}>
-              <Text style={styles.keyText}>Phone Numer: </Text>
-              <Text style={styles.valueText}>{invoiceData.businessPhone}</Text>
+              <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
+                Phone Numer:{' '}
+              </Text>
+              <Text
+                style={[styles.valueText, {fontSize: sizes.valueTextFontSize}]}>
+                {invoiceData.businessPhone}
+              </Text>
             </View>
             <View style={styles.topKeyValueStyle}>
-              <Text style={styles.keyText}>Address: </Text>
-              <Text style={[styles.valueText, {width: '50%'}]}>
+              <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
+                Address:{' '}
+              </Text>
+              <Text
+                style={[
+                  styles.valueText,
+                  {width: '50%', fontSize: sizes.valueTextFontSize},
+                ]}>
                 {invoiceData.businessAddress}
               </Text>
             </View>
             <View style={styles.topKeyValueStyle}>
-              <Text style={styles.keyText}>GST NO : </Text>
-              <Text style={styles.valueText}>{invoiceData.businessGstNo}</Text>
+              <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
+                GST NO :{' '}
+              </Text>
+              <Text
+                style={[styles.valueText, {fontSize: sizes.valueTextFontSize}]}>
+                {invoiceData.businessGstNo}
+              </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <View style={styles.secondContainer}>
-            <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>
+          <View
+            style={[
+              styles.secondContainer,
+              {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+            ]}>
+            <View
+              style={[
+                styles.subSecondContainer,
+                {gap: sizes.subSecondContainerGap},
+              ]}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Invoice No : {invoiceData.invoiceNumber}{' '}
               </Text>
-              <Text style={styles.invoiceText}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Date : {invoiceData.invoiceDate}{' '}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Billed By : {invoiceData.billedBy}
               </Text>
-              <Text style={styles.invoiceText}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Time : {invoiceData.invoiceTime}
               </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <View style={styles.secondContainer}>
+          <View
+            style={[
+              styles.secondContainer,
+              {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+            ]}>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Name : {invoiceData.customerName}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Number : {invoiceData.customerPhone}
               </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
           <View style={styles.itemCotainer}>
-            <Text style={[styles.invoiceTitle, {width: '35%'}]}>Name</Text>
             <Text
-              style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
+              style={[
+                styles.invoiceTitle,
+                {width: '35%', fontSize: sizes.invoiceTitleFontSize},
+              ]}>
+              Name
+            </Text>
+            <Text
+              style={[
+                styles.invoiceTitle,
+                {
+                  width: '20%',
+                  textAlign: 'right',
+                  fontSize: sizes.invoiceTitleFontSize,
+                },
+              ]}>
               Quantity
             </Text>
             <Text
-              style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
+              style={[
+                styles.invoiceTitle,
+                {
+                  width: '20%',
+                  textAlign: 'right',
+                  fontSize: sizes.invoiceTitleFontSize,
+                },
+              ]}>
               Price
             </Text>
             <Text
-              style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
+              style={[
+                styles.invoiceTitle,
+                {
+                  width: '20%',
+                  textAlign: 'right',
+                  fontSize: sizes.invoiceTitleFontSize,
+                },
+              ]}>
               Amount
             </Text>
           </View>
           <DottedDivider borderWidth={0.8} />
           {invoiceData.items.map((item, index) => (
             <View style={styles.itemCotainer} key={index + '_item'}>
-              <Text style={[styles.invoiceItem, {width: '40%'}]}>
+              <Text
+                style={[
+                  styles.invoiceItem,
+                  {width: '40%', fontSize: sizes.invoiceItemFontSize},
+                ]}>
                 {item.name}
               </Text>
               <Text
                 style={[
                   styles.invoiceItem,
-                  {width: '20%', textAlign: 'right'},
+                  {
+                    width: '20%',
+                    textAlign: 'right',
+                    fontSize: sizes.invoiceItemFontSize,
+                  },
                 ]}>
                 {item.quantity}
               </Text>
               <Text
                 style={[
                   styles.invoiceItem,
-                  {width: '20%', textAlign: 'right'},
+                  {
+                    width: '20%',
+                    textAlign: 'right',
+                    fontSize: sizes.invoiceItemFontSize,
+                  },
                 ]}>
                 ₹{item.price}
               </Text>
               <Text
                 style={[
                   styles.invoiceTitle,
-                  {width: '20%', textAlign: 'right'},
+                  {
+                    width: '20%',
+                    textAlign: 'right',
+                    fontSize: sizes.invoiceTitleFontSize,
+                  },
                 ]}>
                 ₹{item.price * item.quantity}
               </Text>
             </View>
           ))}
           <DottedDivider borderWidth={0.8} />
-          <View style={styles.secondContainer}>
+          <View
+            style={[
+              [
+                styles.secondContainer,
+                {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+              ],
+            ]}>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>Total Quantity : 10</Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                Total Quantity : 10
+              </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>Sub Total : 1340.95</Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                Sub Total : 1340.95
+              </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <View style={styles.secondContainer}>
+          <View
+            style={[
+              styles.secondContainer,
+              {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+            ]}>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>1280.95 @ CGST - 2.5%</Text>
-              <Text style={styles.invoiceText}>1280.95 @ SGST - 2.5%</Text>
-              <Text style={styles.invoiceText}>Round Off</Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                1280.95 @ CGST - 2.5%
+              </Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                1280.95 @ SGST - 2.5%
+              </Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                Round Off
+              </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text style={styles.invoiceText}>₹32.02</Text>
-              <Text style={styles.invoiceText}>₹32.02</Text>
-              <Text style={styles.invoiceText}>₹0.01</Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                ₹32.02
+              </Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                ₹32.02
+              </Text>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
+                ₹0.01
+              </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <View style={styles.secondContainer}>
+          <View
+            style={[
+              styles.secondContainer,
+              {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+            ]}>
             <View style={styles.subSecondContainer}>
               <Text style={[styles.invoiceText, {fontSize: 15}]}>
                 Payment : Cash
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text style={[styles.invoiceText, {fontSize: 15}]}>
+              <Text
+                style={[
+                  styles.invoiceText,
+                  {fontSize: sizes.invoiceTextFontSize},
+                ]}>
                 Total Amount : ₹1405.00
               </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <Text style={styles.thankYouText}>Thank You & Visit Again</Text>
+          <Text style={[styles.thankYouText, {fontSize: sizes.thankYouText}]}>
+            Thank You & Visit Again
+          </Text>
         </View>
       </ScrollView>
     </Layout>
@@ -247,21 +430,20 @@ const InvoiceDetails = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 20,
-    paddingBottom: 10,
+    // marginTop: 20,
+    // paddingBottom: 10,
   },
   topContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 30,
-    gap: 7,
+    // paddingVertical: 30,
+    // gap: 7,
   },
   logo: {
     height: 24,
     tintColor: '#00000090',
   },
   businessText: {
-    fontSize: 20,
     fontFamily: fonts.onBold,
     color: '#000',
   },
@@ -270,27 +452,24 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   keyText: {
-    fontSize: 14,
     fontFamily: fonts.onSemiBold,
     color: '#000',
   },
   valueText: {
-    fontSize: 14,
     fontFamily: fonts.onMedium,
     color: '#000',
   },
   secondContainer: {
     marginVertical: 5,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   subSecondContainer: {
-    gap: 10,
+    // gap: 10,
   },
   invoiceText: {
-    fontSize: 14,
     fontFamily: fonts.inSemiBold,
     color: '#000000',
   },
@@ -302,12 +481,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   invoiceTitle: {
-    fontSize: 14,
     fontFamily: fonts.inBold,
     color: '#000000',
   },
   invoiceItem: {
-    fontSize: 14,
     fontFamily: fonts.inMedium,
     color: '#000000',
   },
@@ -315,7 +492,6 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   thankYouText: {
-    fontSize: 15,
     fontFamily: fonts.inBold,
     color: '#000000',
     textAlign: 'center',

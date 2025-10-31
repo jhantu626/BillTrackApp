@@ -57,7 +57,7 @@ const App = () => {
   const HomeStack = memo(() => {
     return (
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName="InvoiceDetails"
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -99,7 +99,7 @@ const App = () => {
   const AppStack = memo(() => {
     return (
       <Tab.Navigator
-        initialRouteName="Create"
+        initialRouteName="Home"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
