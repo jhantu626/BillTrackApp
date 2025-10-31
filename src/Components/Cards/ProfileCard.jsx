@@ -1,33 +1,34 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { fonts } from '../../utils/fonts';
-import { colors } from '../../utils/colors';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React, {memo} from 'react';
+import {fonts} from '../../utils/fonts';
+import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
+import {font, padding} from './../../utils/responsive';
 
-const ProfileCard = () => {
+const ProfileCard = memo(() => {
   return (
     <View style={styles.container}>
-          <View style={styles.leftContainer}>
-            <Image
-              source={require('./../../../asset/images/profile.png')}
-              style={styles.image}
-            />
-            <View style={styles.leftRightContainer}>
-              <Text style={styles.nameText}>Pritam Bala</Text>
-              <Text style={styles.numberText}>9775746484</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.editBtn}>
-            <AntDesign name="edit" size={20} color={colors.primary} />
-          </TouchableOpacity>
+      <View style={styles.leftContainer}>
+        <Image
+          source={require('./../../../asset/images/profile.png')}
+          style={styles.image}
+        />
+        <View style={styles.leftRightContainer}>
+          <Text style={styles.nameText}>Pritam Bala</Text>
+          <Text style={styles.numberText}>9775746484</Text>
         </View>
-  )
-}
+      </View>
+      <TouchableOpacity style={styles.editBtn}>
+        <AntDesign name="edit" size={20} color={colors.primary} />
+      </TouchableOpacity>
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#fff',
+    padding: padding(16),
+    // backgroundColor: '#fff',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.border,
@@ -49,11 +50,11 @@ const styles = StyleSheet.create({
     // gap: ,
   },
   nameText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Bold',
+    fontSize: font(18),
+    fontFamily: fonts.popSemiBold,
   },
   numberText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.popRegular,
   },
   editBtn: {
@@ -64,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileCard
+export default ProfileCard;

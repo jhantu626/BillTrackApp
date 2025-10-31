@@ -15,6 +15,7 @@ import InvoiceCard from './Cards/InvoiceCard';
 import CreateBillBottom from './Cards/CreateBillBottom';
 import BillProductCard from './Cards/BillProductCard';
 import ProfileCard from './Cards/ProfileCard';
+import SettingItemsCard from './Cards/SettingItemsCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -34,4 +35,5 @@ export {
   CreateBillBottom,
   BillProductCard,
   ProfileCard,
+  SettingItemsCard,
 };
