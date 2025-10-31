@@ -16,6 +16,9 @@ import InvoiceDetails from './Invoice/InvoiceDetails';
 // CREATE BILL
 import CreateBill from './CreateBill/CreateBill';
 
+// ACCOUNT
+import Account from './Account/Account';
+
 export {
   Onboarding,
   AuthHome,
@@ -27,4 +30,5 @@ export {
   Invoice,
   CreateBill,
   InvoiceDetails,
+  Account,
 };

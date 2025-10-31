@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
+  Account,
   AuthHome,
   BusinessSetup,
   BusinessSetup2,
@@ -57,7 +58,7 @@ const App = () => {
   const HomeStack = memo(() => {
     return (
       <Stack.Navigator
-        initialRouteName="InvoiceDetails"
+        initialRouteName="Home"
         screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
@@ -99,7 +100,7 @@ const App = () => {
   const AppStack = memo(() => {
     return (
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Account"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
@@ -209,11 +210,10 @@ const App = () => {
         />
         <Tab.Screen
           name="Account"
-          component={Home}
+          component={Account}
           options={{
             tabBarIcon: ({focused, color}) => (
               <Image
-                // source={require('./../asset/images/accounttab.png')}
                 source={icons.Account}
                 style={[
                   styles.tabbarIcon,
