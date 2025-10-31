@@ -1,12 +1,30 @@
-import {Dimensions, FlatList, StyleSheet} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BillProductCard,
   CreateBillBottom,
   SecondaryHeader,
+  SimpleTextInput,
 } from '../../Components';
 import {products} from '../../utils/data';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {fonts} from '../../utils/fonts';
+import {validateIndianPhone} from '../../utils/validator';
+import {colors} from '../../utils/colors';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = 3;
@@ -22,27 +40,126 @@ const ITEM_WIDTH =
 const CreateBill = () => {
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  // STATE VARIABLES
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  // BOTTOMSHEET
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ['30%'], []);
+
+  const renderBackdrop = useMemo(
+    () => props =>
+      (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+          opacity={0.8}
+        />
+      ),
+    [],
+  );
+
+  const handleCloseBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.close();
+  }, []);
+  const handleOpenBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  });
+
   return (
-    <Layout>
-      <SecondaryHeader title="Create Bill" />
-      <FlatList
-        style={{flex: 1}}
-        contentContainerStyle={styles.container}
-        data={products}
-        keyExtractor={(_, index) => index + '_create_bill_item'}
-        renderItem={({item}, index) => (
-          <BillProductCard
-            width={ITEM_WIDTH}
-            item={item}
-            setQuantity={setQuantity}
-            setTotalPrice={setTotalPrice}
-          />
-        )}
-        numColumns={3}
-        columnWrapperStyle={styles.columnWrapperStyle}
-      />
-      <CreateBillBottom totalQuanity={quantity} totalAmount={totalPrice} />
-    </Layout>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Layout>
+        <SecondaryHeader title="Create Bill" />
+        <FlatList
+          style={{flex: 1}}
+          contentContainerStyle={styles.container}
+          data={products}
+          keyExtractor={(_, index) => index + '_create_bill_item'}
+          renderItem={({item}, index) => (
+            <BillProductCard
+              width={ITEM_WIDTH}
+              item={item}
+              setQuantity={setQuantity}
+              setTotalPrice={setTotalPrice}
+            />
+          )}
+          numColumns={3}
+          columnWrapperStyle={styles.columnWrapperStyle}
+        />
+        <CreateBillBottom
+          totalQuanity={quantity}
+          totalAmount={totalPrice}
+          saveButtonFunciton={handleOpenBottomSheet}
+        />
+      </Layout>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        index={-1}
+        handleComponent={() => null}
+        backgroundStyle={{borderRadius: 0}}
+        backdropComponent={renderBackdrop}
+        animationConfigs={{
+          duration: 250,
+        }}
+        enableHandlePanningGesture={false}>
+        <BottomSheetView style={{flex: 1, padding: 15}}>
+          <View style={styles.bottomSheetContaienr}>
+            <Text style={styles.bottomSheetTitleText}>
+              Enter customer phone number
+            </Text>
+            <TouchableOpacity onPress={handleCloseBottomSheet}>
+              <Ionicons name="close" size={20} color={'#000'} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.bottomSheetSubTitleText}>
+            For sending sms & reminders
+          </Text>
+          <View style={styles.bottomSheetPhoneContainer}>
+            <Text
+              style={{
+                fontSize: 12,
+                fontFamily: fonts.popMedium,
+                color: '#000',
+              }}>
+              Phone number
+            </Text>
+            <SimpleTextInput
+              maxLength={10}
+              hasError={
+                phoneNumber.length > 0 && !validateIndianPhone(phoneNumber)
+              }
+              value={phoneNumber}
+              setValue={setPhoneNumber}
+              keyboardType="phone-pad"
+              placeholder="Customer Phone Number"
+              borderColor="#00000090"
+              placeholderTextColor="#00000095"
+            />
+          </View>
+          <View style={styles.bottomSheetButtonContaienr}>
+            <TouchableOpacity
+              style={[
+                styles.bottomSheetButton,
+                {
+                  backgroundColor: colors.sucess,
+                },
+              ]}>
+              <Text style={styles.bottomSheetButtonText}>SEND</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.bottomSheetButton,
+                {backgroundColor: colors.error},
+              ]}>
+              <Text style={styles.bottomSheetButtonText}>PRINT</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
   );
 };
 
@@ -55,6 +172,44 @@ const styles = StyleSheet.create({
   columnWrapperStyle: {
     gap: GAP_BETWEEN_ITEMS,
     marginBottom: 16,
+  },
+  bottomSheetContaienr: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  bottomSheetTitleText: {
+    fontSize: 16,
+    fontFamily: fonts.popMedium,
+    color: '#000',
+  },
+  bottomSheetSubTitleText: {
+    fontSize: 11,
+    fontFamily: fonts.popRegular,
+    color: '#00000080',
+  },
+  bottomSheetPhoneContainer: {
+    gap: 8,
+    marginVertical: 20,
+  },
+  bottomSheetButtonContaienr: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 15,
+    marginBottom: 20,
+  },
+  bottomSheetButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  bottomSheetButtonText: {
+    fontSize: 14,
+    fontFamily: fonts.popSemiBold,
+    color: '#fff',
   },
 });
 

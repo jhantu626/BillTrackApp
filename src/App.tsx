@@ -99,7 +99,7 @@ const App = () => {
   const AppStack = memo(() => {
     return (
       <Tab.Navigator
-        initialRouteName="Home"
+        initialRouteName="Create"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
