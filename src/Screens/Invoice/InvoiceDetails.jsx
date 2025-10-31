@@ -1,4 +1,11 @@
-import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import React from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
@@ -34,6 +41,58 @@ const InvoiceDetails = () => {
       {name: 'Chicken Kebab', quantity: 1, price: 180},
     ],
   };
+
+  const {width} = useWindowDimensions();
+
+  const sizes = useMemo(() => {
+    // 🔹 Logo dimensions
+    const logoHeight = width * 0.065; // ~24px at width 375
+    const logoWidth = width * 0.22;   // Optional if using fixed ratio
+
+    // 🔹 Font sizes
+    const businessTextFontSize = width * 0.053; // 20
+    const keyTextFontSize = width * 0.037;      // 14
+    const valueTextFontSize = width * 0.037;    // 14
+    const invoiceTextFontSize = width * 0.037;  // 14
+    const invoiceTitleFontSize = width * 0.037; // 14
+    const invoiceItemFontSize = width * 0.037;  // 14
+    const thankYouTextFontSize = width * 0.04;  // 15
+
+    // 🔹 Paddings
+    const containerPaddingBottom = width * 0.026;  // 10
+    const topContainerPaddingVertical = width * 0.08; // 30
+    const secondContainerPaddingHorizontal = width * 0.042; // 16
+    const itemContainerPaddingHorizontal = width * 0.042;   // 16
+
+    // 🔹 Margins
+    const containerMarginTop = width * 0.053; // 20
+    const itemContainerMarginVertical = width * 0.013; // 5
+
+    // 🔹 Spacing / gaps
+    const topContainerGap = width * 0.018; // 7
+    const subSecondContainerGap = width * 0.026; // 10
+
+    return {
+      logoHeight,
+      logoWidth,
+      businessTextFontSize,
+      keyTextFontSize,
+      valueTextFontSize,
+      invoiceTextFontSize,
+      invoiceTitleFontSize,
+      invoiceItemFontSize,
+      thankYouTextFontSize,
+      containerPaddingBottom,
+      topContainerPaddingVertical,
+      secondContainerPaddingHorizontal,
+      itemContainerPaddingHorizontal,
+      containerMarginTop,
+      itemContainerMarginVertical,
+      topContainerGap,
+      subSecondContainerGap,
+    };
+  }, [width]);
+
   return (
     <Layout>
       <SecondaryHeader
@@ -105,8 +164,14 @@ const InvoiceDetails = () => {
               style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
               Quantity
             </Text>
-            <Text style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>Price</Text>
-            <Text style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>Amount</Text>
+            <Text
+              style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
+              Price
+            </Text>
+            <Text
+              style={[styles.invoiceTitle, {width: '20%', textAlign: 'right'}]}>
+              Amount
+            </Text>
           </View>
           <DottedDivider borderWidth={0.8} />
           {invoiceData.items.map((item, index) => (
