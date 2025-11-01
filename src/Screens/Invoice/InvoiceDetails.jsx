@@ -13,7 +13,7 @@ import {fonts} from '../../utils/fonts';
 
 const InvoiceDetails = () => {
   const invoiceData = {
-    businessName: 'Floop Product Of Turain',
+    businessName: 'Turain Software',
     businessPhone: '+91 6290 397200',
     businessAddress: '2/25 Poddarnagar, Kolkata, West Bengal - 700046',
     businessGstNo: '19YWFAS0292L8Z8',

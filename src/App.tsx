@@ -22,6 +22,7 @@ import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useMemo} from 'react';
+import { icon } from './utils/responsive';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -100,7 +101,7 @@ const App = () => {
   const AppStack = memo(() => {
     return (
       <Tab.Navigator
-        initialRouteName="Account"
+        initialRouteName="Home"
         screenOptions={{
           animation: 'shift',
           headerShown: false,
@@ -244,8 +245,8 @@ export default memo(App);
 
 const styles = StyleSheet.create({
   tabbarIcon: {
-    width: 22,
-    height: 22,
+    width: icon(22),
+    height: icon(22),
   },
   createTabParent: {
     backgroundColor: colors.primary,

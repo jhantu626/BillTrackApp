@@ -2,6 +2,7 @@ import React, {useMemo, useState, useCallback, memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {LineChart} from 'react-native-gifted-charts';
 import {colors} from '../../utils/colors';
+import { font, margin, padding } from '../../utils/responsive';
 
 const formatINR = n => '₹' + Math.round(n).toLocaleString('en-IN');
 
@@ -134,17 +135,17 @@ const SalesAreaChart = memo(
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 4,
-    paddingBottom: 8,
+    paddingTop: padding(4),
+    paddingBottom: padding(8),
   },
   yAxisText: {
     color: '#000',
-    fontSize: 11,
+    fontSize: font(11),
   },
   xAxisText: {
     color: '#000',
-    fontSize: 10,
-    marginTop: 8,
+    fontSize: font(10),
+    marginTop: margin(8),
   },
   tooltipWrapper: {
     alignItems: 'center',
@@ -152,8 +153,8 @@ const styles = StyleSheet.create({
   },
   tooltipBubble: {
     backgroundColor: '#ffffff',
-    paddingVertical: 8,
-    paddingHorizontal: 10,
+    paddingVertical: padding(8),
+    paddingHorizontal: padding(10),
     borderRadius: 10,
     minWidth: 120,
     alignItems: 'center',
@@ -169,8 +170,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tooltipLine2: {
-    marginTop: 2,
-    fontSize: 14,
+    marginTop: margin(2),
+    fontSize: font(14),
     fontWeight: '700',
   },
   tooltipCaret: {

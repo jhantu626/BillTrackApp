@@ -18,6 +18,7 @@ import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {invoice} from '../../utils/data';
+import {padding} from '../../utils/responsive';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -32,7 +33,7 @@ const Home = () => {
       <ScrollView
         style={{flex: 1}}
         contentContainerStyle={{
-          paddingBottom: 30,
+          paddingBottom: padding(30),
         }}>
         <HomeChartComponent
           selectedPriod={selectedPriod}
@@ -51,7 +52,7 @@ const Home = () => {
             </TouchableOpacity>
           </View>
           {invoice.map((item, index) => (
-            <InvoiceCard invoice={item} key={index+"invoice_card"} />
+            <InvoiceCard invoice={item} key={index + 'invoice_card'} />
           ))}
         </View>
       </ScrollView>

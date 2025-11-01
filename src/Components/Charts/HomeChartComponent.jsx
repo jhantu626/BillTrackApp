@@ -10,6 +10,7 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import SalesAreaChart from './SalesAreaChart';
+import {font, gap, margin, padding} from '../../utils/responsive';
 
 const {width} = Dimensions.get('screen');
 
@@ -86,11 +87,11 @@ const HomeChartComponent = memo(({selectedPriod, handleChangePriod}) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: padding(16),
     backgroundColor: '#fff',
     borderRadius: 5,
-    marginVertical: 20,
-    marginHorizontal: 16,
+    marginVertical: margin(20),
+    marginHorizontal: margin(16),
   },
   selectableContainer: {
     flexDirection: 'row',
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: colors.primaryBackground,
     alignItems: 'center',
-    padding: 8,
+    padding: padding(8),
     borderRadius: 5,
   },
   selectable: {
@@ -108,18 +109,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedText: {
-    fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.inMedium,
     color: '#000000',
   },
   salesContainer: {
-    marginTop: 15,
-    gap: 10,
+    marginTop: margin(15),
+    gap: gap(10),
   },
   sales: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: gap(10),
   },
   salesPercentage: {
     flexDirection: 'row',
