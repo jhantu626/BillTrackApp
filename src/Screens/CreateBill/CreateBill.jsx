@@ -26,7 +26,6 @@ import {fonts} from '../../utils/fonts';
 import {validateIndianPhone} from '../../utils/validator';
 import {colors} from '../../utils/colors';
 import { font, gap, margin, padding } from '../../utils/responsive';
-import { renderBackdrop } from '../../utils/components';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = 3;
@@ -57,6 +56,19 @@ const CreateBill = () => {
   const handleOpenBottomSheet = useCallback(() => {
     bottomSheetRef.current?.expand();
   });
+
+  const renderBackdrop = useMemo(
+  () => props =>
+    (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.8}
+      />
+    ),
+  [],
+);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>

@@ -17,25 +17,36 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { renderBackdrop } from '../../utils/components';
+import {font, margin, padding} from '../../utils/responsive';
 
 const Invoice = () => {
-  const bottomSheetRef = useRef(null);
-  const snapPonts = useMemo(() => ['50%'], []);
-
   // STATE VARIABLES
   const [sortBy, setSortBy] = useState('');
 
-  
+  const bottomSheetRef = useRef(null);
+  const snapPoints = useMemo(() => ['50%'], []);
 
   const handleOpenBottomSheet = useCallback(
-    () => bottomSheetRef.current?.snapToIndex(1),
+    () => bottomSheetRef.current?.snapToIndex(0),
     [],
   );
   const handleCloseBottomSheet = useCallback(() => {
     bottomSheetRef.current?.close();
     console.info('close');
   }, []);
+
+  const renderBackdrop = useMemo(
+  () => props =>
+    (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.8}
+      />
+    ),
+  [],
+);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -62,15 +73,16 @@ const Invoice = () => {
       </Layout>
       <BottomSheet
         ref={bottomSheetRef}
-        snapPoints={snapPonts}
+        snapPoints={snapPoints}
         index={-1}
-        backdropComponent={renderBackdrop}
         handleComponent={() => null}
+        backdropComponent={renderBackdrop}
         animationConfigs={{
           duration: 300,
         }}
         backgroundStyle={{borderRadius: 0}}
-        enableOverDrag={false}>
+        enableOverDrag={false}
+        enableHandlePanningGesture={false}>
         <BottomSheetView style={{flex: 1, gap: 10}}>
           <View style={styles.bottomSheetTop}>
             <Text style={styles.bottomSheetTopText}>Sorting</Text>
@@ -122,6 +134,9 @@ const Invoice = () => {
             </View>
             <DottedDivider />
           </View>
+          <TouchableOpacity style={styles.applyButton}>
+            <Text style={styles.applyText}>APPLY</Text>
+          </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>
@@ -187,6 +202,19 @@ const styles = StyleSheet.create({
   },
   bottomSheetBottom: {
     paddingHorizontal: 16,
+  },
+  applyButton: {
+    alignSelf: 'center',
+    marginBottom: margin(15),
+    paddingHorizontal: padding(30),
+    paddingVertical: padding(8),
+    backgroundColor: colors.primary,
+    borderRadius: 5,
+  },
+  applyText: {
+    fontSize: font(12),
+    fontFamily: fonts.inBold,
+    color: '#fff',
   },
 });
 
