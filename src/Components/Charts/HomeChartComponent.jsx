@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   selectableContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: heightResponsive(50),
+    height: heightResponsive(48),
     backgroundColor: colors.primaryBackground,
     alignItems: 'center',
     padding: padding(8),
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
   selectable: {
     width: '30%',
     // height: heightResponsive(30),
-    paddingVertical: padding(9),
+    paddingVertical: padding(8),
     paddingHorizontal: padding(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedText: {
-    fontSize: font(12),
+    fontSize: font(10),
     fontFamily: fonts.inMedium,
     color: '#000000',
   },
