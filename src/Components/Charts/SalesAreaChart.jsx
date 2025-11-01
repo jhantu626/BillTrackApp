@@ -2,7 +2,13 @@ import React, {useMemo, useState, useCallback, memo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {LineChart} from 'react-native-gifted-charts';
 import {colors} from '../../utils/colors';
-import { font, margin, padding } from '../../utils/responsive';
+import {
+  font,
+  margin,
+  padding,
+  widthResponsive,
+  heightResponsive,
+} from '../../utils/responsive';
 
 const formatINR = n => '₹' + Math.round(n).toLocaleString('en-IN');
 
@@ -14,7 +20,11 @@ const formatK = n => {
 };
 
 const SalesAreaChart = memo(
-  ({data: inputData, chartColor = colors.primary, height = 200}) => {
+  ({
+    data: inputData,
+    chartColor = colors.primary,
+    height = heightResponsive(200),
+  }) => {
     const data = useMemo(() => {
       return inputData?.length
         ? inputData
@@ -43,15 +53,18 @@ const SalesAreaChart = memo(
       setChartWidth(e.nativeEvent.layout.width || 0);
     }, []);
 
-    const yAxisLabelWidth = 42;
+    const yAxisLabelWidth = widthResponsive(42);
     const spacing = useMemo(() => {
-      if (!chartWidth || data.length <= 1) return 28;
-      const available = Math.max(chartWidth - yAxisLabelWidth - 24, 100);
+      if (!chartWidth || data.length <= 1) return widthResponsive(28);
+      const available = Math.max(
+        chartWidth - yAxisLabelWidth - widthResponsive(24),
+        widthResponsive(100),
+      );
       const s = available / (data.length - 1);
-      return Math.max(16, Math.min(40, s));
+      return Math.max(widthResponsive(16), Math.min(widthResponsive(40), s));
     }, [chartWidth, data.length]);
 
-    const gridColor = 'rgba(0,0,0,0.08)';
+    const gridColor = 'rgba(255,255,255,0.20)'; // lighter grid per screenshot
 
     return (
       <View style={[styles.container, {height}]} onLayout={onLayout}>
@@ -61,11 +74,11 @@ const SalesAreaChart = memo(
           curved
           isAnimated
           color={chartColor}
-          thickness={3}
+          thickness={widthResponsive(2.5)}
           startFillColor={chartColor}
-          endFillColor={chartColor}
-          startOpacity={0.35}
-          endOpacity={0.06}
+          endFillColor="#fff"
+          startOpacity={0.85}
+          endOpacity={0.12}
           gradientDirection="vertical"
           hideDataPoints
           yAxisTextStyle={styles.yAxisText}
@@ -79,7 +92,7 @@ const SalesAreaChart = memo(
           xAxisLabelTextStyle={styles.xAxisText}
           xAxisTextNumberOfLines={1}
           formatYLabel={formatK}
-          initialSpacing={12}
+          initialSpacing={widthResponsive(12)}
           spacing={spacing}
           xAxisIndicesHeight={0}
           showStripOnPress
@@ -88,21 +101,21 @@ const SalesAreaChart = memo(
           pointerConfig={{
             activatePointersOnLongPress: true,
             panGestureEnabled: true,
-            pointerStripHeight: height - 40,
+            pointerStripHeight: height - heightResponsive(40),
             pointerStripColor: 'rgba(0,0,0,0.25)',
-            pointerStripWidth: 2,
+            pointerStripWidth: widthResponsive(2),
             pointerColor: '#FFFFFF',
-            radius: 6,
+            radius: widthResponsive(7),
             pointerVanishDelay: 50,
             autoAdjustPointerLabelPosition: true,
             pointerComponent: () => (
               <View
                 style={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: 8,
+                  width: widthResponsive(16),
+                  height: widthResponsive(16),
+                  borderRadius: widthResponsive(8),
                   backgroundColor: '#fff',
-                  borderWidth: 3,
+                  borderWidth: widthResponsive(3),
                   borderColor: chartColor,
                 }}
               />
@@ -136,16 +149,21 @@ const SalesAreaChart = memo(
 const styles = StyleSheet.create({
   container: {
     paddingTop: padding(4),
-    paddingBottom: padding(8),
+    // paddingBottom: padding(8),
+    backgroundColor: '#fff',
+    borderRadius: widthResponsive(10),
+    overflow: 'hidden',
   },
   yAxisText: {
     color: '#000',
     fontSize: font(11),
+    fontWeight: '500',
   },
   xAxisText: {
-    color: '#000',
+    color: '#fff',
     fontSize: font(10),
     marginTop: margin(8),
+    fontWeight: '500',
   },
   tooltipWrapper: {
     alignItems: 'center',
@@ -153,20 +171,20 @@ const styles = StyleSheet.create({
   },
   tooltipBubble: {
     backgroundColor: '#ffffff',
-    paddingVertical: padding(8),
+    // paddingVertical: padding(8),
     paddingHorizontal: padding(10),
-    borderRadius: 10,
-    minWidth: 120,
+    borderRadius: widthResponsive(10),
+    minWidth: widthResponsive(100),
     alignItems: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.18,
     shadowOffset: {width: 0, height: 2},
-    shadowRadius: 6,
+    shadowRadius: widthResponsive(6),
     elevation: 4,
   },
   tooltipLine1: {
-    color: '#111',
-    fontSize: 12,
+    color: '#fff',
+    fontSize: font(12),
     fontWeight: '600',
   },
   tooltipLine2: {
@@ -177,9 +195,9 @@ const styles = StyleSheet.create({
   tooltipCaret: {
     width: 0,
     height: 0,
-    borderLeftWidth: 7,
-    borderRightWidth: 7,
-    borderTopWidth: 7,
+    borderLeftWidth: widthResponsive(7),
+    borderRightWidth: widthResponsive(7),
+    borderTopWidth: widthResponsive(7),
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: '#ffffff',

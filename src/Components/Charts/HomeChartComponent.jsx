@@ -10,7 +10,13 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import SalesAreaChart from './SalesAreaChart';
-import {font, gap, margin, padding} from '../../utils/responsive';
+import {
+  font,
+  gap,
+  heightResponsive,
+  margin,
+  padding,
+} from '../../utils/responsive';
 
 const {width} = Dimensions.get('screen');
 
@@ -78,7 +84,7 @@ const HomeChartComponent = memo(({selectedPriod, handleChangePriod}) => {
           </View>
         </View>
       </View>
-      <View style={{paddingBottom: 50}}>
+      <View style={{paddingBottom: padding(5)}}>
         <SalesAreaChart />
       </View>
     </View>
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
   selectableContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 50,
+    height: heightResponsive(50),
     backgroundColor: colors.primaryBackground,
     alignItems: 'center',
     padding: padding(8),
@@ -104,7 +110,9 @@ const styles = StyleSheet.create({
   },
   selectable: {
     width: '30%',
-    height: 33,
+    // height: heightResponsive(30),
+    paddingVertical: padding(9),
+    paddingHorizontal: padding(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
