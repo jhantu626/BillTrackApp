@@ -17,6 +17,7 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { renderBackdrop } from '../../utils/components';
 
 const Invoice = () => {
   const bottomSheetRef = useRef(null);
@@ -25,18 +26,7 @@ const Invoice = () => {
   // STATE VARIABLES
   const [sortBy, setSortBy] = useState('');
 
-  const renderBackdrop = useMemo(
-    () => props =>
-      (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.8}
-        />
-      ),
-    [],
-  );
+  
 
   const handleOpenBottomSheet = useCallback(
     () => bottomSheetRef.current?.snapToIndex(1),

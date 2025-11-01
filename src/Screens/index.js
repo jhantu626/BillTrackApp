@@ -19,6 +19,10 @@ import CreateBill from './CreateBill/CreateBill';
 // ACCOUNT
 import Account from './Account/Account';
 
+
+// PRODUCT
+import Product from './Product/Product';
+
 export {
   Onboarding,
   AuthHome,
@@ -31,4 +35,5 @@ export {
   CreateBill,
   InvoiceDetails,
   Account,
+  Product
 };

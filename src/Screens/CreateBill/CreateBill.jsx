@@ -26,6 +26,7 @@ import {fonts} from '../../utils/fonts';
 import {validateIndianPhone} from '../../utils/validator';
 import {colors} from '../../utils/colors';
 import { font, gap, margin, padding } from '../../utils/responsive';
+import { renderBackdrop } from '../../utils/components';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = 3;
@@ -49,18 +50,6 @@ const CreateBill = () => {
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ['30%'], []);
 
-  const renderBackdrop = useMemo(
-    () => props =>
-      (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.8}
-        />
-      ),
-    [],
-  );
 
   const handleCloseBottomSheet = useCallback(() => {
     bottomSheetRef.current?.close();
