@@ -3,13 +3,14 @@ import React, {memo} from 'react';
 import Octicons from '@react-native-vector-icons/octicons';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import {font, heightResponsive} from '../../utils/responsive';
 
 const SimpleTextInput = memo(
   ({
     placeholder = 'Enter Text',
     color = colors.sucess,
     width = '100%',
-    height = 45,
+    height = heightResponsive(45),
     isBorder = true,
     borderColor = colors.border,
     borderRadius = 5,
@@ -22,6 +23,7 @@ const SimpleTextInput = memo(
     hasError = false,
     upperCase = false,
     placeholderTextColor = colors.border,
+    fontSize = font(14),
   }) => {
     return (
       <View
@@ -46,7 +48,7 @@ const SimpleTextInput = memo(
               setValue(text);
           }}
           maxLength={maxLength}
-          style={styles.inputBox}
+          style={[styles.inputBox, {fontSize: fontSize}]}
           placeholderTextColor={placeholderTextColor}
         />
         <Octicons
@@ -70,7 +72,7 @@ const styles = StyleSheet.create({
   },
   inputBox: {
     flex: 1,
-    fontSize: 14,
+    // fontSize: 14,
     fontFamily: fonts.onMedium,
   },
 });

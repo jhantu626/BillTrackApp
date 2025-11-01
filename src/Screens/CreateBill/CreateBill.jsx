@@ -25,6 +25,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {fonts} from '../../utils/fonts';
 import {validateIndianPhone} from '../../utils/validator';
 import {colors} from '../../utils/colors';
+import { font, gap, margin, padding } from '../../utils/responsive';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = 3;
@@ -105,7 +106,7 @@ const CreateBill = () => {
           duration: 250,
         }}
         enableHandlePanningGesture={false}>
-        <BottomSheetView style={{flex: 1, padding: 15}}>
+        <BottomSheetView style={{flex: 1, padding: padding(15)}}>
           <View style={styles.bottomSheetContaienr}>
             <Text style={styles.bottomSheetTitleText}>
               Enter customer phone number
@@ -165,13 +166,13 @@ const CreateBill = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    marginTop: 10,
-    paddingBottom: 20,
+    paddingHorizontal: padding(16),
+    marginTop: margin(10),
+    paddingBottom: padding(20),
   },
   columnWrapperStyle: {
     gap: GAP_BETWEEN_ITEMS,
-    marginBottom: 16,
+    marginBottom: margin(16),
   },
   bottomSheetContaienr: {
     flexDirection: 'row',
@@ -179,35 +180,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bottomSheetTitleText: {
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: fonts.popMedium,
     color: '#000',
   },
   bottomSheetSubTitleText: {
-    fontSize: 11,
+    fontSize: font(11),
     fontFamily: fonts.popRegular,
     color: '#00000080',
   },
   bottomSheetPhoneContainer: {
-    gap: 8,
-    marginVertical: 20,
+    gap: gap(8),
+    marginVertical: margin(20),
   },
   bottomSheetButtonContaienr: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 15,
-    marginBottom: 20,
+    gap: gap(15),
+    marginBottom: margin(20),
   },
   bottomSheetButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 20,
+    paddingVertical: padding(6),
+    paddingHorizontal: padding(20),
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
   },
   bottomSheetButtonText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.popSemiBold,
     color: '#fff',
   },

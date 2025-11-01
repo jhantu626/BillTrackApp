@@ -18,7 +18,13 @@ import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {invoice} from '../../utils/data';
-import {padding} from '../../utils/responsive';
+import {
+  font,
+  gap,
+  heightResponsive,
+  margin,
+  padding,
+} from '../../utils/responsive';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -62,20 +68,20 @@ const Home = () => {
 
 const styles = StyleSheet.create({
   invoiceContainer: {
-    marginHorizontal: 16,
-    gap: 15,
+    marginHorizontal: margin(16),
+    gap: gap(15),
   },
   invoiceHeader: {
     backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    height: 50,
+    paddingHorizontal: padding(16),
+    height: heightResponsive(50),
     borderRadius: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 14,
+    fontSize: font(12),
     fontFamily: fonts.inMedium,
     color: '#000',
   },
@@ -83,10 +89,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 5,
+    gap: gap(5),
   },
   headerRightText: {
-    fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.inMedium,
     color: colors.primary,
   },

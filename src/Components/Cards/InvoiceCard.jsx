@@ -12,6 +12,7 @@ import DottedDivider from '../Dividers/DottedDivider';
 import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
+import { gap, padding } from '../../utils/responsive';
 
 // const {width} = Dimensions.get('screen');
 
@@ -136,12 +137,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     borderRadius: 5,
-    paddingVertical: 10,
+    paddingVertical: padding(10),
   },
   container: {
     // height: 65,
     // borderRadius: 5,
-    paddingHorizontal: 16,
+    paddingHorizontal: padding(16),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -168,8 +169,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 3,
-    paddingHorizontal: 8,
+    paddingVertical: padding(3),
+    paddingHorizontal: padding(8),
   },
   paidText: {
     // fontSize: 8,
@@ -191,13 +192,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: padding(16),
   },
   subBottomContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 5,
+    gap: gap(5),
   },
   subBottomContainerText: {
     // fontSize: 12,
