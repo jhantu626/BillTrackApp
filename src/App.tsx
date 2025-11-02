@@ -23,7 +23,7 @@ import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
-import {icon} from './utils/responsive';
+import {font, heightResponsive, icon, margin, padding, widthResponsive} from './utils/responsive';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -120,13 +120,13 @@ const AppStack = memo(() => {
         lazy: true,
         animation: 'shift',
         tabBarStyle: {
-          height: 85,
+          height: heightResponsive(85),
           justifyContent: 'center',
           alignItems: 'center',
-          paddingTop: 10,
+          paddingTop: padding(10),
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: font(12),
           fontFamily: fonts.onMedium,
           // marginTop: 1,
         },
@@ -188,10 +188,10 @@ const AppStack = memo(() => {
                     display: 'none',
                   }
                 : {
-                    height: 85,
+                    height: heightResponsive(85),
                     justifyContent: 'center',
                     alignItems: 'center',
-                    paddingTop: 10,
+                    paddingTop: padding(10),
                   },
           };
         }}
@@ -225,11 +225,11 @@ const styles = StyleSheet.create({
   },
   createTabParent: {
     backgroundColor: colors.primary,
-    width: 50,
-    height: 50,
+    width: widthResponsive(50),
+    height: heightResponsive(50),
     borderRadius: 50 / 2,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: margin(10),
   },
 });
