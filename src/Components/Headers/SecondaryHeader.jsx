@@ -11,7 +11,13 @@ import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from '../../utils/fonts';
 import {useNavigation} from '@react-navigation/native';
-import { font, gap, heightResponsive, icon, padding } from '../../utils/responsive';
+import {
+  font,
+  gap,
+  heightResponsive,
+  icon,
+  padding,
+} from '../../utils/responsive';
 
 const SecondaryHeader = memo(
   ({
@@ -19,6 +25,8 @@ const SecondaryHeader = memo(
     isSearch = true,
     isQuestion = true,
     isNotification = true,
+    isApps = false,
+    handleAppClick = () => {},
   }) => {
     const navigation = useNavigation();
     const handleBack = useCallback(() => {
@@ -28,11 +36,20 @@ const SecondaryHeader = memo(
       <View style={styles.container}>
         <View style={styles.leftContainer}>
           <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Ionicons name="arrow-back" size={icon(24)} color={colors.primary} />
+            <Ionicons
+              name="arrow-back"
+              size={icon(24)}
+              color={colors.primary}
+            />
           </TouchableOpacity>
           <Text style={styles.title}>{title}</Text>
         </View>
         <View style={styles.rightContainer}>
+          {isApps && (
+            <Pressable onPress={handleAppClick}>
+              <Octicons name="apps" size={icon(22)} />
+            </Pressable>
+          )}
           {isSearch && (
             <Pressable>
               <Ionicons name="search" size={icon(22)} />

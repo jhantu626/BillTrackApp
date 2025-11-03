@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   },
   createTabParent: {
     backgroundColor: colors.primary,
-    width: widthResponsive(50),
+    width: 50,
     height: 50,
     borderRadius: 50 / 2,
     justifyContent: 'center',

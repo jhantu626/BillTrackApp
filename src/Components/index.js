@@ -16,6 +16,8 @@ import CreateBillBottom from './Cards/CreateBillBottom';
 import BillProductCard from './Cards/BillProductCard';
 import ProfileCard from './Cards/ProfileCard';
 import SettingItemsCard from './Cards/SettingItemsCard';
+import ProductCard from './Cards/ProductCard';
+import ProductCardRow from './Cards/ProductCardRow';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -36,4 +38,6 @@ export {
   BillProductCard,
   ProfileCard,
   SettingItemsCard,
+  ProductCard,
+  ProductCardRow,
 };
