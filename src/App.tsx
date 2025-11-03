@@ -120,7 +120,7 @@ const AppStack = memo(() => {
         lazy: true,
         animation: 'shift',
         tabBarStyle: {
-          height: heightResponsive(85),
+          height: 85,
           justifyContent: 'center',
           alignItems: 'center',
           paddingTop: padding(10),
@@ -188,7 +188,7 @@ const AppStack = memo(() => {
                     display: 'none',
                   }
                 : {
-                    height: heightResponsive(85),
+                    height: 85,
                     justifyContent: 'center',
                     alignItems: 'center',
                     paddingTop: padding(10),
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   createTabParent: {
     backgroundColor: colors.primary,
     width: widthResponsive(50),
-    height: heightResponsive(50),
+    height: 50,
     borderRadius: 50 / 2,
     justifyContent: 'center',
     alignItems: 'center',
