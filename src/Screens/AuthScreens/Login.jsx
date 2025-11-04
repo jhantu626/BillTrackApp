@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: font(16),
+    fontSize: font(14),
     fontFamily: fonts.onMedium,
   },
   button: {

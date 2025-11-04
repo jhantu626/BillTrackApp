@@ -13,6 +13,7 @@ import {colors} from '../../utils/colors';
 import {useEffect, useRef, useState} from 'react';
 import {GestureHandlerRefContext} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
+import { font, gap, icon, margin, widthResponsive } from '../../utils/responsive';
 
 const OtpVerify = () => {
   const navigation = useNavigation();
@@ -126,42 +127,42 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 15,
+    gap: gap(15),
   },
   image: {
-    width: 230,
-    height: 230,
+    width: icon(230),
+    height: icon(230),
   },
   topTextContainer: {
     width: '80%',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: gap(10),
   },
   titleText: {
-    fontSize: 24,
+    fontSize: font(24),
     fontFamily: fonts.onSemiBold,
     color: '#000',
     textAlign: 'center',
   },
   descText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onMedium,
     color: '#000',
     textAlign: 'center',
-    width: 300,
+    width: widthResponsive(300),
   },
   innerDescText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onSemiBold,
     color: colors.primary,
   },
   otpParent: {
-    marginVertical: 10,
-    gap: 15,
+    marginVertical: margin(10),
+    gap: gap(15),
   },
   otpText: {
-    fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.onSemiBold,
     color: colors.primary,
     textAlign: 'center',
@@ -170,11 +171,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 15,
+    gap: gap(15),
   },
   otpBox: {
-    width: 50,
-    height: 50,
+    width: icon(50),
+    height: icon(50),
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.primary,
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   otpInput: {
     width: '100%',
     height: '100%',
-    fontSize: 20,
+    fontSize: font(20),
     fontFamily: fonts.onSemiBold,
     color: colors.primary,
     textAlign: 'center',
@@ -193,22 +194,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bottomText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onRegular,
     textAlign: 'center',
   },
   resendContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: gap(5),
   },
   resendText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onRegular,
     textAlign: 'center',
   },
   timeText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onSemiBold,
     textAlign: 'center',
     color: colors.primary,
@@ -220,10 +221,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: margin(5),
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: fonts.onSemiBold,
     color: '#ffffff',
   },

@@ -48,7 +48,7 @@ const Tab = createBottomTabNavigator();
 const AuthStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="BusinessSetup"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
