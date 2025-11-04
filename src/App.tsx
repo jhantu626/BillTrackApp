@@ -23,7 +23,14 @@ import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
-import {font, heightResponsive, icon, margin, padding, widthResponsive} from './utils/responsive';
+import {
+  font,
+  heightResponsive,
+  icon,
+  margin,
+  padding,
+  widthResponsive,
+} from './utils/responsive';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -97,6 +104,14 @@ const InvoiceStack = memo(() => {
     </Stack.Navigator>
   );
 });
+
+const AccountStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Account" component={Account} />
+    </Stack.Navigator>
+  );
+};
 
 const AppStack = memo(() => {
   const renderTabIcon = useCallback(
@@ -208,7 +223,7 @@ const AppStack = memo(() => {
 });
 
 const App = () => {
-  const authToken = true;
+  const authToken = false;
   return (
     <NavigationContainer>
       {authToken ? <AppStack /> : <AuthStack />}
