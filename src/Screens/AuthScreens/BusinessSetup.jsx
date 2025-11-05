@@ -33,6 +33,14 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import {
+  font,
+  gap,
+  icon,
+  margin,
+  padding,
+  widthResponsive,
+} from '../../utils/responsive';
 
 const businessTypes = [
   {id: 1, name: 'Retail'},
@@ -236,44 +244,44 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: gap(10),
   },
   image: {
-    width: 250,
-    height: 120,
+    width: icon(250),
+    height: icon(120),
   },
   title: {
-    fontSize: 24,
+    fontSize: font(24),
     fontFamily: fonts.onBold,
     color: '#000',
   },
   inputContainer: {
     width: '100%',
-    paddingHorizontal: 25,
-    marginVertical: 15,
-    gap: 15,
+    paddingHorizontal: padding(25),
+    marginVertical: margin(15),
+    gap: gap(15),
   },
   button: {
-    width: 130,
-    height: 45,
+    width: widthResponsive(130),
+    height: widthResponsive(45),
     borderRadius: 5,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: margin(10),
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: fonts.onSemiBold,
     color: '#fff',
   },
   bottomSheetHeader: {
-    height: 50,
+    height: icon(50),
     backgroundColor: colors.primary + 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    paddingHorizontal: padding(15),
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
