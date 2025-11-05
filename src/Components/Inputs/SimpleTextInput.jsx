@@ -3,14 +3,14 @@ import React, {memo} from 'react';
 import Octicons from '@react-native-vector-icons/octicons';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
-import {font, heightResponsive} from '../../utils/responsive';
+import {font, heightResponsive, icon} from '../../utils/responsive';
 
 const SimpleTextInput = memo(
   ({
     placeholder = 'Enter Text',
     color = colors.sucess,
     width = '100%',
-    height = heightResponsive(45),
+    height = icon(45),
     isBorder = true,
     borderColor = colors.border,
     borderRadius = 5,

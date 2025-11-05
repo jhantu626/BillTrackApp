@@ -90,6 +90,7 @@ const Account = memo(() => {
               <Lucide name="headset" size={icon(22)} color={colors.primary} />
             }
             title="Help & supports"
+            onpress={()=>handleNavigation({screen: "HelpAndSupport"})}
           />
           <SettingItemsCard
             mainIcon={

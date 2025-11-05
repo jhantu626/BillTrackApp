@@ -18,6 +18,7 @@ import ProfileCard from './Cards/ProfileCard';
 import SettingItemsCard from './Cards/SettingItemsCard';
 import ProductCard from './Cards/ProductCard';
 import ProductCardRow from './Cards/ProductCardRow';
+import NavigationCard from './Cards/NavigationCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -40,4 +41,5 @@ export {
   SettingItemsCard,
   ProductCard,
   ProductCardRow,
+  NavigationCard,
 };

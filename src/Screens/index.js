@@ -19,6 +19,7 @@ import CreateBill from './CreateBill/CreateBill';
 // ACCOUNT
 import Account from './Account/Account';
 import Subscription from './Account/Subscription';
+import HelpAndSupport from './Account/HelpAndSupport';
 
 
 // PRODUCT
@@ -37,5 +38,6 @@ export {
   InvoiceDetails,
   Account,
   Product,
-  Subscription
+  Subscription,
+  HelpAndSupport
 };

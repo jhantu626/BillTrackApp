@@ -1,0 +1,78 @@
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {memo} from 'react';
+import {Layout} from '../Layout';
+import {
+  NavigationCard,
+  SecondaryHeader,
+  SettingItemsCard,
+} from '../../Components';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {colors} from '../../utils/colors';
+import {font, icon, margin, padding} from '../../utils/responsive';
+import {fonts} from '../../utils/fonts';
+
+const HelpAndSupport = memo(() => {
+  return (
+    <Layout>
+      <SecondaryHeader title="Help & support" isSearch={false} />
+      <ScrollView
+        style={{flex: 1, backgroundColor: '#fff'}}
+        contentContainerStyle={styles.container}>
+        <View style={styles.topCOntainer}>
+          <SettingItemsCard
+            title={'Call Support'}
+            mainIcon={
+              <Ionicons
+                name="call-outline"
+                color={colors.primary}
+                size={icon(20)}
+              />
+            }
+          />
+          <SettingItemsCard
+            title={'Chat Support'}
+            mainIcon={
+              <Ionicons
+                name="chatbubble-outline"
+                color={colors.primary}
+                size={icon(20)}
+              />
+            }
+          />
+        </View>
+        <View style={styles.bottomContainer}>
+          <Text style={styles.itemTitleText}>FAQs</Text>
+          <NavigationCard title={'General Inquiry'} />
+          <NavigationCard title={'Feedback & Suggestions'} />
+          <NavigationCard title={'Subscription Related Query'} />
+          <NavigationCard title={'SMS Related Inquiry'} />
+        </View>
+      </ScrollView>
+    </Layout>
+  );
+});
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+  },
+  topCOntainer: {
+    paddingHorizontal: padding(16),
+    borderTopWidth: 0.8,
+    borderBottomWidth: 0.8,
+    borderColor: colors.border,
+    paddingVertical: padding(5),
+  },
+  bottomContainer: {
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(5),
+    marginVertical: margin(10),
+  },
+  itemTitleText: {
+    fontSize: font(16),
+    fontFamily: fonts.inRegular,
+    marginBottom: margin(10),
+  },
+});
+
+export default HelpAndSupport;
