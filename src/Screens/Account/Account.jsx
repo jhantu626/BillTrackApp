@@ -8,18 +8,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {Layout} from '../Layout';
 import {ProfileCard, SecondaryHeader, SettingItemsCard} from '../../Components';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {font, gap, icon, padding} from '../../utils/responsive';
-import Ionicons from '@react-native-vector-icons/ionicons';
 import Lucide from '@react-native-vector-icons/lucide';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import AntDesign from '@react-native-vector-icons/ant-design';
+import {useNavigation} from '@react-navigation/native';
 
-const Account = () => {
+const Account = memo(() => {
+  const navigation = useNavigation();
+
+  const handleNavigation = ({screen, data = {}}) => {
+    navigation.navigate(screen, {
+      data,
+    });
+  };
+
   return (
     <Layout>
       <SecondaryHeader title="Account Setting" isSearch={false} />
@@ -61,6 +69,7 @@ const Account = () => {
             title="Item master"
           />
           <SettingItemsCard
+            onpress={() => handleNavigation({screen: 'Subscription'})}
             mainIcon={
               <Lucide name="crown" size={icon(22)} color={colors.primary} />
             }
@@ -114,7 +123,7 @@ const Account = () => {
       </ScrollView>
     </Layout>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

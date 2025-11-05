@@ -17,6 +17,7 @@ import {
   Onboarding,
   OtpVerify,
   Product,
+  Subscription,
 } from './Screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Octicons from '@react-native-vector-icons/octicons';
@@ -105,13 +106,19 @@ const InvoiceStack = memo(() => {
   );
 });
 
-const AccountStack = () => {
+const AccountStack = memo(() => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      initialRouteName="Subscription"
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+      }}>
       <Stack.Screen name="Account" component={Account} />
+      <Stack.Screen name="Subscription" component={Subscription} />
     </Stack.Navigator>
   );
-};
+});
 
 const AppStack = memo(() => {
   const renderTabIcon = useCallback(
@@ -128,7 +135,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -213,7 +220,7 @@ const AppStack = memo(() => {
       />
       <Tab.Screen
         name="Account"
-        component={Account}
+        component={AccountStack}
         options={{
           tabBarIcon: renderTabIcon(icons.Account),
         }}
@@ -223,7 +230,7 @@ const AppStack = memo(() => {
 });
 
 const App = () => {
-  const authToken = false;
+  const authToken = true;
   return (
     <NavigationContainer>
       {authToken ? <AppStack /> : <AuthStack />}

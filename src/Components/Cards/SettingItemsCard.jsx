@@ -1,12 +1,12 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
-import {font, gap, padding,icon} from '../../utils/responsive';
+import {font, gap, padding, icon} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 
-const SettingItemsCard = ({mainIcon, title}) => {
+const SettingItemsCard = ({mainIcon, title, onpress = () => {}}) => {
   return (
-    <TouchableOpacity style={styles.settingCard}>
+    <TouchableOpacity style={styles.settingCard} onPress={onpress}>
       <View style={styles.leftContainer}>
         {mainIcon}
         <Text style={styles.itemText}>{title}</Text>
