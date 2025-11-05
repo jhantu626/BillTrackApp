@@ -10,11 +10,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
-import { AuthLayout } from '../Layout';
-import { SimpleTextInput } from '../../Components';
-import { fonts } from '../../utils/fonts';
-import { colors } from '../../utils/colors';
+import React, {useState} from 'react';
+import {AuthLayout} from '../Layout';
+import {SimpleTextInput} from '../../Components';
+import {fonts} from '../../utils/fonts';
+import {colors} from '../../utils/colors';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {
@@ -22,6 +22,14 @@ import {
   validateBusinessName,
   validateIndianGST,
 } from '../../utils/validator';
+import {
+  font,
+  gap,
+  icon,
+  margin,
+  padding,
+  widthResponsive,
+} from '../../utils/responsive';
 
 const BusinessSetup2 = () => {
   const [image, setImage] = useState(null);
@@ -61,7 +69,7 @@ const BusinessSetup2 = () => {
 
   return (
     <AuthLayout>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
+      <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
         <Image
           style={styles.image}
           source={require('./../../../asset/images/business.png')}
@@ -83,8 +91,7 @@ const BusinessSetup2 = () => {
 
           <TouchableOpacity
             style={styles.uploadButton}
-            onPress={handleImagePickcker}
-          >
+            onPress={handleImagePickcker}>
             <MaterialIcons
               name="file-upload"
               size={16}
@@ -133,48 +140,48 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
+    gap: gap(10),
   },
   image: {
-    width: 250,
-    height: 120,
+    width: icon(250),
+    height: icon(120),
   },
   title: {
-    fontSize: 24,
+    fontSize: font(24),
     fontFamily: fonts.onBold,
     color: '#000',
   },
   inputContainer: {
     width: '100%',
-    paddingHorizontal: 25,
-    marginVertical: 15,
-    gap: 15,
+    paddingHorizontal: padding(25),
+    marginVertical: margin(15),
+    gap: gap(15),
   },
   button: {
-    width: 130,
-    height: 45,
+    width: icon(130),
+    height: icon(45),
     borderRadius: 5,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: margin(10),
   },
   logoContainer: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 10,
-    marginVertical: 5,
+    gap: gap(10),
+    marginVertical: margin(5),
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: icon(100),
+    height: icon(100),
     borderWidth: 2,
     borderColor: colors.primary,
-    borderRadius: 100 / 2,
+    borderRadius: icon(100) / 2,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: fonts.onSemiBold,
     color: '#fff',
   },
@@ -183,12 +190,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary + 30,
-    width: 130,
-    height: 40,
-    gap: 5,
+    width: icon(130),
+    height: icon(40),
+    gap: gap(5),
   },
   uploadText: {
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.onMedium,
     color: colors.primary,
   },
