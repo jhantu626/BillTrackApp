@@ -10,6 +10,7 @@ import {
   BusinessSetup,
   BusinessSetup2,
   CreateBill,
+  HelpAndSupport,
   Home,
   Invoice,
   InvoiceDetails,
@@ -109,13 +110,14 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Subscription"
+      initialRouteName="HelpAndSupport"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}>
       <Stack.Screen name="Account" component={Account} />
       <Stack.Screen name="Subscription" component={Subscription} />
+      <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
     </Stack.Navigator>
   );
 });
