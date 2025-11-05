@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: colors.primary,
+    paddingBottom: padding(10),
   },
   featuresContainer: {
     paddingVertical: padding(10),
