@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {AuthLayout} from '../Layout';
 import {fonts} from '../../utils/fonts';
 import {
@@ -36,6 +36,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {
   font,
   gap,
+  height70,
   icon,
   margin,
   padding,
@@ -95,7 +96,7 @@ const BusinessSetup = () => {
   const [bottomSheetType, setBottomSheetType] = useState('businessType');
 
   // BOTTOM SHEET
-  const snapPoints = useMemo(() => ['70%'], []);
+  const snapPoints = useMemo(() => [height70], []);
 
   const renderBackdrop = useMemo(
     () => props =>
@@ -191,35 +192,45 @@ const BusinessSetup = () => {
         index={-1}
         snapPoints={snapPoints}
         enablePanDownToClose
+        enableOverDrag={false}
         backdropComponent={renderBackdrop}
+        handleComponent={() => null}
         animationConfigs={{
           duration: 300,
-        }}>
+        }}
+        backgroundStyle={{borderRadius: 0}}>
         {/* <BottomSheetView> */}
         <BottomSheetFlatList
-          ListHeaderComponent={() => (
-            <View>
-              <View style={styles.bottomSheetHeader}>
-                <Text style={styles.bottomSheetTitle}>
-                  Choose Business Type
-                </Text>
-                <TouchableOpacity onPress={handleCloseBottomSheet}>
-                  <Ionicons name="close" size={24} color={colors.primary} />
-                </TouchableOpacity>
+          ListHeaderComponent={useCallback(
+            () => (
+              <View>
+                <View style={styles.bottomSheetHeader}>
+                  <Text style={styles.bottomSheetTitle}>
+                    Choose Business Type
+                  </Text>
+                  <TouchableOpacity onPress={handleCloseBottomSheet}>
+                    <Ionicons name="close" size={icon(24)} color={colors.primary} />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.searchContainer}>
+                  <Ionicons name="search" size={icon(24)} color={colors.border} />
+                  <TextInput
+                    placeholder="Search here..."
+                    style={styles.searchInput}
+                    value={query}
+                    onChangeText={text => handleSearch(text)}
+                  />
+                </View>
               </View>
-              <View style={styles.searchContainer}>
-                <Ionicons name="search" size={24} color={colors.border} />
-                <TextInput
-                  placeholder="Search here..."
-                  style={styles.searchInput}
-                  value={query}
-                  onChangeText={text => handleSearch(text)}
-                />
-              </View>
-            </View>
+            ),
+            [bottomSheetType],
           )}
+          style={{flex: 1}}
           contentContainerStyle={styles.bottomSheetContainer}
           data={businessTypes}
+          keyExtractor={(_, index) =>
+            index + 'bottomsheet_radiobtn_' + bottomSheetType
+          }
           renderItem={({item}) => (
             <View style={styles.bottomSheetItem}>
               <RadioInput
@@ -232,6 +243,7 @@ const BusinessSetup = () => {
           )}
           ItemSeparatorComponent={() => <DottedDivider />}
           stickyHeaderHiddenOnScroll
+          nestedScrollEnabled
         />
         {/* </BottomSheetView> */}
       </BottomSheet>
@@ -308,6 +320,7 @@ const styles = StyleSheet.create({
   bottomSheetItem: {
     paddingHorizontal: 20,
   },
+  bottomSheetContainer: {},
 });
 
 export default BusinessSetup;

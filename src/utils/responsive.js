@@ -18,3 +18,4 @@ export const scale = SCALE;
 export const widthResponsive = size => size * SCALE;
 export const heightResponsive = size => size * SCALE_HEIGHT;
 export const scaleHeight = SCALE_HEIGHT;
+export const height70 = heightResponsive(BASE_HEIGHT * 0.7);

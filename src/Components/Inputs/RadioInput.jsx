@@ -2,9 +2,10 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {memo, useCallback} from 'react';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
+import { icon } from '../../utils/responsive';
 
 const RadioInput = memo(
-  ({value, label, setValue, isSelected = false, height = 30}) => {
+  ({value, label, setValue, isSelected = false, height = icon(30)}) => {
     return (
       <TouchableOpacity
         style={[styles.container, {height: height}]}
