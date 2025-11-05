@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
+  About,
   Account,
   AuthHome,
   BusinessSetup,
@@ -110,7 +111,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="HelpAndSupport"
+      initialRouteName="About"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -118,6 +119,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="Account" component={Account} />
       <Stack.Screen name="Subscription" component={Subscription} />
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
+      <Stack.Screen name="About" component={About} />
     </Stack.Navigator>
   );
 });

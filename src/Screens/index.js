@@ -20,6 +20,7 @@ import CreateBill from './CreateBill/CreateBill';
 import Account from './Account/Account';
 import Subscription from './Account/Subscription';
 import HelpAndSupport from './Account/HelpAndSupport';
+import About from './Account/About';
 
 
 // PRODUCT
@@ -39,5 +40,6 @@ export {
   Account,
   Product,
   Subscription,
-  HelpAndSupport
+  HelpAndSupport,
+  About
 };
