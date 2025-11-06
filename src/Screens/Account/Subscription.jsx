@@ -35,7 +35,7 @@ const Subscription = memo(() => {
   }, []);
 
   const handleMomentumScrollEnd = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    (e) => {
       const offsetX = e.nativeEvent.contentOffset.x;
       const newIndex = Math.round(offsetX / ScreenWidth);
       if (newIndex !== activeIndex) setActiveIndex(newIndex);

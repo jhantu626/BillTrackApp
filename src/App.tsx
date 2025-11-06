@@ -19,6 +19,7 @@ import {
   Onboarding,
   OtpVerify,
   Product,
+  SalesReport,
   Subscription,
 } from './Screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -111,7 +112,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="SalesAndReport"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -120,6 +121,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="Subscription" component={Subscription} />
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="SalesAndReport" component={SalesReport} />
     </Stack.Navigator>
   );
 });
@@ -139,7 +141,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

@@ -1,0 +1,349 @@
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import React, {memo, useMemo, useRef, useState} from 'react';
+import {Layout} from '../Layout';
+import {
+  DottedDivider,
+  HomeChartComponent,
+  SalesAreaChart,
+  SecondaryHeader,
+} from '../../Components';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import {colors} from '../../utils/colors';
+import {font, gap, icon, margin, padding} from '../../utils/responsive';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {fonts} from '../../utils/fonts';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import AntDesign from '@react-native-vector-icons/ant-design';
+
+const SalesReport = memo(() => {
+  const [selectedPriod, setSelectedPriod] = useState('Monthly');
+  const [selectedDownload, setSelectedDownload] = useState('Today');
+  const [selectedDownloadType, setSelectedDownloadType] = useState('CSV');
+
+  // bottomsheet contents
+  const bottomSheetRef = useRef(null);
+  const snapPont = useMemo(() => ['30%'], []);
+
+  const renderBackdrop = useMemo(
+    () => props =>
+      (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+          opacity={0.8}
+        />
+      ),
+    [],
+  );
+
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+      <Layout>
+        <SecondaryHeader title="Sales report" isSearch={false} />
+        <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+          <View style={styles.topContainer}>
+            <View style={styles.topButtonContainer}>
+              <View style={styles.downloadContainer}>
+                <Text style={styles.downloadText}>
+                  Download detailed report
+                </Text>
+                <Text style={styles.clickText}>
+                  Click to choose date range & file type
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.downloadBtn}>
+                <MaterialDesignIcons
+                  name="file-download-outline"
+                  color={'#fff'}
+                  size={icon(20)}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.salesContainer}>
+              <View style={styles.sales}>
+                <View style={styles.salesHeader}>
+                  <Text style={styles.salesText}>Sales</Text>
+                  <Text style={[styles.salesText, {color: colors.sucess}]}>
+                    +2.5%
+                  </Text>
+                  <Ionicons name="arrow-up" color={colors.sucess} />
+                </View>
+                <Text style={styles.salesAmount}>₹ 10289.00</Text>
+                <Text style={styles.salesBottomText} numberOfLines={2}>
+                  Compared to (₹ 9340.00 last month)
+                </Text>
+              </View>
+              <View style={styles.sales}>
+                <View style={styles.salesHeader}>
+                  <Text style={styles.salesText}>Sales</Text>
+                  <Text style={[styles.salesText, {color: colors.sucess}]}>
+                    +2.5%
+                  </Text>
+                  <Ionicons name="arrow-up" color={colors.sucess} />
+                </View>
+                <Text style={styles.salesAmount}>₹ 10289.00</Text>
+                <Text style={styles.salesBottomText} numberOfLines={2}>
+                  Compared to (₹ 9340.00 last month)
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.container}>
+            <View style={styles.selectableContainer}>
+              {['Monthly', '3 Months', '6 Months'].map(period => (
+                <TouchableOpacity
+                  key={period}
+                  style={[
+                    styles.selectable,
+                    selectedPriod === period && {
+                      backgroundColor: '#fff',
+                      borderRadius: 5,
+                      borderWidth: 0.5,
+                      borderColor: colors.primary,
+                    },
+                  ]}
+                  onPress={() => setSelectedPriod(period)}>
+                  <Text
+                    style={[
+                      styles.selectedText,
+                      {fontSize: 12},
+                      selectedPriod === period && {color: colors.primary},
+                    ]}>
+                    {period}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={{paddingBottom: padding(5)}}>
+              <SalesAreaChart />
+            </View>
+          </View>
+        </ScrollView>
+      </Layout>
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPont}
+        index={1}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={{borderRadius: 0}}
+        enableOverDrag={false}
+        handleComponent={() => null}>
+        <BottomSheetView style={{flex: 1}}>
+          <View style={styles.bottomSheetHeaderContainer}>
+            <View>
+              <Text style={styles.downloadText}>Select option to download</Text>
+              <Text style={styles.clickText}>
+                Choose desire conditions for reports
+              </Text>
+            </View>
+            <TouchableOpacity>
+              <AntDesign name="close" size={icon(18)} color={colors.primary} />
+            </TouchableOpacity>
+          </View>
+          <DottedDivider marginVertical={0} borderWidth={0.8} />
+          <View style={styles.bottomSheetSelectedContainer}>
+            {['Today', 'Week', 'Month', 'Custom'].map(item => (
+              <TouchableOpacity
+                key={item + 'first'}
+                style={[
+                  styles.bottomSheetSelectedButton,
+                  selectedDownload === item && {
+                    backgroundColor: colors.primary + 40,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.bottomSheetSelectedText,
+                    selectedDownload === item && {color: colors.primary},
+                  ]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View style={styles.bottomSheetSelectedContainer}>
+            {['Excel', 'PDF', 'CSV', 'Word'].map(item => (
+              <TouchableOpacity
+                key={item + 'first'}
+                style={[
+                  styles.bottomSheetSelectedButton,
+                  selectedDownloadType === item && {
+                    backgroundColor: colors.primary + 40,
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.bottomSheetSelectedText,
+                    selectedDownloadType === item && {color: colors.primary},
+                  ]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </BottomSheetView>
+      </BottomSheet>
+    </GestureHandlerRootView>
+  );
+});
+
+const styles = StyleSheet.create({
+  topContainer: {
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(16),
+    borderTopWidth: 0.8,
+    borderColor: colors.border,
+  },
+  topButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: padding(10),
+  },
+  downloadBtn: {
+    width: icon(40),
+    height: icon(40),
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: icon(8),
+  },
+  downloadContainer: {},
+  downloadText: {
+    fontSize: font(16),
+    fontFamily: fonts.inSemiBold,
+  },
+  clickText: {
+    fontSize: font(12),
+    fontFamily: fonts.inRegular,
+    color: '#00000080',
+  },
+  salesContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  sales: {
+    width: '48%',
+    backgroundColor: '#F7F7F7',
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(15),
+    borderRadius: icon(10),
+    gap: gap(5),
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  salesHeader: {
+    flexDirection: 'row',
+    gap: gap(5),
+    alignItems: 'center',
+  },
+  salesText: {
+    fontSize: font(12),
+    fontFamily: fonts.inSemiBold,
+  },
+  salesAmount: {
+    fontSize: font(18),
+    fontFamily: fonts.inSemiBold,
+  },
+  salesBottomText: {
+    fontSize: font(10),
+    fontFamily: fonts.inRegular,
+  },
+  container: {
+    // padding: padding(16),
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    // marginVertical: margin(20),
+    marginHorizontal: margin(16),
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  selectableContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 48,
+    backgroundColor: colors.primaryBackground,
+    alignItems: 'center',
+    padding: padding(8),
+    borderRadius: 5,
+  },
+  selectable: {
+    width: '30%',
+    // height: heightResponsive(30),
+    paddingVertical: padding(6),
+    paddingHorizontal: padding(20),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedText: {
+    fontSize: font(10),
+    fontFamily: fonts.inMedium,
+    color: '#000000',
+  },
+  // salesContainer: {
+  //   marginTop: margin(15),
+  //   gap: gap(10),
+  // },
+  // sales: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   gap: gap(10),
+  // },
+  salesPercentage: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  salesText: {
+    // fontSize: 14,
+    fontFamily: fonts.inMedium,
+    color: '#00000090',
+  },
+  salesAmount: {
+    // fontSize: 24,
+    fontFamily: fonts.inBold,
+    color: '#000',
+  },
+  salesPercentageText: {
+    // fontSize: 12,
+    fontFamily: fonts.inMedium,
+    color: colors.sucess,
+  },
+  bottomSheetHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(16),
+  },
+  bottomSheetSelectedContainer: {
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(10),
+    flexDirection: 'row',
+    gap: gap(16),
+  },
+  bottomSheetSelectedButton: {
+    paddingHorizontal: padding(20),
+    paddingVertical: padding(10),
+    backgroundColor: colors.border + 50,
+    borderRadius: 1000,
+  },
+  bottomSheetSelectedText: {
+    fontSize: font(12),
+    fontFamily: fonts.inMedium,
+  },
+});
+
+export default SalesReport;

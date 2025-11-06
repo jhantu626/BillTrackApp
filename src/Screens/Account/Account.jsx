@@ -39,7 +39,7 @@ const Account = memo(() => {
         }}>
         <ProfileCard />
         <View style={styles.container}>
-          <Pressable style={styles.card}>
+          <Pressable style={styles.card} onPress={()=>handleNavigation({screen: "SalesAndReport"})}>
             <Image
               source={require('./../../../asset/images/product_icon.png')}
               style={styles.image}

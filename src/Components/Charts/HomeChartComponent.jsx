@@ -20,76 +20,82 @@ import {
 
 const {width} = Dimensions.get('screen');
 
-const HomeChartComponent = memo(({selectedPriod, handleChangePriod}) => {
-  const sizes = useMemo(() => {
-    const selectedText = width * 0.032;
-    const salesText = width * 0.036;
-    const salesAmount = width * 0.062;
-    const salesPercentageText = width * 0.03;
-    const iconSize = width * 0.032;
+const HomeChartComponent = memo(
+  ({
+    selectedPriod,
+    handleChangePriod,
+    salesDurations = ['Today', 'Week', 'Month'],
+  }) => {
+    const sizes = useMemo(() => {
+      const selectedText = width * 0.032;
+      const salesText = width * 0.036;
+      const salesAmount = width * 0.062;
+      const salesPercentageText = width * 0.03;
+      const iconSize = width * 0.032;
 
-    return {
-      selectedText,
-      salesText,
-      salesAmount,
-      salesPercentageText,
-      iconSize,
-    };
-  }, [width]);
+      return {
+        selectedText,
+        salesText,
+        salesAmount,
+        salesPercentageText,
+        iconSize,
+      };
+    }, [width]);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.selectableContainer}>
-        {['Today', 'Week', 'Month'].map(period => (
-          <TouchableOpacity
-            key={period}
-            onPress={() => handleChangePriod(period)}
-            style={[
-              styles.selectable,
-              selectedPriod === period && {
-                backgroundColor: '#fff',
-                borderRadius: 5,
-                borderWidth: 0.5,
-                borderColor: colors.primary,
-              },
-            ]}>
-            <Text
+    return (
+      <View style={styles.container}>
+        <View style={styles.selectableContainer}>
+          {salesDurations.map(period => (
+            <TouchableOpacity
+              key={period}
+              onPress={() => handleChangePriod(period)}
               style={[
-                styles.selectedText,
-                {fontSize: sizes.selectedText},
-                selectedPriod === period && {color: colors.primary},
+                styles.selectable,
+                selectedPriod === period && {
+                  backgroundColor: '#fff',
+                  borderRadius: 5,
+                  borderWidth: 0.5,
+                  borderColor: colors.primary,
+                },
               ]}>
-              {period}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View style={styles.salesContainer}>
-        <Text style={[styles.salesText, {fontSize: sizes.salesText}]}>
-          {selectedPriod}'s Sales
-        </Text>
-        <View style={styles.sales}>
-          <Text style={[styles.salesAmount, {fontSize: sizes.salesAmount}]}>
-            ₹ 5104.00
+              <Text
+                style={[
+                  styles.selectedText,
+                  {fontSize: sizes.selectedText},
+                  selectedPriod === period && {color: colors.primary},
+                ]}>
+                {period}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.salesContainer}>
+          <Text style={[styles.salesText, {fontSize: sizes.salesText}]}>
+            {selectedPriod}'s Sales
           </Text>
-          <View style={styles.salesPercentage}>
-            <Ionicons name="arrow-up" size={12} color={colors.sucess} />
-            <Text
-              style={[
-                styles.salesPercentageText,
-                {fontSize: sizes.salesPercentageText},
-              ]}>
-              1.3% increased
+          <View style={styles.sales}>
+            <Text style={[styles.salesAmount, {fontSize: sizes.salesAmount}]}>
+              ₹ 5104.00
             </Text>
+            <View style={styles.salesPercentage}>
+              <Ionicons name="arrow-up" size={12} color={colors.sucess} />
+              <Text
+                style={[
+                  styles.salesPercentageText,
+                  {fontSize: sizes.salesPercentageText},
+                ]}>
+                1.3% increased
+              </Text>
+            </View>
           </View>
         </View>
+        <View style={{paddingBottom: padding(5)}}>
+          <SalesAreaChart />
+        </View>
       </View>
-      <View style={{paddingBottom: padding(5)}}>
-        <SalesAreaChart />
-      </View>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

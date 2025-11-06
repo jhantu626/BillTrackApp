@@ -21,7 +21,7 @@ import Account from './Account/Account';
 import Subscription from './Account/Subscription';
 import HelpAndSupport from './Account/HelpAndSupport';
 import About from './Account/About';
-
+import SalesReport from './Account/SalesReport';
 
 // PRODUCT
 import Product from './Product/Product';
@@ -41,5 +41,6 @@ export {
   Product,
   Subscription,
   HelpAndSupport,
-  About
+  About,
+  SalesReport,
 };
