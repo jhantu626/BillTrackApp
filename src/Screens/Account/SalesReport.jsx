@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useMemo, useRef, useState} from 'react';
+import React, {memo, useCallback, useMemo, useRef, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   DottedDivider,
@@ -33,6 +33,14 @@ const SalesReport = memo(() => {
   // bottomsheet contents
   const bottomSheetRef = useRef(null);
   const snapPont = useMemo(() => ['30%'], []);
+
+  const handleOpenBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
+
+  const handleCloseBottomSheet = useCallback(() => {
+    bottomSheetRef.current?.close();
+  }, []);
 
   const renderBackdrop = useMemo(
     () => props =>
@@ -62,7 +70,9 @@ const SalesReport = memo(() => {
                   Click to choose date range & file type
                 </Text>
               </View>
-              <TouchableOpacity style={styles.downloadBtn}>
+              <TouchableOpacity
+                style={styles.downloadBtn}
+                onPress={handleOpenBottomSheet}>
                 <MaterialDesignIcons
                   name="file-download-outline"
                   color={'#fff'}
@@ -147,7 +157,7 @@ const SalesReport = memo(() => {
                 Choose desire conditions for reports
               </Text>
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleCloseBottomSheet}>
               <AntDesign name="close" size={icon(18)} color={colors.primary} />
             </TouchableOpacity>
           </View>
@@ -192,6 +202,9 @@ const SalesReport = memo(() => {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity style={styles.downloadButton}>
+            <Text style={styles.downloadButtonText}>Download</Text>
+          </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
     </GestureHandlerRootView>
@@ -343,6 +356,20 @@ const styles = StyleSheet.create({
   bottomSheetSelectedText: {
     fontSize: font(12),
     fontFamily: fonts.inMedium,
+  },
+  downloadButton: {
+    paddingVertical: padding(16),
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginHorizontal: margin(16),
+    marginVertical: margin(20)
+  },
+  downloadButtonText: {
+    fontSize: font(16),
+    fontFamily: fonts.inSemiBold,
+    color: '#fff',
   },
 });
 
