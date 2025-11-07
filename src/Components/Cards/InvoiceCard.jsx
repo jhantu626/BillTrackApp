@@ -12,7 +12,7 @@ import DottedDivider from '../Dividers/DottedDivider';
 import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
-import { gap, padding } from '../../utils/responsive';
+import { gap, padding,font, icon } from '../../utils/responsive';
 
 // const {width} = Dimensions.get('screen');
 
@@ -20,48 +20,27 @@ const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
 
-
-  const sizes = useMemo(() => {
-    const tsText = width * 0.036;
-    const numberText = width * 0.032;
-    const dateText = width * 0.028;
-    const priceText = width * 0.038;
-    const paidText = width * 0.026;
-    const subBottomContainerText = width * 0.032;
-    const iconSize = width * 0.05;
-
-    return {
-      tsText,
-      numberText,
-      dateText,
-      priceText,
-      paidText,
-      subBottomContainerText,
-      iconSize,
-    };
-  }, [width]);
-
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.left}>
-          <Text style={[styles.tsText, {fontSize: sizes.tsText}]}>
+          <Text style={[styles.tsText]}>
             {invoice?.ts}
           </Text>
-          <Text style={[styles.numberText, {fontSize: sizes.numberText}]}>
+          <Text style={[styles.numberText]}>
             {invoice?.invoiceNumber}
           </Text>
         </View>
-        <Text style={[styles.dateText, {fontSize: sizes.dateText}]}>
+        <Text style={[styles.dateText]}>
           {invoice?.date}
         </Text>
         <View style={styles.right}>
           <View style={styles.paidContainer}>
-            <Text style={[styles.paidText, {fontSize: sizes.paidText}]}>
+            <Text style={[styles.paidText, ]}>
               {invoice?.status}
             </Text>
           </View>
-          <Text style={[styles.priceText, {fontSize: sizes.priceText}]}>
+          <Text style={[styles.priceText]}>
             ₹ {invoice?.amount}
           </Text>
         </View>
@@ -71,14 +50,13 @@ const InvoiceCard = memo(({invoice}) => {
         <TouchableOpacity style={styles.subBottomContainer}>
           <Lucide
             name="message-square-text"
-            size={sizes.iconSize}
+            size={icon(18)}
             color={'#007aff'}
           />
           <Text
             style={[
               {color: '#007aff'},
               styles.subBottomContainerText,
-              {fontSize: sizes.subBottomContainerText},
             ]}>
             SMS
           </Text>
@@ -86,25 +64,24 @@ const InvoiceCard = memo(({invoice}) => {
         <TouchableOpacity style={styles.subBottomContainer}>
           <Ionicons
             name="logo-whatsapp"
-            size={sizes.iconSize}
+            size={icon(18)}
             color={'#04bd01'}
           />
           <Text
             style={[
               {color: '#04bd01'},
               styles.subBottomContainerText,
-              {fontSize: sizes.subBottomContainerText},
             ]}>
             Whatsapp
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.subBottomContainer}>
-          <Lucide name="printer" size={sizes.iconSize} color={'#ff393c'} />
+          <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
           <Text
             style={[
               {color: '#ff393c'},
               styles.subBottomContainerText,
-              {fontSize: sizes.subBottomContainerText},
+             
             ]}>
             Print
           </Text>
@@ -114,12 +91,12 @@ const InvoiceCard = memo(({invoice}) => {
           onPress={() => {
             navigation.navigate('InvoiceDetails');
           }}>
-          <Lucide name="eye" size={sizes.iconSize} color={'#00000090'} />
+          <Lucide name="eye" size={icon(18)} color={'#00000090'} />
           <Text
             style={[
               {color: '#00000090'},
               styles.subBottomContainerText,
-              {fontSize: sizes.subBottomContainerText},
+             
             ]}>
             Details
           </Text>
@@ -151,12 +128,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tsText: {
-    // fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.inBold,
     color: colors.primary,
   },
   numberText: {
-    // fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.inRegular,
     color: '#00000080',
   },
@@ -173,17 +150,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: padding(8),
   },
   paidText: {
-    // fontSize: 8,
+    fontSize: font(8),
     fontFamily: fonts.inSemiBold,
     color: colors.sucess,
   },
   priceText: {
-    // fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.inSemiBold,
     color: '#000000',
   },
   dateText: {
-    // fontSize: 10,
+    fontSize: font(10),
     fontFamily: fonts.inRegular,
     color: '#00000080',
     textDecorationLine: 'underline',
@@ -201,7 +178,7 @@ const styles = StyleSheet.create({
     gap: gap(5),
   },
   subBottomContainerText: {
-    // fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.inBold,
   },
 });

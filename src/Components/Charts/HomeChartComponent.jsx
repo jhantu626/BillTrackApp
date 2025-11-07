@@ -26,21 +26,6 @@ const HomeChartComponent = memo(
     handleChangePriod,
     salesDurations = ['Today', 'Week', 'Month'],
   }) => {
-    const sizes = useMemo(() => {
-      const selectedText = width * 0.032;
-      const salesText = width * 0.036;
-      const salesAmount = width * 0.062;
-      const salesPercentageText = width * 0.03;
-      const iconSize = width * 0.032;
-
-      return {
-        selectedText,
-        salesText,
-        salesAmount,
-        salesPercentageText,
-        iconSize,
-      };
-    }, [width]);
 
     return (
       <View style={styles.container}>
@@ -61,7 +46,6 @@ const HomeChartComponent = memo(
               <Text
                 style={[
                   styles.selectedText,
-                  {fontSize: sizes.selectedText},
                   selectedPriod === period && {color: colors.primary},
                 ]}>
                 {period}
@@ -70,22 +54,12 @@ const HomeChartComponent = memo(
           ))}
         </View>
         <View style={styles.salesContainer}>
-          <Text style={[styles.salesText, {fontSize: sizes.salesText}]}>
-            {selectedPriod}'s Sales
-          </Text>
+          <Text style={[styles.salesText]}>{selectedPriod}'s Sales</Text>
           <View style={styles.sales}>
-            <Text style={[styles.salesAmount, {fontSize: sizes.salesAmount}]}>
-              ₹ 5104.00
-            </Text>
+            <Text style={[styles.salesAmount]}>₹ 5104.00</Text>
             <View style={styles.salesPercentage}>
               <Ionicons name="arrow-up" size={12} color={colors.sucess} />
-              <Text
-                style={[
-                  styles.salesPercentageText,
-                  {fontSize: sizes.salesPercentageText},
-                ]}>
-                1.3% increased
-              </Text>
+              <Text style={[styles.salesPercentageText]}>1.3% increased</Text>
             </View>
           </View>
         </View>
@@ -99,7 +73,7 @@ const HomeChartComponent = memo(
 
 const styles = StyleSheet.create({
   container: {
-    padding: padding(16),
+    padding: padding(12),
     backgroundColor: '#fff',
     borderRadius: 5,
     marginVertical: margin(20),
@@ -141,17 +115,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   salesText: {
-    // fontSize: 14,
+    fontSize: font(14),
     fontFamily: fonts.inMedium,
     color: '#00000090',
   },
   salesAmount: {
-    // fontSize: 24,
+    fontSize: font(24),
     fontFamily: fonts.inBold,
     color: '#000',
   },
   salesPercentageText: {
-    // fontSize: 12,
+    fontSize: font(12),
     fontFamily: fonts.inMedium,
     color: colors.sucess,
   },
