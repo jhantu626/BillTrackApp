@@ -18,14 +18,14 @@ import {
   SecondaryHeader,
   SimpleTextInput,
 } from '../../Components';
-import {font, gap, icon, margin, padding} from '../../utils/responsive';
+import {font, gap, icon, isTabletDevice, margin, padding} from '../../utils/responsive';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
 
 const {width: screenWidth} = Dimensions.get('window');
-const NUMBER_OF_COLUMNS = 3;
+const NUMBER_OF_COLUMNS = isTabletDevice?4:3;
 const HORIZONTAL_PADDING = 16;
 const GAP_BETWEEN_ITEMS = 10;
 const ITEM_WIDTH =
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     width: screenWidth - HORIZONTAL_PADDING * 2,
   },
   imageCOntainer: {
-    width: '100%',
+    width: isTabletDevice?'40%':'100%',
     aspectRatio: 16 / 9,
   },
   image: {
