@@ -143,7 +143,7 @@ const SalesReport = memo(() => {
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPont}
-        index={1}
+        index={-1}
         backdropComponent={renderBackdrop}
         backgroundStyle={{borderRadius: 0}}
         enableOverDrag={false}
