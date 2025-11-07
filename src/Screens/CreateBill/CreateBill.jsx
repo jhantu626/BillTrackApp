@@ -25,10 +25,10 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {fonts} from '../../utils/fonts';
 import {validateIndianPhone} from '../../utils/validator';
 import {colors} from '../../utils/colors';
-import {font, gap, margin, padding} from '../../utils/responsive';
+import {font, gap, isTabletDevice, margin, padding} from '../../utils/responsive';
 
 const {width: screenWidth} = Dimensions.get('window');
-const NUM_COLUMNS = 3;
+const NUM_COLUMNS = isTabletDevice ? 4 : 3;
 const HORIZONTAL_PADDING = 16;
 const GAP_BETWEEN_ITEMS = 10;
 
@@ -86,7 +86,7 @@ const CreateBill = () => {
               setTotalPrice={setTotalPrice}
             />
           )}
-          numColumns={3}
+          numColumns={NUM_COLUMNS}
           columnWrapperStyle={styles.columnWrapperStyle}
         />
         <CreateBillBottom

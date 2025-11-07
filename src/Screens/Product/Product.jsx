@@ -25,7 +25,7 @@ import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
 
 const {width: screenWidth} = Dimensions.get('window');
-const NUMBER_OF_COLUMNS = isTabletDevice?4:3;
+const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
 const HORIZONTAL_PADDING = 16;
 const GAP_BETWEEN_ITEMS = 10;
 const ITEM_WIDTH =
