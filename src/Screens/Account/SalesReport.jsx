@@ -9,7 +9,6 @@ import React, {memo, useCallback, useMemo, useRef, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   DottedDivider,
-  HomeChartComponent,
   SalesAreaChart,
   SecondaryHeader,
 } from '../../Components';
@@ -287,22 +286,22 @@ const styles = StyleSheet.create({
   selectableContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 48,
+    // height: 48,
     backgroundColor: colors.primaryBackground,
     alignItems: 'center',
-    padding: padding(8),
+    padding: padding(9),
     borderRadius: 5,
   },
   selectable: {
     width: '30%',
     // height: heightResponsive(30),
-    paddingVertical: padding(6),
+    paddingVertical: padding(9),
     paddingHorizontal: padding(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   selectedText: {
-    fontSize: font(10),
+    fontSize: font(12),
     fontFamily: fonts.inMedium,
     color: '#000000',
   },
