@@ -11,8 +11,11 @@ import {
   padding,
   widthResponsive,
 } from '../../utils/responsive';
+import {useAuth} from '../../Contexts/AuthContext';
+import {greeting} from '../../utils/validator';
 
 const PrimaryHeader = memo(() => {
+  const {name} = useAuth();
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
@@ -21,8 +24,8 @@ const PrimaryHeader = memo(() => {
           style={styles.image}
         />
         <View>
-          <Text style={styles.text}>Good Morning</Text>
-          <Text style={styles.name}>Pritam Bala</Text>
+          <Text style={styles.text}>{greeting()}</Text>
+          <Text style={styles.name}>{name}</Text>
         </View>
       </View>
       <TouchableOpacity style={styles.rightContainer}>

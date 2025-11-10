@@ -46,7 +46,7 @@ const Tab = createBottomTabNavigator();
 const AuthStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="Onboarding"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -55,13 +55,12 @@ const AuthStack = memo(() => {
       <Stack.Screen name="AuthHome" component={AuthHome} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Otp" component={OtpVerify} />
-      <Stack.Screen name="BusinessSetup" component={BusinessSetup} />
-      <Stack.Screen name="BusinessSetup2" component={BusinessSetup2} />
     </Stack.Navigator>
   );
 });
 
 const HomeStack = memo(() => {
+  
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -78,6 +77,8 @@ const HomeStack = memo(() => {
           animationDuration: 200,
         }}
       />
+      <Stack.Screen name="BusinessSetup" component={BusinessSetup} />
+      <Stack.Screen name="BusinessSetup2" component={BusinessSetup2} />
     </Stack.Navigator>
   );
 });
@@ -232,16 +233,18 @@ const AppStack = memo(() => {
 const AppNav = () => {
   const {authToken} = useAuth();
 
-  return (
-    <NavigationContainer>
-      {authToken ? <AppStack /> : <AuthStack />}
-    </NavigationContainer>
-  );
+  if (!authToken) {
+    return <AuthStack />;
+  }
+
+  return <AppStack />;
 };
 const App = () => {
   return (
     <AuthProvider>
-      <AppNav />
+      <NavigationContainer>
+        <AppNav />
+      </NavigationContainer>
     </AuthProvider>
   );
 };
