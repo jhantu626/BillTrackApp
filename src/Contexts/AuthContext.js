@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 
@@ -13,6 +13,10 @@ const AuthProvider = ({children}) => {
     try {
       await AsyncStorage.setItem('token', token);
       await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.multiSet([
+        ['token', token],
+        ['user', JSON.stringify(user)],
+      ]);
       setUser(user);
       setAuthToken(token);
     } catch (error) {}
@@ -20,8 +24,7 @@ const AuthProvider = ({children}) => {
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('user');
+      await AsyncStorage.multiRemove(['token', 'user']);
       setAuthToken(null);
       setUser(null);
     } catch (error) {}
@@ -31,8 +34,6 @@ const AuthProvider = ({children}) => {
     try {
       const token = await AsyncStorage.getItem('token');
       const user = await AsyncStorage.getItem('user');
-      console.log('token', token);
-      console.log('user', JSON.parse(user));
       setAuthToken(token);
       setUser(JSON.parse(user));
     } catch (error) {
@@ -46,17 +47,16 @@ const AuthProvider = ({children}) => {
     check();
   }, []);
 
+  const userInfo = user || {};
+  const value = useMemo(() => {
+    return {authToken, login, logout, ...userInfo};
+  }, [authToken, user]);
+
   if (isLoading) {
     return null;
   }
 
-  const userInfo = user || {};
-
-  return (
-    <AuthContext.Provider value={{authToken, login, logout, ...userInfo}}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => useContext(AuthContext);
