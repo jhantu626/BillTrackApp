@@ -27,14 +27,8 @@ import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
-import {
-  font,
-  heightResponsive,
-  icon,
-  margin,
-  padding,
-  widthResponsive,
-} from './utils/responsive';
+import {font, icon, margin, padding} from './utils/responsive';
+import AuthProvider, {useAuth} from './Contexts/AuthContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -52,7 +46,7 @@ const Tab = createBottomTabNavigator();
 const AuthStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="BusinessSetup"
+      initialRouteName="Login"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -235,12 +229,20 @@ const AppStack = memo(() => {
   );
 });
 
-const App = () => {
-  const authToken = true;
+const AppNav = () => {
+  const {authToken} = useAuth();
+
   return (
     <NavigationContainer>
       {authToken ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
+  );
+};
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppNav />
+    </AuthProvider>
   );
 };
 

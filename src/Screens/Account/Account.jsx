@@ -18,9 +18,11 @@ import Lucide from '@react-native-vector-icons/lucide';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '../../Contexts/AuthContext';
 
 const Account = memo(() => {
   const navigation = useNavigation();
+  const {logout} = useAuth();
 
   const handleNavigation = ({screen, data = {}}) => {
     navigation.navigate(screen, {
@@ -39,7 +41,9 @@ const Account = memo(() => {
         }}>
         <ProfileCard />
         <View style={styles.container}>
-          <Pressable style={styles.card} onPress={()=>handleNavigation({screen: "SalesAndReport"})}>
+          <Pressable
+            style={styles.card}
+            onPress={() => handleNavigation({screen: 'SalesAndReport'})}>
             <Image
               source={require('./../../../asset/images/product_icon.png')}
               style={styles.image}
@@ -112,6 +116,7 @@ const Account = memo(() => {
               />
             }
             title="Logout"
+            onpress={async () => logout()}
           />
         </View>
         <View style={styles.deleteContainer}>

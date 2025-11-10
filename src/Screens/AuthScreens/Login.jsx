@@ -1,24 +1,58 @@
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {AuthLayout} from '../Layout';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import FontAwesome from '@react-native-vector-icons/fontawesome';
 import {useNavigation} from '@react-navigation/native';
-import {font, gap, icon, margin, padding, widthResponsive} from '../../utils/responsive';
+import {
+  font,
+  gap,
+  icon,
+  margin,
+  padding,
+  widthResponsive,
+} from '../../utils/responsive';
+import {validateIndianPhone} from '../../utils/validator';
+import {authService} from '../../Services/AuthService';
 
 const Login = () => {
   const navigation = useNavigation();
-  const sendOtp = () => {
-    navigation.navigate('Otp');
+  const [mobile, setMobile] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendOtp = async () => {
+    if (!validateIndianPhone(mobile)) {
+      setError('Please enter a valid mobile number');
+      return;
+    }
+    setError('');
+    try {
+      setIsLoading(true);
+      const data = await authService.login(mobile);
+      if (data?.status) {
+        navigation.navigate('Otp', {
+          mobile,
+        });
+      } else {
+        ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <AuthLayout>
@@ -49,7 +83,14 @@ const Login = () => {
             <FontAwesome name="phone" size={icon(20)} color={colors.primary} />
             <View style={styles.inputBar} />
             <View style={styles.inputContainer}>
-              <TextInput style={styles.input} placeholder="+91 9775746484" />
+              <TextInput
+                style={styles.input}
+                placeholder="9775746484"
+                maxLength={10}
+                value={mobile}
+                onChangeText={text => setMobile(text)}
+                keyboardType="phone-pad"
+              />
               <FontAwesome
                 name="check-circle"
                 size={icon(20)}
@@ -57,8 +98,13 @@ const Login = () => {
               />
             </View>
           </View>
+          {error && <Text style={styles.errorText}>{error}</Text>}
           <TouchableOpacity style={styles.button} onPress={sendOtp}>
-            <Text style={styles.buttonText}>GET OTP</Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color={'#fff'} />
+            ) : (
+              <Text style={styles.buttonText}>GET OTP</Text>
+            )}
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -141,6 +187,11 @@ const styles = StyleSheet.create({
     fontSize: font(16),
     fontFamily: fonts.onSemiBold,
     color: '#fff',
+  },
+  errorText: {
+    fontSize: font(12),
+    fontFamily: fonts.inRegular,
+    color: colors.error,
   },
 });
 

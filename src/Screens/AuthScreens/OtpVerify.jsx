@@ -1,9 +1,11 @@
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -11,15 +13,21 @@ import {AuthLayout} from './../Layout/index';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import {useEffect, useRef, useState} from 'react';
-import {GestureHandlerRefContext} from '@react-navigation/stack';
-import {useNavigation} from '@react-navigation/native';
-import { font, gap, icon, margin, widthResponsive } from '../../utils/responsive';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {font, gap, icon, margin, widthResponsive} from '../../utils/responsive';
+import {authService} from '../../Services/AuthService';
+import {useAuth} from '../../Contexts/AuthContext';
 
 const OtpVerify = () => {
+  const {login, authToken} = useAuth();
+  console.info(authToken);
   const navigation = useNavigation();
+  const route = useRoute();
   const [otp, setOtp] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(180);
   const otpRef = useRef([]);
+  const {mobile} = route.params;
+  const [isLoading, setIsLoading] = useState(false);
 
   const formatTime = seconds => {
     const minutes = Math.floor(seconds / 60);
@@ -27,12 +35,52 @@ const OtpVerify = () => {
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleChange = (value, index) => {
+  const validateOtp = async ({parameterOtp = null}) => {
+    try {
+      setIsLoading(true);
+      const newOtp = parameterOtp || otp.join('');
+      if (newOtp.length !== 4) return;
+      const data = await authService.validateOtp(mobile, newOtp);
+      if (data?.status) {
+        console.info(JSON.stringify(data));
+        await login(data?.token, data?.data);
+      } else {
+        setOtp(['', '', '', '']);
+        otpRef.current[0].focus();
+        ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      if (timer > 0) return;
+      const data = await authService.login(mobile);
+      if (data?.status) {
+        setTimer(180);
+        ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+      } else {
+        ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+      }
+    } catch (error) {
+      ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    }
+  };
+
+  const handleChange = async (value, index) => {
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     if (value !== '' && index < 3) {
       otpRef.current[index + 1].focus();
+    }
+    const newOtpString = newOtp.join('');
+    if (newOtpString.length === 4) {
+      await validateOtp({parameterOtp: newOtpString});
     }
   };
 
@@ -60,8 +108,8 @@ const OtpVerify = () => {
           <Text style={styles.titleText}>Verify Your Mobile Number</Text>
           <Text style={styles.descText} numberOfLines={2}>
             Enter the OTP sent to{' '}
-            <Text style={styles.innerDescText}>+91 9775746484</Text> to verify
-            and access your account securely.
+            <Text style={styles.innerDescText}>+91 {mobile}</Text> to verify and
+            access your account securely.
           </Text>
         </View>
         <View style={styles.otpParent}>
@@ -105,17 +153,22 @@ const OtpVerify = () => {
           <Text style={styles.bottomText}>Didn’t receive the OTP?</Text>
           <View style={styles.resendContainer}>
             <Text style={styles.resendText}>Resend in</Text>
-            <TouchableOpacity>
-              <Text style={styles.timeText}>{formatTime(timer)}</Text>
+            <TouchableOpacity onPress={handleResendOtp} disabled={timer > 0}>
+              <Text style={styles.timeText}>
+                {timer > 0 ? formatTime(timer) : 'Resend'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => {
-            navigation.navigate('BusinessSetup');
-          }}>
-          <Text style={styles.buttonText}>VERIFY OTP</Text>
+          onPress={validateOtp}
+          disabled={isLoading}>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>VERIFY OTP</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </AuthLayout>
