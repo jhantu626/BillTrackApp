@@ -1,11 +1,13 @@
 import {createContext, useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import SplashScreen from 'react-native-splash-screen';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({children}) => {
   const [authToken, setAuthToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const login = async (token, user = {}) => {
     try {
@@ -34,6 +36,9 @@ const AuthProvider = ({children}) => {
       setAuthToken(token);
       setUser(JSON.parse(user));
     } catch (error) {
+    } finally {
+      setIsLoading(false);
+      SplashScreen.hide();
     }
   };
 
@@ -41,8 +46,12 @@ const AuthProvider = ({children}) => {
     check();
   }, []);
 
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <AuthContext.Provider value={{authToken, login, logout,user}}>
+    <AuthContext.Provider value={{authToken, login, logout, user}}>
       {children}
     </AuthContext.Provider>
   );
