@@ -1,5 +1,4 @@
 import {
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
@@ -8,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {AuthLayout} from '../Layout';
 import {fonts} from '../../utils/fonts';
 import {
@@ -32,52 +31,18 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetFlatList,
-  BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {
   font,
   gap,
-  height70,
   icon,
   margin,
   padding,
   widthResponsive,
 } from '../../utils/responsive';
 import Toast from './../../Components/Toasts/ToastService';
-
-const businessTypes = [
-  {id: 1, name: 'Retail'},
-  {id: 2, name: 'Hospitality'},
-  {id: 3, name: 'Technology'},
-  {id: 4, name: 'Healthcare'},
-  {id: 5, name: 'Education'},
-  {id: 6, name: 'Finance'},
-  {id: 7, name: 'Transportation'},
-  {id: 8, name: 'Real Estate'},
-  {id: 9, name: 'Entertainment'},
-  {id: 10, name: 'Manufacturing'},
-  {id: 11, name: 'Agriculture'},
-  {id: 12, name: 'Construction'},
-  {id: 13, name: 'Energy'},
-  {id: 14, name: 'Telecommunications'},
-  {id: 15, name: 'Legal Services'},
-  {id: 16, name: 'Marketing & Advertising'},
-  {id: 17, name: 'Nonprofit & Charity'},
-  {id: 18, name: 'Food & Beverage'},
-  {id: 19, name: 'Media & Publishing'},
-  {id: 20, name: 'Logistics & Supply Chain'},
-  {id: 21, name: 'Consulting'},
-  {id: 22, name: 'Sports & Recreation'},
-  {id: 23, name: 'Automotive'},
-  {id: 24, name: 'Fashion & Apparel'},
-  {id: 25, name: 'Travel & Tourism'},
-  {id: 26, name: 'Security Services'},
-  {id: 27, name: 'Environmental Services'},
-  {id: 28, name: 'Government & Public Sector'},
-  {id: 29, name: 'Insurance'},
-  {id: 30, name: 'Human Resources & Staffing'},
-];
+import {businessCategoryService} from '../../Services/BusinessCategoryService';
 
 const BusinessSetup = () => {
   const navigation = useNavigation();
@@ -87,19 +52,14 @@ const BusinessSetup = () => {
   const [businessName, setBusinessName] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [businessType, setBusinessType] = useState('');
+  const [businessTypes, setBusinessTypes] = useState([]);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
 
-  // SUGGESTIONS
-  const [suggestion, setSuggetion] = useState(
-    bottomSheetType === 'businessType' ? businessTypes : [],
-  );
-
-  // TYPE STATES
-  const [bottomSheetType, setBottomSheetType] = useState('businessType');
+  const [suggestions, setSuggestions] = useState([]);
 
   // BOTTOM SHEET
-  const snapPoints = useMemo(() => [height70], []);
+  const snapPoints = useMemo(() => ['70%'], []);
 
   const renderBackdrop = useMemo(
     () => props =>
@@ -115,40 +75,52 @@ const BusinessSetup = () => {
   );
 
   const handleOpenBottomSheet = type => {
-    setBottomSheetType(type);
     bottomSheetRef.current?.expand();
   };
   const handleCloseBottomSheet = type => {
-    setBottomSheetType(type);
     bottomSheetRef.current?.close();
   };
 
-  const handleSearch = value => {
-    setQuery(value);
-    setSuggetion(() => {
-      return bottomSheetType === 'businessType' ? businessTypes : [];
-    });
-  };
-
   const handleContinue = () => {
+    console.log(businessType);
     if (businessName.length === 0 || !validateBusinessName(businessName)) {
       Toast.show({
-        message: 'Data saved!',
+        message: 'Enter a valid business name',
         type: 'error',
         position: 'top',
       });
       return;
     }
     if (gstNumber.length === 0 || !validateIndianGST(gstNumber)) {
+      Toast.show({
+        message: 'Enter a valid GST number',
+        type: 'error',
+        position: 'top',
+      });
       return;
     }
-    if (businessType.length === 0) {
+    if (!businessType) {
+      Toast.show({
+        message: 'Select a business type',
+        type: 'error',
+        position: 'top',
+      });
       return;
     }
-    if (email.length === 0 || !validateEmail(email)) {
+    if (email.length > 0 && !validateEmail(email)) {
+      Toast.show({
+        message: 'Enter a valid email',
+        type: 'error',
+        position: 'top',
+      });
       return;
     }
-    if (phone.length === 0 || !validateIndianPhone(phone)) {
+    if (phone.length > 0 && !validateIndianPhone(phone)) {
+      Toast.show({
+        message: 'Enter a valid phone number',
+        type: 'error',
+        position: 'top',
+      });
       return;
     }
     navigation.navigate('BusinessInfoSetup', {
@@ -160,9 +132,29 @@ const BusinessSetup = () => {
     });
   };
 
+  const getBusinessCategory = async () => {
+    try {
+      const data = await businessCategoryService.getAllBusinessCategory();
+      setBusinessTypes(data);
+      setSuggestions(data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getBusinessCategory();
+  }, []);
+
+  const handleSearch = text => {
+    setQuery(text);
+    const filtered = businessTypes.filter(item =>
+      item.name.toLowerCase().includes(text.toLowerCase()),
+    );
+    setSuggestions(filtered);
+  };
+
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <AuthLayout>
+    <AuthLayout>
+      <GestureHandlerRootView style={{flex: 1}}>
         <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
           <Image
             style={styles.image}
@@ -189,7 +181,11 @@ const BusinessSetup = () => {
               hasError={gstNumber.length > 0 && !validateIndianGST(gstNumber)}
             />
             <BottomSheetInput
-              label="Business Type"
+              label={
+                businessType
+                  ? businessTypes.find(item => item.id === businessType).name
+                  : 'Business Type'
+              }
               onPress={() => handleOpenBottomSheet('businessType')}
             />
             <SimpleTextInput
@@ -213,77 +209,79 @@ const BusinessSetup = () => {
             <Text style={styles.buttonText}>CONTINUE</Text>
           </TouchableOpacity>
         </ScrollView>
-      </AuthLayout>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={-1}
-        snapPoints={snapPoints}
-        enablePanDownToClose
-        enableOverDrag={false}
-        backdropComponent={renderBackdrop}
-        handleComponent={() => null}
-        animationConfigs={{
-          duration: 300,
-        }}
-        backgroundStyle={{borderRadius: 0}}>
-        {/* <BottomSheetView> */}
-        <BottomSheetFlatList
-          ListHeaderComponent={useCallback(
-            () => (
-              <View>
-                <View style={styles.bottomSheetHeader}>
-                  <Text style={styles.bottomSheetTitle}>
-                    Choose Business Type
-                  </Text>
-                  <TouchableOpacity onPress={handleCloseBottomSheet}>
-                    <Ionicons
-                      name="close"
-                      size={icon(24)}
-                      color={colors.primary}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.searchContainer}>
-                  <Ionicons
-                    name="search"
-                    size={icon(24)}
-                    color={colors.border}
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={-1}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+          enableOverDrag={false}
+          enableContentPanningGesture={false}
+          backdropComponent={renderBackdrop}
+          handleComponent={() => null}
+          animationConfigs={{
+            duration: 300,
+          }}
+          backgroundStyle={{borderRadius: 0}}>
+          <View style={{flex: 1}}>
+            <BottomSheetFlatList
+              ListHeaderComponent={useMemo(
+                () => (
+                  <View>
+                    <View style={styles.bottomSheetHeader}>
+                      <Text style={styles.bottomSheetTitle}>
+                        Choose Business Type
+                      </Text>
+                      <TouchableOpacity onPress={handleCloseBottomSheet}>
+                        <Ionicons
+                          name="close"
+                          size={icon(24)}
+                          color={colors.primary}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                    <View style={styles.searchContainer}>
+                      <Ionicons
+                        name="search"
+                        size={icon(24)}
+                        color={colors.border}
+                      />
+                      <TextInput
+                        placeholder="Search here..."
+                        style={styles.searchInput}
+                        value={query}
+                        onChangeText={text => handleSearch(text)}
+                      />
+                    </View>
+                  </View>
+                ),
+                [query],
+              )}
+              contentContainerStyle={styles.bottomSheetContainer}
+              data={suggestions}
+              keyExtractor={(_, index) =>
+                index + 'bottomsheet_radiobtn_business_types'
+              }
+              renderItem={({item}) => (
+                <View style={styles.bottomSheetItem}>
+                  <RadioInput
+                    value={item.id}
+                    label={item.name}
+                    setValue={setBusinessType}
+                    isSelected={businessType === item.id}
                   />
-                  <TextInput
-                    placeholder="Search here..."
-                    style={styles.searchInput}
-                    value={query}
-                    onChangeText={text => handleSearch(text)}
-                  />
                 </View>
-              </View>
-            ),
-            [bottomSheetType],
-          )}
-          style={{flex: 1}}
-          contentContainerStyle={styles.bottomSheetContainer}
-          data={businessTypes}
-          keyExtractor={(_, index) =>
-            index + 'bottomsheet_radiobtn_' + bottomSheetType
-          }
-          renderItem={({item}) => (
-            <View style={styles.bottomSheetItem}>
-              <RadioInput
-                value={item.id}
-                label={item.name}
-                // setValue={setBusinessType}
-                // isSelected={businessType === item.id}
-              />
-            </View>
-          )}
-          ItemSeparatorComponent={() => <DottedDivider />}
-          stickyHeaderHiddenOnScroll
-          nestedScrollEnabled
-        />
-        {/* </BottomSheetView> */}
-      </BottomSheet>
-      <ToastContainer />
-    </GestureHandlerRootView>
+              )}
+              ItemSeparatorComponent={() => <DottedDivider />}
+              stickyHeaderHiddenOnScroll
+              nestedScrollEnabled
+            />
+          </View>
+        </BottomSheet>
+
+        <ToastContainer />
+      </GestureHandlerRootView>
+    </AuthLayout>
   );
 };
 
@@ -356,7 +354,10 @@ const styles = StyleSheet.create({
   bottomSheetItem: {
     paddingHorizontal: 20,
   },
-  bottomSheetContainer: {},
+  bottomSheetContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
 });
 
 export default BusinessSetup;

@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+// components/CustomToast.tsx
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  useDerivedValue,
   withTiming,
   withSpring,
   runOnJS,
 } from 'react-native-reanimated';
-import Ionicons from '@react-native-vector-icons/ionicons'; // ✅ Native icon package (no Expo)
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 const { height } = Dimensions.get('window');
 
@@ -30,84 +32,86 @@ const iconConfig: Record<ToastType, { name: string; color: string }> = {
   info: { name: 'information-circle', color: '#2563eb' },
 };
 
-const CustomToast: React.FC<CustomToastProps> = ({
-  visible,
-  message,
-  type = 'info',
-  position = 'top',
-  duration = 2000,
-  onHide,
-}) => {
-  const opacity = useSharedValue(0);
-  const translate = useSharedValue(0);
+const CustomToast: React.FC<CustomToastProps> = React.memo(
+  ({ visible, message, type = 'info', position = 'top', duration = 2000, onHide }) => {
+    const opacity = useSharedValue(0);
+    const translate = useSharedValue(0);
+    const visibleShared = useSharedValue(0);
 
-  useEffect(() => {
-    if (visible) {
-      opacity.value = withTiming(1, { duration: 250 });
-      translate.value = withSpring(1);
+    // Control visibility with Reanimated shared value
+    useEffect(() => {
+      visibleShared.value = visible ? 1 : 0;
+    }, [visible]);
 
-      const timer = setTimeout(() => hideToast(), duration);
-      return () => clearTimeout(timer);
-    }
-  }, [visible]);
-
-  const hideToast = () => {
-    opacity.value = withTiming(0, { duration: 200 });
-    translate.value = withTiming(0, { duration: 200 }, () => {
-      if (onHide) runOnJS(onHide)();
+    // Handle animations purely on UI thread
+    useDerivedValue(() => {
+      if (visibleShared.value) {
+        opacity.value = withTiming(0.9, { duration: 250 });
+        translate.value = withSpring(1);
+      } else {
+        opacity.value = withTiming(0, { duration: 200 });
+        translate.value = withTiming(0, { duration: 200 }, () => {
+          if (onHide) runOnJS(onHide)();
+        });
+      }
     });
-  };
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const transforms: { translateX?: number; translateY?: number }[] = [];
-    switch (position) {
-      case 'top':
-        transforms.push({ translateY: (1 - translate.value) * -60 });
-        break;
-      case 'bottom':
-        transforms.push({ translateY: (1 - translate.value) * 60 });
-        break;
-      case 'left':
-        transforms.push({ translateX: (1 - translate.value) * -100 });
-        break;
-      case 'right':
-        transforms.push({ translateX: (1 - translate.value) * 100 });
-        break;
-    }
+    // Hide automatically after duration
+    useEffect(() => {
+      if (visible) {
+        const timer = setTimeout(() => {
+          visibleShared.value = 0;
+        }, duration);
+        return () => clearTimeout(timer);
+      }
+    }, [visible, duration]);
 
-    return {
-      opacity: opacity.value,
-      transform: transforms,
-    };
-  });
+    const animatedStyle = useAnimatedStyle(() => {
+      const transforms: { translateX?: number; translateY?: number }[] = [];
+      switch (position) {
+        case 'top':
+          transforms.push({ translateY: (1 - translate.value) * -60 });
+          break;
+        case 'bottom':
+          transforms.push({ translateY: (1 - translate.value) * 60 });
+          break;
+        case 'left':
+          transforms.push({ translateX: (1 - translate.value) * -100 });
+          break;
+        case 'right':
+          transforms.push({ translateX: (1 - translate.value) * 100 });
+          break;
+      }
+      return { opacity: opacity.value, transform: transforms };
+    });
 
-  const getPositionStyle = (): Record<string, number | string> => {
-    switch (position) {
-      case 'top':
-        return { top: 80, alignSelf: 'center' };
-      case 'bottom':
-        return { bottom: 80, alignSelf: 'center' };
-      case 'left':
-        return { left: 20, top: height / 2 - 40 };
-      case 'right':
-        return { right: 20, top: height / 2 - 40 };
-      case 'center':
-      default:
-        return { top: height / 2 - 40, alignSelf: 'center' };
-    }
-  };
+    const positionStyle = useMemo(() => {
+      switch (position) {
+        case 'top':
+          return { top: 80, alignSelf: 'center' };
+        case 'bottom':
+          return { bottom: 80, alignSelf: 'center' };
+        case 'left':
+          return { left: 20, top: height / 2 - 40 };
+        case 'right':
+          return { right: 20, top: height / 2 - 40 };
+        case 'center':
+        default:
+          return { top: height / 2 - 40, alignSelf: 'center' };
+      }
+    }, [position]);
 
-  if (!visible) return null;
+    if (!visible) return null;
+    const icon = iconConfig[type];
 
-  const icon = iconConfig[type];
-
-  return (
-    <Animated.View style={[styles.toast, getPositionStyle(), animatedStyle]}>
-      <Ionicons name={icon.name} size={22} color={icon.color} style={styles.icon} />
-      <Text style={styles.text}>{message}</Text>
-    </Animated.View>
-  );
-};
+    return (
+      <Animated.View style={[styles.toast, positionStyle, animatedStyle]}>
+        <Ionicons name={icon.name} size={22} color={icon.color} style={styles.icon} />
+        <Text style={styles.text}>{message}</Text>
+      </Animated.View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   toast: {
@@ -120,8 +124,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 4, // lighter shadow for less GPU cost
     elevation: 6,
   },
   text: {
