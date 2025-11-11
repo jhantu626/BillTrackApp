@@ -21,12 +21,13 @@ import {font, gap, icon, margin, padding} from '../../utils/responsive';
 import {validateIndianPincode} from '../../utils/validator';
 import {thirdPartyApiService} from '../../Services/ThirdPartApiService';
 import ToastService from '../../Components/Toasts/ToastService';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {RotateOutDownLeft} from 'react-native-reanimated';
 import {businessService} from '../../Services/BusinessService';
 import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
 
 const BusinessSetup2 = () => {
+  const navigation = useNavigation();
   const token = useAuthToken();
   const {setUserData, setBusinessData, user} = useAuth();
   const route = useRoute();
@@ -136,7 +137,12 @@ const BusinessSetup2 = () => {
         const businessData = await businessService.getBusiness(token);
         const newUser = {...user, businessId: businessData?.data?.id};
         await setUserData(newUser);
-        await setBusinessData(businessData?.data);
+        const business = businessData?.data;
+        await setBusinessData(business);
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Home'}],
+        });
         ToastService.show({
           message: data.message,
           type: 'success',

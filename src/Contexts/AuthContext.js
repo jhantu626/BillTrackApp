@@ -75,7 +75,7 @@ const AuthProvider = ({children}) => {
       setBusinessData,
       business,
     };
-  }, [authToken, user]);
+  }, [authToken, user, business]);
 
   if (isLoading) {
     return null;
@@ -96,9 +96,14 @@ export const useUser = attribute => {
   return user[attribute];
 };
 
-export const useBusiness = attribute => {
+export const useBusiness = key => {
   const {business} = useAuth();
-  return business[attribute];
+
+  if (!business) return undefined;
+
+  if (!key) return business;
+
+  return business?.[key];
 };
 
 export default AuthProvider;

@@ -28,7 +28,7 @@ import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
 import {font, icon, margin, padding} from './utils/responsive';
-import AuthProvider, {useAuth, useUser} from './Contexts/AuthContext';
+import AuthProvider, {useAuth, useBusiness, useUser} from './Contexts/AuthContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -232,7 +232,6 @@ const AppStack = memo(() => {
 
 const AppNav = () => {
   const {authToken} = useAuth();
-
   if (!authToken) {
     return <AuthStack />;
   }

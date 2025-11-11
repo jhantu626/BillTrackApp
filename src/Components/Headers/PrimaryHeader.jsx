@@ -11,17 +11,20 @@ import {
   padding,
   widthResponsive,
 } from '../../utils/responsive';
-import {useAuth} from '../../Contexts/AuthContext';
+import {useAuth, useBusiness, useUser} from '../../Contexts/AuthContext';
 import {greeting} from '../../utils/validator';
+import { API_URL } from '../../utils/config';
 
 const PrimaryHeader = memo(() => {
-  const {name} = useAuth();
+  const name = useUser('name');
+  const businessUrl=useBusiness('logoUrl');
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
         <Image
-          source={require('./../../../asset/images/profile.png')}
+          source={{uri: `${API_URL}files/logo/${businessUrl}`}}
           style={styles.image}
+          resizeMode='cover'
         />
         <View>
           <Text style={styles.text}>{greeting()}</Text>
@@ -53,6 +56,9 @@ const styles = StyleSheet.create({
   image: {
     width: icon(48),
     height: icon(48),
+    borderWidth: 1,
+    borderRadius: icon(48) / 2,
+    borderColor: colors.primary
   },
   text: {
     fontSize: font(11),
