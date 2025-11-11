@@ -8,6 +8,7 @@ const AuthProvider = ({children}) => {
   const [authToken, setAuthToken] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [business, setBusiness] = useState(null);
 
   const login = async (token, user = {}) => {
     try {
@@ -22,20 +23,41 @@ const AuthProvider = ({children}) => {
     } catch (error) {}
   };
 
+  const setUserData = async userData => {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error('Set user data error:', error);
+    }
+  };
+
+  const setBusinessData = async businessData => {
+    try {
+      await AsyncStorage.setItem('business', JSON.stringify(businessData));
+      setBusiness(businessData);
+    } catch (error) {
+      console.error('Set business data error:', error);
+    }
+  };
+
   const logout = async () => {
     try {
-      await AsyncStorage.multiRemove(['token', 'user']);
+      await AsyncStorage.multiRemove(['token', 'user', 'business']);
       setAuthToken(null);
       setUser(null);
+      setBusiness(null);
     } catch (error) {}
   };
 
   const check = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const user = await AsyncStorage.getItem('user');
+      const userStr = await AsyncStorage.getItem('user');
+      const businessStr = await AsyncStorage.getItem('business');
       setAuthToken(token);
-      setUser(JSON.parse(user));
+      setUser(JSON.parse(userStr));
+      setBusiness(JSON.parse(businessStr));
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -47,9 +69,16 @@ const AuthProvider = ({children}) => {
     check();
   }, []);
 
-  const userInfo = user || {};
   const value = useMemo(() => {
-    return {authToken, login, logout, ...userInfo};
+    return {
+      authToken,
+      login,
+      logout,
+      user,
+      setUserData,
+      setBusinessData,
+      business,
+    };
   }, [authToken, user]);
 
   if (isLoading) {
@@ -64,6 +93,16 @@ export const useAuth = () => useContext(AuthContext);
 export const useAuthToken = () => {
   const {authToken} = useAuth();
   return authToken;
+};
+
+export const useUser = attribute => {
+  const {user} = useAuth();
+  return user[attribute];
+};
+
+export const useBusiness = attribute => {
+  const {business} = useAuth();
+  return business[attribute];
 };
 
 export default AuthProvider;
