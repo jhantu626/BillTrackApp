@@ -13,16 +13,18 @@ import {AuthLayout} from '../Layout';
 import {fonts} from '../../utils/fonts';
 import {
   BottomSheetInput,
+  CustomToast,
   DottedDivider,
   RadioInput,
   SearchInput,
   SimpleTextInput,
+  ToastContainer,
 } from '../../Components';
 import {
+  validateBusinessName,
   validateEmail,
+  validateIndianGST,
   validateIndianPhone,
-  validateIndianPincode,
-  validateName,
 } from '../../utils/validator';
 import {colors} from '../../utils/colors';
 import {useNavigation} from '@react-navigation/native';
@@ -42,6 +44,7 @@ import {
   padding,
   widthResponsive,
 } from '../../utils/responsive';
+import Toast from './../../Components/Toasts/ToastService';
 
 const businessTypes = [
   {id: 1, name: 'Retail'},
@@ -80,12 +83,12 @@ const BusinessSetup = () => {
   const navigation = useNavigation();
 
   const bottomSheetRef = useRef(null);
-  const [ownerName, setOwnerName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [pincode, setPincode] = useState('');
-  const [businessType, setBusinessType] = useState('');
   const [query, setQuery] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const [gstNumber, setGstNumber] = useState('');
+  const [businessType, setBusinessType] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   // SUGGESTIONS
   const [suggestion, setSuggetion] = useState(
@@ -127,6 +130,36 @@ const BusinessSetup = () => {
     });
   };
 
+  const handleContinue = () => {
+    if (businessName.length === 0 || !validateBusinessName(businessName)) {
+      Toast.show({
+        message: 'Data saved!',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+    if (gstNumber.length === 0 || !validateIndianGST(gstNumber)) {
+      return;
+    }
+    if (businessType.length === 0) {
+      return;
+    }
+    if (email.length === 0 || !validateEmail(email)) {
+      return;
+    }
+    if (phone.length === 0 || !validateIndianPhone(phone)) {
+      return;
+    }
+    navigation.navigate('BusinessInfoSetup', {
+      businessName,
+      gstNumber,
+      businessType,
+      email,
+      phone,
+    });
+  };
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <AuthLayout>
@@ -139,19 +172,25 @@ const BusinessSetup = () => {
           <Text style={styles.title}>Set Up Your Business</Text>
           <View style={styles.inputContainer}>
             <SimpleTextInput
-              placeholder="Owner Name"
+              placeholder="Business Name"
               maxLength={50}
-              value={ownerName}
-              setValue={setOwnerName}
-              hasError={ownerName.length > 0 && !validateName(ownerName)}
+              value={businessName}
+              setValue={setBusinessName}
+              hasError={
+                businessName.length > 0 && !validateBusinessName(businessName)
+              }
             />
             <SimpleTextInput
-              placeholder="Phone Number(+91)"
-              maxLength={10}
-              keyboardType="phone-pad"
-              value={phone}
-              setValue={setPhone}
-              hasError={phone.length > 0 && !validateIndianPhone(phone)}
+              placeholder="GST Number"
+              maxLength={15}
+              upperCase={true}
+              value={gstNumber}
+              setValue={setGstNumber}
+              hasError={gstNumber.length > 0 && !validateIndianGST(gstNumber)}
+            />
+            <BottomSheetInput
+              label="Business Type"
+              onPress={() => handleOpenBottomSheet('businessType')}
             />
             <SimpleTextInput
               placeholder="Email(Optional)"
@@ -161,28 +200,16 @@ const BusinessSetup = () => {
               setValue={setEmail}
               hasError={email.length > 0 && !validateEmail(email)}
             />
-            <BottomSheetInput
-              label="Business Type"
-              onPress={() => handleOpenBottomSheet('businessType')}
-            />
-            <BottomSheetInput
-              label="Choose State"
-              onPress={() => handleOpenBottomSheet('stateType')}
-            />
             <SimpleTextInput
-              placeholder="Pincode"
+              placeholder="Phone Number(Optional)"
               maxLength={6}
               keyboardType="numeric"
-              value={pincode}
-              setValue={setPincode}
-              hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
+              value={phone}
+              setValue={setPhone}
+              hasError={phone.length > 0 && !validateIndianPhone(phone)}
             />
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              navigation.navigate('BusinessSetup2');
-            }}>
+          <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>CONTINUE</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -209,11 +236,19 @@ const BusinessSetup = () => {
                     Choose Business Type
                   </Text>
                   <TouchableOpacity onPress={handleCloseBottomSheet}>
-                    <Ionicons name="close" size={icon(24)} color={colors.primary} />
+                    <Ionicons
+                      name="close"
+                      size={icon(24)}
+                      color={colors.primary}
+                    />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.searchContainer}>
-                  <Ionicons name="search" size={icon(24)} color={colors.border} />
+                  <Ionicons
+                    name="search"
+                    size={icon(24)}
+                    color={colors.border}
+                  />
                   <TextInput
                     placeholder="Search here..."
                     style={styles.searchInput}
@@ -236,8 +271,8 @@ const BusinessSetup = () => {
               <RadioInput
                 value={item.id}
                 label={item.name}
-                setValue={setBusinessType}
-                isSelected={businessType === item.id}
+                // setValue={setBusinessType}
+                // isSelected={businessType === item.id}
               />
             </View>
           )}
@@ -247,6 +282,7 @@ const BusinessSetup = () => {
         />
         {/* </BottomSheetView> */}
       </BottomSheet>
+      <ToastContainer />
     </GestureHandlerRootView>
   );
 };

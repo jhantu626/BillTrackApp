@@ -60,10 +60,10 @@ const AuthStack = memo(() => {
 });
 
 const HomeStack = memo(() => {
-  
+  const {businessId} = useAuth();
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName={businessId ? 'Home' : 'BusinessSetup'}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',

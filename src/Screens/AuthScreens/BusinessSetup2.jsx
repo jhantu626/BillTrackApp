@@ -1,5 +1,4 @@
 import {
-  Alert,
   Image,
   PermissionsAndroid,
   Platform,
@@ -101,32 +100,19 @@ const BusinessSetup2 = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.inputContainer}>
+          <SimpleTextInput placeholder="Street" maxLength={50} />
+
+          <SimpleTextInput placeholder="City" maxLength={50} />
+
+          <SimpleTextInput placeholder="State" maxLength={50} />
+
           <SimpleTextInput
-            placeholder="Business Name"
-            maxLength={50}
-            value={businessName}
-            setValue={setBusinessName}
-            hasError={
-              businessName.length > 0 && !validateBusinessName(businessName)
-            }
+            placeholder="Pincode"
+            keyboardType="numeric"
+            maxLength={6}
           />
-          <SimpleTextInput
-            placeholder="GST Number"
-            maxLength={15}
-            value={gstNumber}
-            setValue={setGstNumber}
-            hasError={gstNumber.length > 0 && !validateIndianGST(gstNumber)}
-            upperCase={true}
-          />
-          <SimpleTextInput
-            placeholder="Business Address"
-            maxLength={100}
-            value={address}
-            setValue={setAddress}
-            hasError={address.length > 0 && !validateAddress(address)}
-          />
-          {/* <TextInput keyboardType="email-address" /> */}
         </View>
+
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>PROCEED</Text>
         </TouchableOpacity>
@@ -159,12 +145,12 @@ const styles = StyleSheet.create({
   },
   button: {
     width: icon(130),
-    height: icon(45),
+    height: icon(40),
     borderRadius: 5,
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: margin(10),
+    marginVertical: margin(5),
   },
   logoContainer: {
     width: '100%',

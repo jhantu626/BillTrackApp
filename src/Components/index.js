@@ -24,6 +24,9 @@ import NavigationCard from './Cards/NavigationCard';
 import SalesAreaChart from './Charts/SalesAreaChart';
 import HomeChartComponent from './Charts/HomeChartComponent';
 
+// TOAST
+import ToastContainer from './Toasts/ToastContainer';
+
 export {
   SimpleTextInput,
   BottomSheetInput,
@@ -42,4 +45,5 @@ export {
   ProductCard,
   ProductCardRow,
   NavigationCard,
+  ToastContainer,
 };
