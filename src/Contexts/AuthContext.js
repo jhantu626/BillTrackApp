@@ -27,18 +27,14 @@ const AuthProvider = ({children}) => {
     try {
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
-    } catch (error) {
-      console.error('Set user data error:', error);
-    }
+    } catch (error) {}
   };
 
   const setBusinessData = async businessData => {
     try {
       await AsyncStorage.setItem('business', JSON.stringify(businessData));
       setBusiness(businessData);
-    } catch (error) {
-      console.error('Set business data error:', error);
-    }
+    } catch (error) {}
   };
 
   const logout = async () => {
