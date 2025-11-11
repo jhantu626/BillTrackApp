@@ -49,8 +49,8 @@ const BusinessSetup = () => {
 
   const bottomSheetRef = useRef(null);
   const [query, setQuery] = useState('');
-  const [businessName, setBusinessName] = useState('');
-  const [gstNumber, setGstNumber] = useState('');
+  const [businessName, setBusinessName] = useState('Turain Software');
+  const [gstNumber, setGstNumber] = useState('22AAAAA0000A1Z5');
   const [businessType, setBusinessType] = useState('');
   const [businessTypes, setBusinessTypes] = useState([]);
   const [email, setEmail] = useState('');
@@ -82,7 +82,6 @@ const BusinessSetup = () => {
   };
 
   const handleContinue = () => {
-    console.log(businessType);
     if (businessName.length === 0 || !validateBusinessName(businessName)) {
       Toast.show({
         message: 'Enter a valid business name',
@@ -123,7 +122,7 @@ const BusinessSetup = () => {
       });
       return;
     }
-    navigation.navigate('BusinessInfoSetup', {
+    navigation.navigate('BusinessSetup2', {
       businessName,
       gstNumber,
       businessType,
@@ -227,7 +226,7 @@ const BusinessSetup = () => {
             <BottomSheetFlatList
               ListHeaderComponent={useMemo(
                 () => (
-                  <View>
+                  <View style={styles.bottomSheetHeaderContainer}>
                     <View style={styles.bottomSheetHeader}>
                       <Text style={styles.bottomSheetTitle}>
                         Choose Business Type
@@ -273,7 +272,7 @@ const BusinessSetup = () => {
                 </View>
               )}
               ItemSeparatorComponent={() => <DottedDivider />}
-              stickyHeaderHiddenOnScroll
+              stickyHeaderIndices={[0]}
               nestedScrollEnabled
             />
           </View>
@@ -357,6 +356,10 @@ const styles = StyleSheet.create({
   bottomSheetContainer: {
     flexGrow: 1,
     paddingBottom: 20,
+  },
+  bottomSheetHeaderContainer: {
+    marginBottom: margin(10),
+    backgroundColor: '#fff',
   },
 });
 

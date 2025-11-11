@@ -24,6 +24,7 @@ const SimpleTextInput = memo(
     upperCase = false,
     placeholderTextColor = colors.border,
     fontSize = font(14),
+    disabled = false,
   }) => {
     return (
       <View
@@ -50,14 +51,17 @@ const SimpleTextInput = memo(
           maxLength={maxLength}
           style={[styles.inputBox, {fontSize: fontSize}]}
           placeholderTextColor={placeholderTextColor}
+          editable={!disabled}
         />
-        <Octicons
+        {value.length > 0 && (
+          <Octicons
           name={hasError ? 'x-circle-fill' : 'check-circle-fill'}
           size={16}
           color={
             value.length > 0 ? (hasError ? colors.error : color) : colors.border
           }
         />
+        )}
       </View>
     );
   },

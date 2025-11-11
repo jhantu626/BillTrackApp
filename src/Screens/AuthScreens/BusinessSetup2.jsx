@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   PermissionsAndroid,
   Platform,
@@ -9,32 +10,35 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AuthLayout} from '../Layout';
-import {SimpleTextInput} from '../../Components';
+import {SimpleTextInput, ToastContainer} from '../../Components';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {
-  validateAddress,
-  validateBusinessName,
-  validateIndianGST,
-} from '../../utils/validator';
-import {
-  font,
-  gap,
-  icon,
-  margin,
-  padding,
-  widthResponsive,
-} from '../../utils/responsive';
+import {font, gap, icon, margin, padding} from '../../utils/responsive';
+import {validateIndianPincode} from '../../utils/validator';
+import {thirdPartyApiService} from '../../Services/ThirdPartApiService';
+import ToastService from '../../Components/Toasts/ToastService';
+import {useRoute} from '@react-navigation/native';
+import {RotateOutDownLeft} from 'react-native-reanimated';
+import {businessService} from '../../Services/BusinessService';
+import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
 
 const BusinessSetup2 = () => {
+  const token = useAuthToken();
+  const {setUserData, setBusinessData, user} = useAuth();
+  const route = useRoute();
+  const {businessName, businessType, email, gstNumber, phone} = route.params;
   const [image, setImage] = useState(null);
-  const [businessName, setBusinessName] = useState('');
-  const [gstNumber, setGstNumber] = useState('');
-  const [address, setAddress] = useState('');
+  const [street, setStreet] = useState('Jadav pur');
+  const [city, setCity] = useState('Kolkata');
+  const [state, setState] = useState('');
+  const [pincode, setPincode] = useState('700068');
+  const [addresses, setAddresses] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const requestPermission = async () => {
     if (Platform.OS === 'android') {
@@ -64,6 +68,91 @@ const BusinessSetup2 = () => {
     }).then(image => {
       setImage(image);
     });
+  };
+
+  const fetchAddress = async () => {
+    try {
+      const data = await thirdPartyApiService.getStateByPincode(pincode);
+      setState(data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (pincode.length === 6) {
+      fetchAddress();
+    }
+  }, [pincode]);
+
+  const handleProceed = async () => {
+    if (!image) {
+      ToastService.show({
+        message: 'Upload Business Logo',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (pincode.length !== 6) {
+      ToastService.show({
+        message: 'Enter Valid Pincode',
+        type: 'error',
+        position: 'top',
+      });
+    } else if (street.length === 0) {
+      ToastService.show({
+        message: 'Enter Street Address',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (city.length === 0) {
+      ToastService.show({
+        message: 'Enter City',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await businessService.createBusiness({
+        name: businessName,
+        businessCategoryId: businessType,
+        city: city,
+        email: email,
+        gstNumber: gstNumber,
+        logo: {
+          uri: image.path,
+          type: image.mime,
+          name: image.filename,
+        },
+        phone: phone,
+        pincode: pincode,
+        state: state,
+        street: street,
+        token: token,
+      });
+      if (data?.status) {
+        const businessData = await businessService.getBusiness(token);
+        const newUser = {...user, businessId: businessData?.data?.id};
+        await setUserData(newUser);
+        await setBusinessData(businessData?.data);
+        ToastService.show({
+          message: data.message,
+          type: 'success',
+          position: 'top',
+        });
+      } else {
+        ToastService.show({
+          message: data.message,
+          type: 'error',
+          position: 'top',
+        });
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,23 +189,49 @@ const BusinessSetup2 = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.inputContainer}>
-          <SimpleTextInput placeholder="Street" maxLength={50} />
-
-          <SimpleTextInput placeholder="City" maxLength={50} />
-
-          <SimpleTextInput placeholder="State" maxLength={50} />
-
           <SimpleTextInput
             placeholder="Pincode"
             keyboardType="numeric"
             maxLength={6}
+            value={pincode}
+            setValue={setPincode}
+            hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
+          />
+
+          <SimpleTextInput
+            placeholder="Street"
+            maxLength={50}
+            value={street}
+            setValue={setStreet}
+            hasError={street.length > 0 && street.length < 3}
+          />
+
+          <SimpleTextInput
+            placeholder="City"
+            maxLength={50}
+            value={city}
+            setValue={setCity}
+            hasError={city.length > 0 && city.length < 3}
+          />
+
+          <SimpleTextInput
+            placeholder="State"
+            maxLength={50}
+            disabled={true}
+            value={state}
+            setValue={setState}
           />
         </View>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>PROCEED</Text>
+        <TouchableOpacity style={styles.button} onPress={handleProceed}>
+          {isLoading ? (
+            <ActivityIndicator size={'small'} color={'#fff'} />
+          ) : (
+            <Text style={styles.buttonText}>PROCEED</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
+      <ToastContainer />
     </AuthLayout>
   );
 };
