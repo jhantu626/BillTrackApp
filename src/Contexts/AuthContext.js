@@ -93,7 +93,9 @@ export const useAuthToken = () => {
 
 export const useUser = attribute => {
   const {user} = useAuth();
-  return user[attribute];
+  if(!user) return undefined;
+  if (!attribute) return user;
+  return user?.[attribute];
 };
 
 export const useBusiness = key => {

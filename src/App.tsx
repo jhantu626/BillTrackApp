@@ -136,7 +136,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -235,7 +235,6 @@ const AppNav = () => {
   if (!authToken) {
     return <AuthStack />;
   }
-
   return <AppStack />;
 };
 const App = () => {
