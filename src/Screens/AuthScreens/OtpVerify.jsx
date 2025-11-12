@@ -17,10 +17,10 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {font, gap, icon, margin, widthResponsive} from '../../utils/responsive';
 import {authService} from '../../Services/AuthService';
 import {useAuth} from '../../Contexts/AuthContext';
+import {businessService} from '../../Services/BusinessService';
 
 const OtpVerify = () => {
-  const {login, authToken} = useAuth();
-  console.info(authToken);
+  const {login, setBusinessData} = useAuth();
   const navigation = useNavigation();
   const route = useRoute();
   const [otp, setOtp] = useState(['', '', '', '']);
@@ -42,8 +42,11 @@ const OtpVerify = () => {
       if (newOtp.length !== 4) return;
       const data = await authService.validateOtp(mobile, newOtp);
       if (data?.status) {
-        console.info(JSON.stringify(data));
         await login(data?.token, data?.data);
+        if (data?.data?.businessId) {
+          const businessData = await businessService.getBusiness(data?.token);
+          setBusinessData(businessData?.data);
+        }
       } else {
         setOtp(['', '', '', '']);
         otpRef.current[0].focus();

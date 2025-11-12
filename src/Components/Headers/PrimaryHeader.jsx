@@ -56,9 +56,6 @@ const styles = StyleSheet.create({
   image: {
     width: icon(48),
     height: icon(48),
-    borderWidth: 1,
-    borderRadius: icon(48) / 2,
-    borderColor: colors.primary
   },
   text: {
     fontSize: font(11),

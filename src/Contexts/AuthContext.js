@@ -109,20 +109,18 @@ export const useBusiness = key => {
 };
 
 export const useUpdateUserFields = () => {
-  const { user, setUserData } = useAuth();
+  const {user, setUserData} = useAuth();
 
   const updateUserFields = async (fields = {}) => {
     if (!fields) return;
     try {
-      const updatedUser = { ...(user || {}), ...fields };
+      const updatedUser = {...(user || {}), ...fields};
       await setUserData(updatedUser);
     } catch (error) {
       console.log(error);
     }
   };
-
   return updateUserFields;
 };
-
 
 export default AuthProvider;

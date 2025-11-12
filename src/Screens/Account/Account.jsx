@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -47,6 +48,7 @@ const Account = memo(() => {
   const token = useAuthToken();
   const updateUserFields = useUpdateUserFields();
 
+  console.log(logoUrl);
   //STATE VARIABLES
   const [name, setName] = useState(userName);
   const [email, setEmail] = useState(userEmail);
@@ -107,11 +109,12 @@ const Account = memo(() => {
       });
       console.log(data);
       if (data.status) {
-        ToastService.show({
-          message: data.message,
-          type: 'success',
-          position: 'top',
-        });
+        // ToastService.show({
+        //   message: data.message,
+        //   type: 'success',
+        //   position: 'top',
+        // });
+        ToastAndroid.show(data.message, ToastAndroid.SHORT, ToastAndroid.TOP);
         updateUserFields({name: name, email: email});
         setModalVisible(false);
       } else {
@@ -236,6 +239,8 @@ const Account = memo(() => {
           <Text style={styles.deleteText}>Delete Account</Text>
         </View>
       </ScrollView>
+      <ToastContainer />
+
       <Modal
         visible={isModalVisible}
         animationType="slide"
