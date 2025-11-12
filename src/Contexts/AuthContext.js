@@ -93,7 +93,7 @@ export const useAuthToken = () => {
 
 export const useUser = attribute => {
   const {user} = useAuth();
-  if(!user) return undefined;
+  if (!user) return null;
   if (!attribute) return user;
   return user?.[attribute];
 };
@@ -101,11 +101,28 @@ export const useUser = attribute => {
 export const useBusiness = key => {
   const {business} = useAuth();
 
-  if (!business) return undefined;
+  if (!business) return null;
 
   if (!key) return business;
 
   return business?.[key];
 };
+
+export const useUpdateUserFields = () => {
+  const { user, setUserData } = useAuth();
+
+  const updateUserFields = async (fields = {}) => {
+    if (!fields) return;
+    try {
+      const updatedUser = { ...(user || {}), ...fields };
+      await setUserData(updatedUser);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return updateUserFields;
+};
+
 
 export default AuthProvider;

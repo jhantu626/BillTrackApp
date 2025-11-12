@@ -1,14 +1,10 @@
 // components/ToastContainer.tsx
-import React, { useRef, useCallback, useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import CustomToast, { ToastType, ToastPosition } from './CustomToast';
 import ToastService, { ToastOptions } from './ToastService';
 
-interface ToastState extends ToastOptions {
-  visible: boolean;
-}
-
 const ToastContainer: React.FC = () => {
-  const toastRef = useRef<ToastState>({
+  const [toast, setToast] = useState<ToastOptions & { visible: boolean }>({
     visible: false,
     message: '',
     type: 'info',
@@ -16,27 +12,15 @@ const ToastContainer: React.FC = () => {
     duration: 2000,
   });
 
-  const [renderKey, setRenderKey] = useState(0);
-
-  const hide = useCallback(() => {
-    toastRef.current.visible = false;
-    setRenderKey(k => k + 1);
-  }, []);
-
-  const show = useCallback((options: ToastOptions) => {
-    toastRef.current = { ...options, visible: true };
-    setRenderKey(k => k + 1);
-  }, []);
+  const hide = useCallback(() => setToast(t => ({ ...t, visible: false })), []);
+  const show = useCallback((options: ToastOptions) => setToast({ ...options, visible: true }), []);
 
   useEffect(() => {
     ToastService.setRef({ show, hide });
   }, [show, hide]);
 
-  const toast = toastRef.current;
-
   return (
     <CustomToast
-      key={renderKey}
       visible={toast.visible}
       message={toast.message}
       type={toast.type as ToastType}

@@ -4,26 +4,30 @@ import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import {font, padding} from './../../utils/responsive';
+import {useBusiness, useUser} from '../../Contexts/AuthContext';
+import {API_URL} from '../../utils/config';
 
-const ProfileCard = memo(() => {
-  return (
-    <View style={styles.container}>
-      <View style={styles.leftContainer}>
-        <Image
-          source={require('./../../../asset/images/profile.png')}
-          style={styles.image}
-        />
-        <View style={styles.leftRightContainer}>
-          <Text style={styles.nameText}>Pritam Bala</Text>
-          <Text style={styles.numberText}>9775746484</Text>
+const ProfileCard = memo(
+  ({logoUrl, userName, userPhone, onpressEditBtn = () => {}}) => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.leftContainer}>
+          <Image
+            source={{uri: `${API_URL}files/logo/${logoUrl}`}}
+            style={styles.image}
+          />
+          <View style={styles.leftRightContainer}>
+            <Text style={styles.nameText}>{userName}</Text>
+            <Text style={styles.numberText}>+91 {userPhone}</Text>
+          </View>
         </View>
+        <TouchableOpacity style={styles.editBtn} onPress={onpressEditBtn}>
+          <AntDesign name="edit" size={20} color={colors.primary} />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.editBtn}>
-        <AntDesign name="edit" size={20} color={colors.primary} />
-      </TouchableOpacity>
-    </View>
-  );
-});
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {

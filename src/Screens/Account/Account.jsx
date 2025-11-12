@@ -1,5 +1,7 @@
 import {
+  ActivityIndicator,
   Image,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -8,19 +10,53 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo} from 'react';
+import React, {memo, useState} from 'react';
 import {Layout} from '../Layout';
-import {ProfileCard, SecondaryHeader, SettingItemsCard} from '../../Components';
+import {
+  ProfileCard,
+  SecondaryHeader,
+  SettingItemsCard,
+  SimpleTextInput,
+  ToastContainer,
+} from '../../Components';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
-import {font, gap, icon, padding} from '../../utils/responsive';
+import {font, gap, icon, margin, padding} from '../../utils/responsive';
 import Lucide from '@react-native-vector-icons/lucide';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import {useNavigation} from '@react-navigation/native';
-import {useAuth} from '../../Contexts/AuthContext';
+import {
+  updateUserFields,
+  useAuth,
+  useAuthToken,
+  useBusiness,
+  useUpdateUserFields,
+  useUser,
+} from '../../Contexts/AuthContext';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {validateEmail, validateName} from '../../utils/validator';
+import ToastService from '../../Components/Toasts/ToastService';
+import {userService} from '../../Services/UserService';
 
 const Account = memo(() => {
+  const userName = useUser('name');
+  const userPhone = useUser('phone');
+  const userEmail = useUser('email') || '';
+  const logoUrl = useBusiness('logoUrl');
+  const token = useAuthToken();
+  const updateUserFields = useUpdateUserFields();
+
+  //STATE VARIABLES
+  const [name, setName] = useState(userName);
+  const [email, setEmail] = useState(userEmail);
+
+  // LOADING STATE
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+
+  // MODAL STATES
+  const [isModalVisible, setModalVisible] = useState(false);
+
   const navigation = useNavigation();
   const {logout} = useAuth();
 
@@ -28,6 +64,73 @@ const Account = memo(() => {
     navigation.navigate(screen, {
       data,
     });
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const updateDetails = async () => {
+    if (name === userName && userEmail === email) {
+      console.log('No changes found');
+      ToastService.show({
+        message: 'No changes found',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+    if (!name || !validateName(name)) {
+      ToastService.show({
+        message: 'Enter a valid name',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+
+    if (email && !validateEmail(email)) {
+      ToastService.show({
+        message: 'Enter a valid email',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+
+    try {
+      setIsUpdateLoading(true);
+      const data = await userService.updateUser({
+        name: name,
+        email: email,
+        token: token,
+      });
+      console.log(data);
+      if (data.status) {
+        ToastService.show({
+          message: data.message,
+          type: 'success',
+          position: 'top',
+        });
+        updateUserFields({name: name, email: email});
+        setModalVisible(false);
+      } else {
+        ToastService.show({
+          message: data.message,
+          type: 'error',
+          position: 'top',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      ToastService.show({
+        message: 'Something went wrong',
+        type: 'error',
+        position: 'top',
+      });
+    } finally {
+      setIsUpdateLoading(false);
+    }
   };
 
   return (
@@ -39,7 +142,12 @@ const Account = memo(() => {
           backgroundColor: '#fff',
           paddingBottom: 50,
         }}>
-        <ProfileCard />
+        <ProfileCard
+          userName={userName}
+          userPhone={userPhone}
+          logoUrl={logoUrl}
+          onpressEditBtn={() => setModalVisible(true)}
+        />
         <View style={styles.container}>
           <Pressable
             style={styles.card}
@@ -128,6 +236,45 @@ const Account = memo(() => {
           <Text style={styles.deleteText}>Delete Account</Text>
         </View>
       </ScrollView>
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        backdropColor={'#0000005'}>
+        <Pressable onPress={handleCloseModal} style={styles.modalContainer}>
+          <Pressable
+            onPress={event => event.stopPropagation()}
+            style={styles.modalContentContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalHeaderTitleText}>
+                Update Profile Details
+              </Text>
+              <TouchableOpacity onPress={handleCloseModal}>
+                <Ionicons name="close" size={icon(20)} color="#00000090" />
+              </TouchableOpacity>
+            </View>
+            <SimpleTextInput
+              placeholder="Name"
+              value={name}
+              setValue={setName}
+              hasError={name.length > 0 && !validateName(name)}
+            />
+            <SimpleTextInput
+              placeholder="Email(optional)"
+              value={email}
+              setValue={setEmail}
+              hasError={email && !validateEmail(email)}
+            />
+            <Pressable style={styles.updateBtn} onPress={updateDetails}>
+              {isUpdateLoading ? (
+                <ActivityIndicator color={'#fff'} size={'small'} />
+              ) : (
+                <Text style={styles.updateBtnText}>UPDATE</Text>
+              )}
+            </Pressable>
+          </Pressable>
+        </Pressable>
+        <ToastContainer />
+      </Modal>
     </Layout>
   );
 });
@@ -183,6 +330,39 @@ const styles = StyleSheet.create({
     fontSize: font(14),
     fontFamily: fonts.popMedium,
     color: colors.error,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: padding(16),
+  },
+  modalContentContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: padding(16),
+    gap: gap(15),
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalHeaderTitleText: {
+    fontSize: font(12),
+    fontFamily: fonts.inRegular,
+  },
+  updateBtn: {
+    backgroundColor: colors.primary,
+    paddingVertical: padding(10),
+    marginVertical: margin(10),
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  updateBtnText: {
+    fontSize: font(12),
+    fontFamily: fonts.inMedium,
+    color: '#fff',
   },
 });
 
