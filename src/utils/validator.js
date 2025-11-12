@@ -242,6 +242,11 @@ function greeting() {
   }
 }
 
+function validatePrice(price) {
+  const num = Number(price);
+  return !isNaN(num) && num >= 0;
+}
+
 export {
   validateName,
   validateIndianPhone,
@@ -251,4 +256,5 @@ export {
   validateIndianGST,
   validateAddress,
   greeting,
+  validatePrice,
 };

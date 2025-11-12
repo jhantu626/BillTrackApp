@@ -1,6 +1,8 @@
 import {
+  Linking,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -12,37 +14,38 @@ import DottedDivider from '../Dividers/DottedDivider';
 import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
-import { gap, padding,font, icon } from '../../utils/responsive';
+import {gap, padding, font, icon} from '../../utils/responsive';
 
 // const {width} = Dimensions.get('screen');
 
 const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
+  console.info(invoice);
+
+  const sentWhatapp = async () => {
+    const link = 'whatsapp://send?text=test&phone=919775746484';
+    const supported = await Linking.canOpenURL(link);
+    if (supported) {
+      await Linking.openURL(link);
+    } else {
+      ToastAndroid.show('Please install whatsapp', ToastAndroid.SHORT);
+    }
+  };
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.left}>
-          <Text style={[styles.tsText]}>
-            {invoice?.ts}
-          </Text>
-          <Text style={[styles.numberText]}>
-            {invoice?.invoiceNumber}
-          </Text>
+          <Text style={[styles.tsText]}>{invoice?.ts}</Text>
+          <Text style={[styles.numberText]}>{invoice?.invoiceNumber}</Text>
         </View>
-        <Text style={[styles.dateText]}>
-          {invoice?.date}
-        </Text>
+        <Text style={[styles.dateText]}>{invoice?.date}</Text>
         <View style={styles.right}>
           <View style={styles.paidContainer}>
-            <Text style={[styles.paidText, ]}>
-              {invoice?.status}
-            </Text>
+            <Text style={[styles.paidText]}>{invoice?.status}</Text>
           </View>
-          <Text style={[styles.priceText]}>
-            ₹ {invoice?.amount}
-          </Text>
+          <Text style={[styles.priceText]}>₹ {invoice?.amount}</Text>
         </View>
       </View>
       <DottedDivider />
@@ -53,36 +56,21 @@ const InvoiceCard = memo(({invoice}) => {
             size={icon(18)}
             color={'#007aff'}
           />
-          <Text
-            style={[
-              {color: '#007aff'},
-              styles.subBottomContainerText,
-            ]}>
+          <Text style={[{color: '#007aff'}, styles.subBottomContainerText]}>
             SMS
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.subBottomContainer}>
-          <Ionicons
-            name="logo-whatsapp"
-            size={icon(18)}
-            color={'#04bd01'}
-          />
-          <Text
-            style={[
-              {color: '#04bd01'},
-              styles.subBottomContainerText,
-            ]}>
+        <TouchableOpacity
+          style={styles.subBottomContainer}
+          onPress={sentWhatapp}>
+          <Ionicons name="logo-whatsapp" size={icon(18)} color={'#04bd01'} />
+          <Text style={[{color: '#04bd01'}, styles.subBottomContainerText]}>
             Whatsapp
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.subBottomContainer}>
           <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
-          <Text
-            style={[
-              {color: '#ff393c'},
-              styles.subBottomContainerText,
-             
-            ]}>
+          <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
             Print
           </Text>
         </TouchableOpacity>
@@ -92,12 +80,7 @@ const InvoiceCard = memo(({invoice}) => {
             navigation.navigate('InvoiceDetails');
           }}>
           <Lucide name="eye" size={icon(18)} color={'#00000090'} />
-          <Text
-            style={[
-              {color: '#00000090'},
-              styles.subBottomContainerText,
-             
-            ]}>
+          <Text style={[{color: '#00000090'}, styles.subBottomContainerText]}>
             Details
           </Text>
         </TouchableOpacity>

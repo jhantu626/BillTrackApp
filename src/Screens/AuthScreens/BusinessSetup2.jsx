@@ -25,6 +25,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {RotateOutDownLeft} from 'react-native-reanimated';
 import {businessService} from '../../Services/BusinessService';
 import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
+import { requestPermission } from '../../utils/helper';
 
 const BusinessSetup2 = () => {
   const navigation = useNavigation();
@@ -37,23 +38,10 @@ const BusinessSetup2 = () => {
   const [city, setCity] = useState('Kolkata');
   const [state, setState] = useState('');
   const [pincode, setPincode] = useState('700068');
-  const [addresses, setAddresses] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const requestPermission = async () => {
-    if (Platform.OS === 'android') {
-      const permission =
-        Platform.Version >= 33
-          ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-          : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-      const granted = await PermissionsAndroid.request(permission);
-
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    }
-
-    return true;
-  };
+  
 
   const handleImagePickcker = async () => {
     const hasPermission = await requestPermission();

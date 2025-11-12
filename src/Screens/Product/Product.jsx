@@ -6,23 +6,35 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BottomSheetInput,
   ProductCard,
   ProductCardRow,
+  ProductUnitModal,
   SecondaryHeader,
   SimpleTextInput,
 } from '../../Components';
-import {font, gap, icon, isTabletDevice, margin, padding} from '../../utils/responsive';
+import {
+  font,
+  gap,
+  icon,
+  isTabletDevice,
+  margin,
+  padding,
+} from '../../utils/responsive';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import {requestPermission} from '../../utils/helper';
+import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -39,11 +51,28 @@ const imageHeight = imageWidth * 2;
 const Product = () => {
   const [showModal, setShowModal] = useState(false);
   const [isColumn, setIsColumn] = useState(true);
-
+  const [productImage, setProductImage] = useState(null);
   const [productName, setProductName] = useState('');
+  const [productUnit, setProductUnit] = useState('');
+  const [productPrice, setProductPrice] = useState('');
 
-  const handleOpenCloseModal = () => {
-    setShowModal(prev => !prev);
+  // modal states
+  const [unitModalVisible, setUnitModalVisible] = useState(false);
+
+  const setInitialValueOfModal = () => {
+    setProductImage(null);
+    setProductName('');
+    setProductUnit('');
+    setProductPrice('');
+  };
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setInitialValueOfModal();
   };
 
   const renderItem = useCallback(
@@ -57,14 +86,40 @@ const Product = () => {
             price: 1000,
             image: require('./../../../asset/images/emptyimg.jpg'),
           }}
-          handleLongPress={handleOpenCloseModal}
-          editFunction={handleOpenCloseModal}
+          handleLongPress={handleOpenModal}
+          editFunction={handleOpenModal}
         />
       ) : (
-        <ProductCardRow onpressCard={handleOpenCloseModal} />
+        <ProductCardRow onpressCard={handleOpenModal} />
       ),
-    [isColumn, handleOpenCloseModal],
+    [isColumn],
   );
+
+  const handlePickImag = async () => {
+    const hasPermission = await requestPermission();
+    if (!hasPermission) {
+      ToastAndroid.show('Permission denied', ToastAndroid.SHORT);
+      return;
+    }
+
+    ImageCropPicker.openPicker({
+      width: 1200,
+      height: 900,
+      compressImageQuality: 0.8,
+      avoidEmptySpaceAroundImage: true,
+      cropping: true,
+    })
+      .then(image => {
+        setProductImage(image);
+      })
+      .catch(err => {
+        ToastAndroid.show('Image not selected', ToastAndroid.SHORT);
+      });
+  };
+
+  useEffect(() => {
+    console.log(productImage);
+  }, [productImage]);
 
   return (
     <Layout>
@@ -76,7 +131,7 @@ const Product = () => {
         }}
       />
       <FlatList
-      key={isColumn?'d':'re'}
+        key={isColumn ? 'd' : 're'}
         style={{flex: 1}}
         contentContainerStyle={styles.container}
         data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
@@ -85,7 +140,7 @@ const Product = () => {
         numColumns={isColumn ? NUMBER_OF_COLUMNS : 1}
         columnWrapperStyle={isColumn && styles.columnWrapperStyle}
       />
-      <TouchableOpacity style={styles.addBtn} onPress={handleOpenCloseModal}>
+      <TouchableOpacity style={styles.addBtn} onPress={handleOpenModal}>
         <Text style={styles.addBtnText}>Add New Item</Text>
         <Lucide name="plus" size={10} color={'#fff'} />
       </TouchableOpacity>
@@ -93,17 +148,23 @@ const Product = () => {
         visible={showModal}
         animationType="slide"
         backdropColor={'#00000005'}
-        onRequestClose={handleOpenCloseModal}>
-        <Pressable onPress={handleOpenCloseModal} style={styles.modelContainer}>
+        onRequestClose={handleCloseModal}>
+        <Pressable onPress={handleCloseModal} style={styles.modelContainer}>
           <Pressable onPress={() => {}} style={styles.modelSubContainer}>
             <View style={styles.imageCOntainer}>
               <Image
                 style={styles.image}
-                source={require('./../../../asset/images/productimage.jpg')}
+                source={
+                  productImage
+                    ? {uri: productImage?.path}
+                    : require('./../../../asset/images/emptyimg.jpg')
+                }
                 resizeMode="cover"
               />
               <View style={styles.uploadBtnContainer}>
-                <TouchableOpacity style={styles.uploadBtn}>
+                <TouchableOpacity
+                  style={styles.uploadBtn}
+                  onPress={handlePickImag}>
                   <Octicons name="upload" size={icon(14)} color={'#fff'} />
                   <Text style={styles.uploadBtnText}>Upload image</Text>
                 </TouchableOpacity>
@@ -116,16 +177,28 @@ const Product = () => {
                   placeholder={''}
                   value={productName}
                   setValue={setProductName}
+                  hasError={productName && !validateName(productName)}
                 />
               </View>
               <View style={[styles.inputDoubleContianer]}>
                 <View style={[styles.inputSubContainer, {width: '45%'}]}>
                   <Text style={styles.labelText}>Unit</Text>
-                  <BottomSheetInput label="" />
+                  <BottomSheetInput
+                    label={productUnit}
+                    onPress={() => {
+                      setUnitModalVisible(true);
+                    }}
+                  />
                 </View>
                 <View style={[styles.inputSubContainer, {width: '45%'}]}>
                   <Text style={styles.labelText}>Price</Text>
-                  <SimpleTextInput placeholder={''} />
+                  <SimpleTextInput
+                    placeholder={''}
+                    value={productPrice}
+                    setValue={setProductPrice}
+                    keyboardType="numeric"
+                    hasError={productPrice && !validatePrice(productPrice)}
+                  />
                 </View>
               </View>
             </View>
@@ -141,6 +214,12 @@ const Product = () => {
           </Pressable>
         </Pressable>
       </Modal>
+      <ProductUnitModal
+        visible={unitModalVisible}
+        value={productUnit}
+        setValue={setProductUnit}
+        handleCancel={() => setUnitModalVisible(false)}
+      />
     </Layout>
   );
 };
@@ -188,7 +267,7 @@ const styles = StyleSheet.create({
     width: screenWidth - HORIZONTAL_PADDING * 2,
   },
   imageCOntainer: {
-    width: isTabletDevice?'40%':'100%',
+    width: isTabletDevice ? '40%' : '100%',
     aspectRatio: 16 / 9,
   },
   image: {
@@ -209,15 +288,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: gap(5),
-    paddingHorizontal: padding(isTabletDevice?18:24),
-    paddingVertical: padding(isTabletDevice?8:10),
+    paddingHorizontal: padding(isTabletDevice ? 18 : 24),
+    paddingVertical: padding(isTabletDevice ? 8 : 10),
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 5,
     backgroundColor: 'rgba(255,255,255,0.2)',
   },
   uploadBtnText: {
-    fontSize: font(isTabletDevice?12:14),
+    fontSize: font(isTabletDevice ? 12 : 14),
     fontFamily: fonts.inBold,
     color: '#fff',
   },

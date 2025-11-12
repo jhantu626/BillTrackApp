@@ -27,6 +27,9 @@ import HomeChartComponent from './Charts/HomeChartComponent';
 // TOAST
 import ToastContainer from './Toasts/ToastContainer';
 
+// MODALS
+import ProductUnitModal from './modals/ProductUnitModal';
+
 export {
   SimpleTextInput,
   BottomSheetInput,
@@ -46,4 +49,5 @@ export {
   ProductCardRow,
   NavigationCard,
   ToastContainer,
+  ProductUnitModal
 };
