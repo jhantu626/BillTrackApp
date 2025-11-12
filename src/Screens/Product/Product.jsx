@@ -19,6 +19,7 @@ import {
   ProductUnitModal,
   SecondaryHeader,
   SimpleTextInput,
+  ToastContainer,
 } from '../../Components';
 import {
   font,
@@ -35,6 +36,7 @@ import Octicons from '@react-native-vector-icons/octicons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {requestPermission} from '../../utils/helper';
 import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
+import ToastService from '../../Components/Toasts/ToastService';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -117,9 +119,39 @@ const Product = () => {
       });
   };
 
-  useEffect(() => {
-    console.log(productImage);
-  }, [productImage]);
+  const handleSave = () => {
+    if (!productImage) {
+      ToastService.show({
+        message: 'Please select an image',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (!productName || !validateName(productName)) {
+      ToastService.show({
+        message: 'Please enter a valid name',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (!productUnit) {
+      ToastService.show({
+        message: 'Please select a unit',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (!productPrice || !validatePrice(productPrice)) {
+      ToastService.show({
+        message: 'Please enter a valid price',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+
+    handleCloseModal();
+  };
 
   return (
     <Layout>
@@ -207,12 +239,13 @@ const Product = () => {
                 style={[styles.saveBtn, {backgroundColor: colors.error}]}>
                 <Text style={styles.saveBtnText}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn}>
+              <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
                 <Text style={styles.saveBtnText}>Save</Text>
               </TouchableOpacity>
             </View>
           </Pressable>
         </Pressable>
+        <ToastContainer />
       </Modal>
       <ProductUnitModal
         visible={unitModalVisible}

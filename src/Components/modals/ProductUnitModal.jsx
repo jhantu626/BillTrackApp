@@ -12,6 +12,7 @@ import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
 import DottedDivider from '../Dividers/DottedDivider';
+import ToastContainer from '../Toasts/ToastContainer';
 
 const MAIN_UNITS = [
   {label: 'KG', value: 'kg'},
