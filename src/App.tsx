@@ -15,6 +15,7 @@ import {
   Home,
   Invoice,
   InvoiceDetails,
+  ItemMaster,
   Login,
   Onboarding,
   OtpVerify,
@@ -28,7 +29,11 @@ import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
 import {font, icon, margin, padding} from './utils/responsive';
-import AuthProvider, {useAuth, useBusiness, useUser} from './Contexts/AuthContext';
+import AuthProvider, {
+  useAuth,
+  useBusiness,
+  useUser,
+} from './Contexts/AuthContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -107,7 +112,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="ItemMaster"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -117,6 +122,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="HelpAndSupport" component={HelpAndSupport} />
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="SalesAndReport" component={SalesReport} />
+      <Stack.Screen name="ItemMaster" component={ItemMaster} />
     </Stack.Navigator>
   );
 });
@@ -136,7 +142,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Product"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

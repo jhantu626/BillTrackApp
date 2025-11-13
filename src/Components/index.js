@@ -20,6 +20,7 @@ import ProductCard from './Cards/ProductCard';
 import ProductCardRow from './Cards/ProductCardRow';
 import NavigationCard from './Cards/NavigationCard';
 
+
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
 import HomeChartComponent from './Charts/HomeChartComponent';
