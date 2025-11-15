@@ -44,6 +44,36 @@ class ProductService {
     }
   }
 
+  // CREATE PRODUCT
+  async createProduct({token,name, price, hsnId, unit, productImage = null}) {
+    try {
+      const uri = this.baseUrl;
+      const formData = new FormData();
+
+      formData.append('name', name);
+      formData.append('hsnId', hsnId);
+      formData.append('unitType', unit);
+      formData.append('price', price);
+
+      if (productImage) {
+        formData.append('logo', productImage);
+      }
+      const response = await axios.post(uri, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log('response: ', response);
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      const data = await error.response.data;
+      return data;
+    }
+  }
+
   // GET ALL PRODUCTS
   async getAllProducts(token) {
     try {
@@ -51,6 +81,7 @@ class ProductService {
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
         },
       });
       const data = await response.data;

@@ -44,6 +44,7 @@ import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
 import {useAuthToken} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
+import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -59,6 +60,7 @@ const imageHeight = imageWidth * 2;
 
 const Product = () => {
   const token = useAuthToken();
+  console.log(token);
   const [showModal, setShowModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [isNewProduct, setIsNewProduct] = useState(false);
@@ -166,7 +168,6 @@ const Product = () => {
   };
 
   const handleSave = async () => {
-    console.log('handleSave');
     const showError = message =>
       ToastService.show({message, type: 'error', position: 'top'});
 
@@ -184,8 +185,46 @@ const Product = () => {
     let isImageInserted = false;
 
     if (productImage && typeof productImage !== 'string') {
-      console.log('User selected image');
       isImageInserted = true;
+    }
+
+    if (isNewProduct) {
+      if (!hsnCode) {
+        return showError('Please select HSN Code');
+      }
+      try {
+        setIsSaveLoading(true);
+        const payload = {
+          hsnId: hsnCode?.id,
+          name: productName,
+          price: productPrice,
+          unit: productUnit,
+          token: token,
+        };
+        if (isImageInserted) {
+          payload.productImage = {
+            uri: productImage.path,
+            type: productImage.mime,
+            name: productImage.filename,
+          };
+        }
+        const data = await productService.createProduct({...payload});
+        console.log(data);
+        if (data?.status) {
+          ToastService.show({
+            message: 'Product created successfully',
+            type: 'success',
+            position: 'top',
+          });
+          setTimeout(() => {
+            handleCloseModal();
+          }, 500);
+        }
+      } catch (error) {
+      } finally {
+        setIsSaveLoading(false);
+      }
+      return;
     }
 
     try {
