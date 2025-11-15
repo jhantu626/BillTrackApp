@@ -29,6 +29,7 @@ import ToastContainer from './Toasts/ToastContainer';
 
 // MODALS
 import ProductUnitModal from './modals/ProductUnitModal';
+import GstSelectModal from './modals/GstSelectModal';
 
 // SHIMMERS
 import ItemCardShimmer from './Shimmers/ItemCardShimmer';
@@ -56,4 +57,5 @@ export {
   ProductUnitModal,
   ItemCardShimmer,
   ShimmerProductCard,
+  GstSelectModal
 };

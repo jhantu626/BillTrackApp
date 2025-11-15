@@ -1,19 +1,22 @@
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   Image,
   Modal,
   Pressable,
+  RefreshControl,
   StyleSheet,
   Text,
   ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Activity, useCallback, useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BottomSheetInput,
+  GstSelectModal,
   ProductCard,
   ProductCardRow,
   ProductUnitModal,
@@ -40,6 +43,7 @@ import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
 import {useAuthToken} from '../../Contexts/AuthContext';
+import {API_URL} from '../../utils/config';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -64,12 +68,16 @@ const Product = () => {
   const [productName, setProductName] = useState('');
   const [productUnit, setProductUnit] = useState('');
   const [productPrice, setProductPrice] = useState('');
+  const [hsnCode, setHsnCode] = useState('');
 
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // modal states
   const [unitModalVisible, setUnitModalVisible] = useState(false);
+  const [hsnModalVisible, setHsnModalVisible] = useState(false);
 
   const setInitialValueOfModal = () => {
     setProductImage(null);
@@ -106,7 +114,7 @@ const Product = () => {
             id: index,
             title: item.name,
             price: item.price,
-            image: require('./../../../asset/images/emptyimg.jpg'),
+            image: item?.logo,
           }}
           handleLongPress={() => handleEdit(item)}
           editFunction={() => handleEdit(item)}
@@ -181,6 +189,7 @@ const Product = () => {
     }
 
     try {
+      setIsSaveLoading(true);
       const data = await productService.updateproduct(token, {
         name: productName,
         id: productId,
@@ -194,13 +203,38 @@ const Product = () => {
             }
           : null,
       });
+      if (data?.status) {
+        ToastService.show({
+          message: 'Product updated successfully',
+          type: 'success',
+          position: 'top',
+        });
+        setTimeout(() => {
+          handleCloseModal();
+        }, 500);
+      } else {
+        ToastService.show({
+          message: 'Something went wrong',
+          type: 'error',
+          position: 'top',
+        });
+      }
       console.log(data);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setIsSaveLoading(false);
+    }
   };
 
   useEffect(() => {
     getProducts();
   }, []);
+
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await getProducts();
+    setIsRefreshing(false);
+  };
 
   return (
     <Layout>
@@ -220,6 +254,14 @@ const Product = () => {
         renderItem={isLoading ? renderLoadingItem : renderItem}
         numColumns={isColumn ? NUMBER_OF_COLUMNS : 1}
         columnWrapperStyle={isColumn && styles.columnWrapperStyle}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary, colors.sucess, colors.error]}
+            tintColor={colors.sucess}
+          />
+        }
       />
       <TouchableOpacity
         style={styles.addBtn}
@@ -243,7 +285,7 @@ const Product = () => {
                 source={
                   productImage
                     ? typeof productImage === 'string'
-                      ? {uri: productImage}
+                      ? {uri: `${API_URL}files/product/${productImage}`}
                       : {uri: productImage?.path}
                     : require('./../../../asset/images/emptyimg.jpg')
                 }
@@ -289,16 +331,38 @@ const Product = () => {
                   />
                 </View>
               </View>
+              {isNewProduct && (
+                <View style={styles.inputSubContainer}>
+                  <Text style={styles.labelText}>HSN Code</Text>
+                  <BottomSheetInput
+                    label={
+                      hsnCode
+                        ? `${hsnCode.hsnCode} - ${hsnCode.description}`
+                        : 'Select HSN'
+                    }
+                    onPress={() => {
+                      setHsnModalVisible(true);
+                    }}
+                  />
+                </View>
+              )}
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.saveBtn, {backgroundColor: colors.error}]}>
                 <Text style={styles.saveBtnText}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                <Text style={styles.saveBtnText}>
-                  {isNewProduct ? 'ADD' : 'UPDATE'}
-                </Text>
+              <TouchableOpacity
+                style={styles.saveBtn}
+                onPress={handleSave}
+                disabled={isSaveLoading}>
+                {isSaveLoading ? (
+                  <ActivityIndicator color={'#fff'} size={'small'} />
+                ) : (
+                  <Text style={styles.saveBtnText}>
+                    {isNewProduct ? 'ADD' : 'UPDATE'}
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </Pressable>
@@ -310,6 +374,12 @@ const Product = () => {
         value={productUnit}
         setValue={setProductUnit}
         handleCancel={() => setUnitModalVisible(false)}
+      />
+      <GstSelectModal
+        visible={hsnModalVisible}
+        handleCancel={() => setHsnModalVisible(false)}
+        value={hsnCode}
+        setValue={setHsnCode}
       />
     </Layout>
   );

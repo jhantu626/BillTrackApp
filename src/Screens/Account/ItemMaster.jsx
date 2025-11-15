@@ -24,7 +24,6 @@ import {useNavigation} from '@react-navigation/native';
 const ItemMaster = () => {
   const navigation = useNavigation();
   const token = useAuthToken();
-  console.log(token);
 
   const [products, setProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -36,9 +35,7 @@ const ItemMaster = () => {
       setIsLoading(true);
       const data = await productService.getProductsSuggestions(token);
       setProducts(data?.data || []);
-      console.log("product suggestions: ", data);
     } catch (error) {
-      console.log('fetchItems error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -78,13 +75,11 @@ const ItemMaster = () => {
 
     const finalPayload = selectedItems.map(item => ({
       name: item?.name,
-      productCategoryId: item?.productCategoryId,
       hsnId: item?.hsnId,
       unitType: item?.unitType,
       description: item?.description,
       logo: item?.logo,
     }));
-    console.log('final payload', finalPayload);
     try {
       const data = await productService.createMultipleProduct(
         token,
@@ -101,10 +96,7 @@ const ItemMaster = () => {
           routes: [{name: 'Product'}],
         });
       }
-      console.log('after api call response data', data);
-    } catch (error) {
-      console.log('createMultipleProduct error:', error);
-    }
+    } catch (error) {}
   }, [navigation, selectedItems, token]);
 
   /** Render List Item (Memoized) */

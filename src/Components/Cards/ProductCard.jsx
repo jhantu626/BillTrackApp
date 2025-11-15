@@ -11,6 +11,7 @@ import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
+import { API_URL } from '../../utils/config';
 
 const ProductCard = memo(
   ({
@@ -42,7 +43,7 @@ const ProductCard = memo(
             style={[styles.image, {height: imageHeight}]}
             source={
               item?.image
-                ? item.image
+                ? {uri: `${API_URL}files/product/${item.image}`}
                 : require('./../../../asset/images/emptyimg.jpg')
             }
             resizeMode="cover"

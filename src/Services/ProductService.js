@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {API_URL} from '../utils/config';
+import ToastService from '../Components/Toasts/ToastService';
 
 class ProductService {
   constructor() {
@@ -43,6 +44,7 @@ class ProductService {
     }
   }
 
+  // GET ALL PRODUCTS
   async getAllProducts(token) {
     try {
       const uri = `${this.baseUrl}/all`;
@@ -59,6 +61,7 @@ class ProductService {
     }
   }
 
+  // UPDATE PRODUCT
   async updateproduct(token, {name, id, price, unit, productImage = null}) {
     try {
       const uri = `${this.baseUrl}/update/product`;
