@@ -19,25 +19,41 @@ import {font, icon, padding} from '../../utils/responsive';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 
-// Memoized list item to prevent re-renders
-const SelectableItem = memo(({item}) => (
-  <TouchableOpacity style={styles.selectableCrd}>
-    <Text style={styles.subNameText}>Chicken Boti Kebab (6pc)</Text>
-    <View style={styles.checkbox}>
-      <Octicons name="check" color={colors.primary} size={icon(16)} />
-    </View>
-  </TouchableOpacity>
-));
+const SelectableItem = memo(({item, isSelected, handleSelectAndDeselect}) => {
+  return (
+    <TouchableOpacity
+      style={styles.selectableCrd}
+      onPress={() => handleSelectAndDeselect(item)}>
+      <Text style={styles.subNameText}>{item?.name}</Text>
 
-const ItemCard = ({expandable = false}) => {
-  const [expanded, setExpanded] = useState(expandable);
+      <View
+        style={[
+          styles.checkbox,
+          isSelected && {backgroundColor: colors.sucess},
+        ]}>
+        {isSelected && <Octicons name="check" color={'#fff'} size={icon(16)} />}
+      </View>
+    </TouchableOpacity>
+  );
+});
+
+const ItemCard = ({
+  expandable = false,
+  products,
+  selectedItems = [],
+  setSelectedItem,
+}) => {
+  const hasItems = products?.products?.length > 0;
+
+  // FORCE collapsed if empty
+  const [expanded, setExpanded] = useState(hasItems ? expandable : false);
+
   const [contentHeight, setContentHeight] = useState(0);
   const [isMeasuring, setIsMeasuring] = useState(true);
 
   const animatedHeight = useSharedValue(0);
   const animatedOpacity = useSharedValue(0);
 
-  // Animated styles
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     height: withTiming(animatedHeight.value, {duration: 300}),
     overflow: 'hidden',
@@ -47,9 +63,8 @@ const ItemCard = ({expandable = false}) => {
     opacity: withTiming(animatedOpacity.value, {duration: 200}),
   }));
 
-  // Toggle expand/collapse
   const toggleExpand = useCallback(() => {
-    if (isMeasuring) return; // Prevent toggles while measuring
+    if (isMeasuring) return;
 
     const newExpanded = !expanded;
 
@@ -62,31 +77,44 @@ const ItemCard = ({expandable = false}) => {
     }
 
     setExpanded(newExpanded);
-  }, [expanded, contentHeight, isMeasuring, animatedHeight, animatedOpacity]);
+  }, [expanded, contentHeight, isMeasuring]);
 
-  const renderItem = useCallback(({item}) => <SelectableItem item={item} />, []);
-  const data = React.useMemo(() => [1, 2, 3, 4, 5, 6, 7], []);
+  const handleSelectAndDeselect = item => {
+    if (selectedItems.some(i => i.id === item.id)) {
+      setSelectedItem(prev => prev.filter(i => i.id !== item.id));
+    } else {
+      setSelectedItem(prev => [...prev, item]);
+    }
+  };
+
+  const renderItem = useCallback(
+    ({item}) => (
+      <SelectableItem
+        item={item}
+        isSelected={selectedItems.some(i => i.id === item.id)}
+        handleSelectAndDeselect={handleSelectAndDeselect}
+      />
+    ),
+    [selectedItems, handleSelectAndDeselect],
+  );
+
   const keyExtractor = useCallback((item, index) => index.toString(), []);
 
-  // Handle layout measurement
   const handleLayout = useCallback(
     event => {
       const height = event.nativeEvent.layout.height;
+
       if (height > 0 && contentHeight === 0) {
         setContentHeight(height);
         setIsMeasuring(false);
 
-        // Initialize animation state based on `expandable` prop
-        if (expandable) {
-          animatedHeight.value = withTiming(height, {duration: 300});
-          animatedOpacity.value = withTiming(1, {duration: 200, delay: 100});
-        } else {
-          animatedHeight.value = 0;
-          animatedOpacity.value = 0;
+        if (expanded) {
+          animatedHeight.value = height;
+          animatedOpacity.value = 1;
         }
       }
     },
-    [contentHeight, animatedHeight, animatedOpacity, expandable],
+    [contentHeight, expanded],
   );
 
   return (
@@ -95,7 +123,7 @@ const ItemCard = ({expandable = false}) => {
         style={[styles.cardHeader, !expanded && {backgroundColor: '#fff'}]}
         onPress={toggleExpand}
         disabled={isMeasuring}>
-        <Text style={styles.cardHeaderTitle}>TANDOOR & KEBABS</Text>
+        <Text style={styles.cardHeaderTitle}>{products?.name}</Text>
         <Animated.View
           style={{
             transform: [
@@ -108,36 +136,64 @@ const ItemCard = ({expandable = false}) => {
         </Animated.View>
       </Pressable>
 
-      {/* Animated collapsible container */}
       <Animated.View style={containerAnimatedStyle}>
-        {/* Hidden measurement view (only once) */}
         {isMeasuring && (
-          <View style={styles.measurementView} onLayout={handleLayout}>
-            <FlatList
-              data={data}
-              keyExtractor={keyExtractor}
-              renderItem={renderItem}
-              ItemSeparatorComponent={() => <DottedDivider marginVertical={0} />}
-              scrollEnabled={false}
-              removeClippedSubviews={false}
-            />
+          <View
+            style={[
+              styles.measurementView,
+
+              // Minimum height so empty list can measure itself properly
+              !hasItems && {minHeight: 80},
+            ]}
+            onLayout={handleLayout}>
+            {!hasItems ? (
+              <View style={styles.emptyContainer}>
+                <MaterialIcons
+                  name="inventory"
+                  size={icon(40)}
+                  color={colors.border}
+                />
+                <Text style={styles.emptyText}>No products available</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={products?.products}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
+                ItemSeparatorComponent={() => (
+                  <DottedDivider marginVertical={0} />
+                )}
+                scrollEnabled={false}
+              />
+            )}
           </View>
         )}
 
-        {/* Actual content */}
         {!isMeasuring && (
           <Animated.View style={[styles.contentView, contentAnimatedStyle]}>
-            <FlatList
-              data={data}
-              keyExtractor={keyExtractor}
-              renderItem={renderItem}
-              ItemSeparatorComponent={() => <DottedDivider marginVertical={0} />}
-              scrollEnabled={false}
-              removeClippedSubviews
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={5}
-            />
+            {!hasItems ? (
+              <View style={styles.emptyContainer}>
+                <MaterialIcons
+                  name="inventory"
+                  size={icon(40)}
+                  color={colors.border}
+                />
+                <Text style={styles.emptyText}>No products available</Text>
+              </View>
+            ) : (
+              <FlatList
+                data={products?.products}
+                keyExtractor={keyExtractor}
+                renderItem={renderItem}
+                ItemSeparatorComponent={() => (
+                  <DottedDivider marginVertical={0} />
+                )}
+                scrollEnabled={false}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+              />
+            )}
           </Animated.View>
         )}
       </Animated.View>
@@ -191,6 +247,17 @@ const styles = StyleSheet.create({
   contentView: {
     width: '100%',
   },
+  emptyContainer: {
+    padding: padding(20),
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    marginTop: padding(8),
+    color: colors.border,
+    fontFamily: fonts.inRegular,
+    fontSize: font(13),
+  },
 });
 
-export default React.memo(ItemCard);
+export default memo(ItemCard);

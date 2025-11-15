@@ -25,7 +25,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {RotateOutDownLeft} from 'react-native-reanimated';
 import {businessService} from '../../Services/BusinessService';
 import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
-import { requestPermission } from '../../utils/helper';
+import {requestPermission} from '../../utils/helper';
 
 const BusinessSetup2 = () => {
   const navigation = useNavigation();
@@ -40,8 +40,6 @@ const BusinessSetup2 = () => {
   const [pincode, setPincode] = useState('700068');
 
   const [isLoading, setIsLoading] = useState(false);
-
-  
 
   const handleImagePickcker = async () => {
     const hasPermission = await requestPermission();
@@ -123,6 +121,7 @@ const BusinessSetup2 = () => {
       });
       if (data?.status) {
         const businessData = await businessService.getBusiness(token);
+        console.log('businessData', businessData);
         const newUser = {...user, businessId: businessData?.data?.id};
         await setUserData(newUser);
         const business = businessData?.data;

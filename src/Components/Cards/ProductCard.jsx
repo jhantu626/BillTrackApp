@@ -55,7 +55,7 @@ const ProductCard = memo(
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
           <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
-            ₹{item.price}
+            ₹{item.price ? item.price : 'NA'}
           </Text>
           <TouchableOpacity
             onPress={editFunction}

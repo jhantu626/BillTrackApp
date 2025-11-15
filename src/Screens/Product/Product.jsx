@@ -18,6 +18,7 @@ import {
   ProductCardRow,
   ProductUnitModal,
   SecondaryHeader,
+  ShimmerProductCard,
   SimpleTextInput,
   ToastContainer,
 } from '../../Components';
@@ -37,6 +38,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import {requestPermission} from '../../utils/helper';
 import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
+import {productService} from '../../Services/ProductService';
+import {useAuthToken} from '../../Contexts/AuthContext';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -51,12 +54,19 @@ const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
 const imageHeight = imageWidth * 2;
 
 const Product = () => {
+  const token = useAuthToken();
   const [showModal, setShowModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [isNewProduct, setIsNewProduct] = useState(false);
   const [isColumn, setIsColumn] = useState(true);
+  const [productId, setProductId] = useState(null);
   const [productImage, setProductImage] = useState(null);
   const [productName, setProductName] = useState('');
   const [productUnit, setProductUnit] = useState('');
   const [productPrice, setProductPrice] = useState('');
+
+  // Loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   // modal states
   const [unitModalVisible, setUnitModalVisible] = useState(false);
@@ -77,6 +87,16 @@ const Product = () => {
     setInitialValueOfModal();
   };
 
+  const handleEdit = item => {
+    setProductId(item.id);
+    setProductName(item.name);
+    setProductPrice(item.price || '');
+    setProductUnit(item.unitType.toUpperCase() || '');
+    setProductImage(item.logo);
+    handleOpenModal();
+    setIsNewProduct(false);
+  };
+
   const renderItem = useCallback(
     ({item, index}) =>
       isColumn ? (
@@ -84,18 +104,36 @@ const Product = () => {
           width={ITEM_WIDTH}
           item={{
             id: index,
-            title: `Product ${index}`,
-            price: 1000,
+            title: item.name,
+            price: item.price,
             image: require('./../../../asset/images/emptyimg.jpg'),
           }}
-          handleLongPress={handleOpenModal}
-          editFunction={handleOpenModal}
+          handleLongPress={() => handleEdit(item)}
+          editFunction={() => handleEdit(item)}
         />
       ) : (
         <ProductCardRow onpressCard={handleOpenModal} />
       ),
     [isColumn],
   );
+
+  const renderLoadingItem = useCallback(
+    ({index}) => <ShimmerProductCard width={ITEM_WIDTH} />,
+    [],
+  );
+
+  const getProducts = async () => {
+    try {
+      setIsLoading(true);
+      const data = await productService.getAllProducts(token);
+      if (data?.status) {
+        setProducts(data?.data || []);
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePickImag = async () => {
     const hasPermission = await requestPermission();
@@ -119,39 +157,50 @@ const Product = () => {
       });
   };
 
-  const handleSave = () => {
-    if (!productImage) {
-      ToastService.show({
-        message: 'Please select an image',
-        type: 'error',
-        position: 'top',
-      });
-      return;
-    } else if (!productName || !validateName(productName)) {
-      ToastService.show({
-        message: 'Please enter a valid name',
-        type: 'error',
-        position: 'top',
-      });
-      return;
-    } else if (!productUnit) {
-      ToastService.show({
-        message: 'Please select a unit',
-        type: 'error',
-        position: 'top',
-      });
-      return;
-    } else if (!productPrice || !validatePrice(productPrice)) {
-      ToastService.show({
-        message: 'Please enter a valid price',
-        type: 'error',
-        position: 'top',
-      });
-      return;
+  const handleSave = async () => {
+    console.log('handleSave');
+    const showError = message =>
+      ToastService.show({message, type: 'error', position: 'top'});
+
+    if (!productName?.trim() || !validateName(productName)) {
+      return showError('Please enter a valid name');
     }
 
-    handleCloseModal();
+    if (!productUnit) {
+      return showError('Please select a unit');
+    }
+
+    if (!productPrice || !validatePrice(productPrice)) {
+      return showError('Please enter a valid price');
+    }
+    let isImageInserted = false;
+
+    if (productImage && typeof productImage !== 'string') {
+      console.log('User selected image');
+      isImageInserted = true;
+    }
+
+    try {
+      const data = await productService.updateproduct(token, {
+        name: productName,
+        id: productId,
+        price: productPrice,
+        unit: productUnit,
+        productImage: isImageInserted
+          ? {
+              uri: productImage.path,
+              type: productImage.mime,
+              name: productImage.filename,
+            }
+          : null,
+      });
+      console.log(data);
+    } catch (error) {}
   };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   return (
     <Layout>
@@ -166,13 +215,18 @@ const Product = () => {
         key={isColumn ? 'd' : 're'}
         style={{flex: 1}}
         contentContainerStyle={styles.container}
-        data={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] : products}
         keyExtractor={(_, index) => index + '_items'}
-        renderItem={renderItem}
+        renderItem={isLoading ? renderLoadingItem : renderItem}
         numColumns={isColumn ? NUMBER_OF_COLUMNS : 1}
         columnWrapperStyle={isColumn && styles.columnWrapperStyle}
       />
-      <TouchableOpacity style={styles.addBtn} onPress={handleOpenModal}>
+      <TouchableOpacity
+        style={styles.addBtn}
+        onPress={() => {
+          setIsNewProduct(true);
+          handleOpenModal();
+        }}>
         <Text style={styles.addBtnText}>Add New Item</Text>
         <Lucide name="plus" size={10} color={'#fff'} />
       </TouchableOpacity>
@@ -188,7 +242,9 @@ const Product = () => {
                 style={styles.image}
                 source={
                   productImage
-                    ? {uri: productImage?.path}
+                    ? typeof productImage === 'string'
+                      ? {uri: productImage}
+                      : {uri: productImage?.path}
                     : require('./../../../asset/images/emptyimg.jpg')
                 }
                 resizeMode="cover"
@@ -240,7 +296,9 @@ const Product = () => {
                 <Text style={styles.saveBtnText}>Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-                <Text style={styles.saveBtnText}>Save</Text>
+                <Text style={styles.saveBtnText}>
+                  {isNewProduct ? 'ADD' : 'UPDATE'}
+                </Text>
               </TouchableOpacity>
             </View>
           </Pressable>

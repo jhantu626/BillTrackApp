@@ -20,7 +20,6 @@ import ProductCard from './Cards/ProductCard';
 import ProductCardRow from './Cards/ProductCardRow';
 import NavigationCard from './Cards/NavigationCard';
 
-
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
 import HomeChartComponent from './Charts/HomeChartComponent';
@@ -30,6 +29,10 @@ import ToastContainer from './Toasts/ToastContainer';
 
 // MODALS
 import ProductUnitModal from './modals/ProductUnitModal';
+
+// SHIMMERS
+import ItemCardShimmer from './Shimmers/ItemCardShimmer';
+import ShimmerProductCard from './Shimmers/ShimmerProductCard';
 
 export {
   SimpleTextInput,
@@ -50,5 +53,7 @@ export {
   ProductCardRow,
   NavigationCard,
   ToastContainer,
-  ProductUnitModal
+  ProductUnitModal,
+  ItemCardShimmer,
+  ShimmerProductCard,
 };

@@ -1,40 +1,210 @@
 import {
+  Alert,
   FlatList,
-  Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {Layout} from '../Layout';
-import {DottedDivider, SecondaryHeader} from '../../Components';
-import {font, icon, padding} from '../../utils/responsive';
-import MaterialIcons from '@react-native-vector-icons/material-icons';
+import {
+  ItemCardShimmer,
+  SecondaryHeader,
+  ToastContainer,
+} from '../../Components';
+import {font, gap, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
-import {colors} from '../../utils/colors';
-import Octicons from '@react-native-vector-icons/octicons';
 import ItemCard from '../../Components/Cards/ItemCard';
+import {productService} from '../../Services/ProductService';
+import {useAuthToken} from '../../Contexts/AuthContext';
+import ToastService from '../../Components/Toasts/ToastService';
+import {useNavigation} from '@react-navigation/native';
 
 const ItemMaster = () => {
+  const navigation = useNavigation();
+  const token = useAuthToken();
+  console.log(token);
+
+  const [products, setProducts] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  /** Fetch Items */
+  const fetchItems = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await productService.getProductsSuggestions(token);
+      setProducts(data?.data || []);
+      console.log("product suggestions: ", data);
+    } catch (error) {
+      console.log('fetchItems error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchItems();
+  }, [fetchItems]);
+
+  /** Handle Set Price */
+  const handleSetPrice = useCallback(async () => {
+    if (selectedItems.length === 0) {
+      Alert.alert(
+        'No Product Selected',
+        'No products selected. Do you want to skip?',
+        [
+          {text: 'Cancel', style: 'cancel'},
+          {
+            text: 'YES',
+            onPress: () =>
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'Product'}],
+              }),
+          },
+        ],
+        {cancelable: false},
+      );
+
+      ToastService.show({
+        message: 'Please select at least one item',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+
+    const finalPayload = selectedItems.map(item => ({
+      name: item?.name,
+      productCategoryId: item?.productCategoryId,
+      hsnId: item?.hsnId,
+      unitType: item?.unitType,
+      description: item?.description,
+      logo: item?.logo,
+    }));
+    console.log('final payload', finalPayload);
+    try {
+      const data = await productService.createMultipleProduct(
+        token,
+        finalPayload,
+      );
+      if (data?.status) {
+        ToastService.show({
+          message: data?.message,
+          type: 'success',
+          position: 'top',
+        });
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Product'}],
+        });
+      }
+      console.log('after api call response data', data);
+    } catch (error) {
+      console.log('createMultipleProduct error:', error);
+    }
+  }, [navigation, selectedItems, token]);
+
+  /** Render List Item (Memoized) */
+  const renderItem = useCallback(
+    ({item, index}) => (
+      <ItemCard
+        products={item}
+        expandable={index === 0}
+        selectedItems={selectedItems}
+        setSelectedItem={setSelectedItems}
+      />
+    ),
+    [selectedItems],
+  );
+
+  /** Stable keyExtractor */
+  const keyExtractor = useCallback(
+    (item, index) => item?.id?.toString() || `${index}_itemCard`,
+    [],
+  );
+
   return (
     <Layout>
       <SecondaryHeader title="Item Master" />
-      <ScrollView
-        style={{flex: 1, padding: padding(16)}}
-        contentContainerStyle={styles.container}>
-        <ItemCard expandable={true} />
-        <ItemCard />
-        <ItemCard />
-      </ScrollView>
+
+      {isLoading ? (
+        <View style={styles.shimmerWrapper}>
+          <ItemCardShimmer />
+        </View>
+      ) : (
+        <FlatList
+          style={styles.list}
+          contentContainerStyle={styles.container}
+          data={products}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      )}
+
+      <View style={styles.bottomContainer}>
+        <View style={styles.bottomLeftContainer}>
+          <Text style={styles.bottomTitleText}>Selected Product</Text>
+          <Text style={styles.bottomSubValueText}>{selectedItems.length}</Text>
+        </View>
+
+        <TouchableOpacity style={styles.btnContainer} onPress={handleSetPrice}>
+          <Text style={styles.btnText}>SET PRICE</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ToastContainer />
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+    padding: padding(16),
+  },
+  shimmerWrapper: {
+    flex: 1,
+    padding: padding(16),
+  },
   container: {
-    gap: padding(16),
+    gap: gap(16),
+    paddingBottom: padding(25),
+  },
+  bottomContainer: {
+    width: '100%',
+    paddingVertical: padding(13),
+    paddingHorizontal: padding(16),
+    backgroundColor: '#40599B',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  bottomLeftContainer: {
+    alignItems: 'flex-start',
+  },
+  bottomTitleText: {
+    fontSize: font(14),
+    fontFamily: fonts.inMedium,
+    color: '#fff',
+  },
+  bottomSubValueText: {
+    fontSize: font(24),
+    fontFamily: fonts.inBold,
+    color: '#fff',
+  },
+  btnContainer: {
+    paddingVertical: padding(10),
+    paddingHorizontal: padding(20),
+    backgroundColor: '#EA6B23',
+    borderRadius: 5,
+  },
+  btnText: {
+    fontSize: font(12),
+    fontFamily: fonts.inBold,
+    color: '#fff',
   },
 });
 

@@ -174,6 +174,7 @@ const Account = memo(() => {
         <View style={styles.settingContainer}>
           <Text style={styles.settingTitleText}>Settings</Text>
           <SettingItemsCard
+            onpress={() => handleNavigation({screen: 'ItemMaster'})}
             mainIcon={
               <Lucide
                 name="baggage-claim"
