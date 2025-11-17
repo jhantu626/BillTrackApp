@@ -34,6 +34,7 @@ import AuthProvider, {
   useBusiness,
   useUser,
 } from './Contexts/AuthContext';
+import ProductProvider from './Contexts/ProductContexts';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -112,7 +113,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="ItemMaster"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -179,14 +180,22 @@ const AppStack = memo(() => {
       />
       <Tab.Screen
         name="Product"
-        component={Product}
+        component={() => (
+          <ProductProvider>
+            <Product />
+          </ProductProvider>
+        )}
         options={{
           tabBarIcon: renderTabIcon(icons.Product),
         }}
       />
       <Tab.Screen
         name="Create"
-        component={CreateBill}
+        component={() => (
+          <ProductProvider>
+            <CreateBill />
+          </ProductProvider>
+        )}
         options={{
           tabBarStyle: {
             display: 'none',

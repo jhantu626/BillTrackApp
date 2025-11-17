@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   FlatList,
   StyleSheet,
@@ -28,6 +29,7 @@ const ItemMaster = () => {
   const [products, setProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
 
   /** Fetch Items */
   const fetchItems = useCallback(async () => {
@@ -81,6 +83,7 @@ const ItemMaster = () => {
       logo: item?.logo,
     }));
     try {
+      setIsSaveLoading(true);
       const data = await productService.createMultipleProduct(
         token,
         finalPayload,
@@ -96,7 +99,10 @@ const ItemMaster = () => {
           routes: [{name: 'Product'}],
         });
       }
-    } catch (error) {}
+    } catch (error) {
+    }finally {
+      setIsSaveLoading(false);
+    }
   }, [navigation, selectedItems, token]);
 
   /** Render List Item (Memoized) */
@@ -143,7 +149,11 @@ const ItemMaster = () => {
         </View>
 
         <TouchableOpacity style={styles.btnContainer} onPress={handleSetPrice}>
-          <Text style={styles.btnText}>SET PRICE</Text>
+          {isSaveLoading ? (
+            <ActivityIndicator color="#fff" size={'small'} />
+          ) : (
+            <Text style={styles.btnText}>SET PRICE</Text>
+          )}
         </TouchableOpacity>
       </View>
 

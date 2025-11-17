@@ -30,7 +30,6 @@ class ProductService {
       const payload = {
         products: products,
       };
-      console.log('payload: ', JSON.stringify(payload));
       const response = await axios.post(uri, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,7 +44,7 @@ class ProductService {
   }
 
   // CREATE PRODUCT
-  async createProduct({token,name, price, hsnId, unit, productImage = null}) {
+  async createProduct({token, name, price, hsnId, unit, productImage = null}) {
     try {
       const uri = this.baseUrl;
       const formData = new FormData();
@@ -64,11 +63,9 @@ class ProductService {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('response: ', response);
       const data = await response.data;
       return data;
     } catch (error) {
-      console.log(error);
       const data = await error.response.data;
       return data;
     }
@@ -104,18 +101,32 @@ class ProductService {
       if (productImage) {
         formData.append('logo', productImage);
       }
-      console.log('formData: ', formData);
       const response = await axios.put(uri, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('response: ', response);
       const data = await response.data;
       return data;
     } catch (error) {
-      console.log(error);
+      const data = await error.response.data;
+      return data;
+    }
+  }
+
+  // DEACTIVATE PRODUCT
+  async deleteProductById(token, id) {
+    try {
+      const uri = `${this.baseUrl}/${id}`;
+      const response = await axios.delete(uri, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.data;
+      return data;
+    } catch (error) {
       const data = await error.response.data;
       return data;
     }

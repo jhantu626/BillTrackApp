@@ -45,6 +45,7 @@ import {productService} from '../../Services/ProductService';
 import {useAuthToken} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
 import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
+import {useProduct} from '../../Contexts/ProductContexts';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -59,8 +60,8 @@ const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
 const imageHeight = imageWidth * 2;
 
 const Product = () => {
+  const {Products, resetProducts, addProduct, removeProduct} = useProduct();
   const token = useAuthToken();
-  console.log(token);
   const [showModal, setShowModal] = useState(false);
   const [products, setProducts] = useState([]);
   const [isNewProduct, setIsNewProduct] = useState(false);
@@ -76,6 +77,7 @@ const Product = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   // modal states
   const [unitModalVisible, setUnitModalVisible] = useState(false);
@@ -134,10 +136,12 @@ const Product = () => {
 
   const getProducts = async () => {
     try {
+      console.log('api is calling');
       setIsLoading(true);
       const data = await productService.getAllProducts(token);
       if (data?.status) {
-        setProducts(data?.data || []);
+        // setProducts(data?.data || []);
+        await resetProducts(data?.data || []);
       }
     } catch (error) {
     } finally {
@@ -209,13 +213,14 @@ const Product = () => {
           };
         }
         const data = await productService.createProduct({...payload});
-        console.log(data);
         if (data?.status) {
           ToastService.show({
             message: 'Product created successfully',
             type: 'success',
             position: 'top',
           });
+          await addProduct(data?.data);
+          console.log('data: ', data.data);
           setTimeout(() => {
             handleCloseModal();
           }, 500);
@@ -248,6 +253,8 @@ const Product = () => {
           type: 'success',
           position: 'top',
         });
+        console.log('data: ', data);
+        await addProduct(data?.data);
         setTimeout(() => {
           handleCloseModal();
         }, 500);
@@ -258,15 +265,42 @@ const Product = () => {
           position: 'top',
         });
       }
-      console.log(data);
     } catch (error) {
     } finally {
       setIsSaveLoading(false);
     }
   };
 
+  const handleDeleteProduct = async () => {
+    try {
+      setIsDeleteLoading(true);
+      const data = await productService.deleteProductById(token, productId);
+      if (data?.status) {
+        ToastService.show({
+          message: data?.message,
+          type: 'success',
+          position: 'top',
+        });
+        await removeProduct(productId);
+        handleCloseModal();
+      } else {
+        ToastService.show({
+          message: data?.message,
+          type: 'error',
+          position: 'top',
+        });
+      }
+    } catch (error) {
+      ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getProducts();
+    if (Products.length === 0) {
+      getProducts();
+    }
   }, []);
 
   const onRefresh = async () => {
@@ -288,7 +322,7 @@ const Product = () => {
         key={isColumn ? 'd' : 're'}
         style={{flex: 1}}
         contentContainerStyle={styles.container}
-        data={isLoading ? [1, 2, 3, 4, 5, 6] : products}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] : Products}
         keyExtractor={(_, index) => index + '_items'}
         renderItem={isLoading ? renderLoadingItem : renderItem}
         numColumns={isColumn ? NUMBER_OF_COLUMNS : 1}
@@ -388,8 +422,14 @@ const Product = () => {
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={[styles.saveBtn, {backgroundColor: colors.error}]}>
-                <Text style={styles.saveBtnText}>Delete</Text>
+                style={[styles.saveBtn, {backgroundColor: colors.error}]}
+                disabled={isDeleteLoading}
+                onPress={handleDeleteProduct}>
+                {isDeleteLoading ? (
+                  <ActivityIndicator color={'#fff'} size={'small'} />
+                ) : (
+                  <Text style={styles.saveBtnText}>Delete</Text>
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.saveBtn}
