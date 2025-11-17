@@ -467,4 +467,23 @@ const aboutScreenNavigations = [
   },
 ];
 
-export {invoice, products,aboutScreenNavigations};
+const helpAndSupportNavigations = [
+  {
+    name: 'General Inquiry',
+    url: 'https://billtrack.co.in/contact',
+  },
+  {
+    name: 'Feedback & Suggestions',
+    url: 'https://billtrack.co.in/contact',
+  },
+  {
+    name: 'Subscription Related Query',
+    url: 'https://billtrack.co.in/contact',
+  },
+  {
+    name: 'SMS Related Query',
+    url: 'https://billtrack.co.in/contact',
+  },
+];
+
+export {invoice, products, aboutScreenNavigations, helpAndSupportNavigations};

@@ -10,8 +10,11 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {colors} from '../../utils/colors';
 import {font, icon, margin, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
+import {helpAndSupportNavigations} from '../../utils/data';
+import {useNavigation} from '@react-navigation/native';
 
 const HelpAndSupport = memo(() => {
+  const navigation = useNavigation();
   return (
     <Layout>
       <SecondaryHeader title="Help & support" isSearch={false} />
@@ -42,10 +45,16 @@ const HelpAndSupport = memo(() => {
         </View>
         <View style={styles.bottomContainer}>
           <Text style={styles.itemTitleText}>FAQs</Text>
-          <NavigationCard title={'General Inquiry'} />
-          <NavigationCard title={'Feedback & Suggestions'} />
-          <NavigationCard title={'Subscription Related Query'} />
-          <NavigationCard title={'SMS Related Inquiry'} />
+          {helpAndSupportNavigations.map((item, index) => (
+            <NavigationCard
+              title={item.name}
+              onpress={() => {
+                navigation.navigate('Browser', {
+                  uri: item.url,
+                });
+              }}
+            />
+          ))}
         </View>
       </ScrollView>
     </Layout>
