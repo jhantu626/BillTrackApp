@@ -8,6 +8,7 @@ import {
   About,
   Account,
   AuthHome,
+  BrowserScreen,
   BusinessSetup,
   BusinessSetup2,
   CreateBill,
@@ -113,7 +114,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="About"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -124,6 +125,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="About" component={About} />
       <Stack.Screen name="SalesAndReport" component={SalesReport} />
       <Stack.Screen name="ItemMaster" component={ItemMaster} />
+      <Stack.Screen name="Browser" component={BrowserScreen} />
     </Stack.Navigator>
   );
 });
@@ -143,7 +145,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
