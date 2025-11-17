@@ -10,7 +10,7 @@ import React, {memo, useMemo} from 'react';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { font, icon, padding } from '../../utils/responsive';
+import {font, icon, padding} from '../../utils/responsive';
 
 // const {width} = Dimensions.get('screen');
 
@@ -33,37 +33,16 @@ const CreateBillBottom = memo(
     }, [width]);
 
     return (
-      <View
-        style={[
-          styles.bottomContainer,
-        ]}>
+      <View style={[styles.bottomContainer]}>
         <View style={styles.bottomContainerSub}>
-          <Text
-            style={[
-              styles.bottomCOntainerTitle,
-            ]}>
-            Total Amount
-          </Text>
-          <Text
-            style={[
-              styles.bottomCOntainerValue,
-            
-            ]}>
+          <Text style={[styles.bottomCOntainerTitle]}>Total Amount</Text>
+          <Text style={[styles.bottomCOntainerValue]}>
             ₹ {totalAmount.toFixed(2)}
           </Text>
         </View>
         <View style={styles.bottomContainerSub}>
-          <Text
-            style={[
-              styles.bottomCOntainerTitle,
-            ]}>
-            Quantity
-          </Text>
-          <Text
-            style={[
-              styles.bottomCOntainerValue,
-              {textAlign: 'center'},
-            ]}>
+          <Text style={[styles.bottomCOntainerTitle]}>Quantity</Text>
+          <Text style={[styles.bottomCOntainerValue, {textAlign: 'center'}]}>
             {totalQuanity}
           </Text>
         </View>

@@ -276,7 +276,6 @@ const Product = () => {
       [
         {
           text: 'Cancel',
-          onPress: () => {},
           style: 'cancel',
         },
         {

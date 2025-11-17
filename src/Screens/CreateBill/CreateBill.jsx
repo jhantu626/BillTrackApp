@@ -14,6 +14,7 @@ import {
   CreateBillBottom,
   SecondaryHeader,
   SimpleTextInput,
+  ToastContainer,
 } from '../../Components';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {
@@ -32,6 +33,7 @@ import {
   padding,
 } from '../../utils/responsive';
 import {useProduct} from '../../Contexts/ProductContexts';
+import ToastService from '../../Components/Toasts/ToastService';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -76,6 +78,18 @@ const CreateBill = () => {
     [],
   );
 
+  const handleSave = () => {
+    if (!quantity) {
+      ToastService.show({
+        message: 'Please Add Products',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
+    handleOpenBottomSheet();
+  };
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Layout>
@@ -99,7 +113,7 @@ const CreateBill = () => {
         <CreateBillBottom
           totalQuanity={quantity}
           totalAmount={totalPrice}
-          saveButtonFunciton={handleOpenBottomSheet}
+          saveButtonFunciton={handleSave}
         />
       </Layout>
       <BottomSheet
@@ -167,6 +181,7 @@ const CreateBill = () => {
           </View>
         </BottomSheetView>
       </BottomSheet>
+      <ToastContainer />
     </GestureHandlerRootView>
   );
 };
