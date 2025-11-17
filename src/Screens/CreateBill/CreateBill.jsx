@@ -97,7 +97,7 @@ const CreateBill = () => {
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={styles.container}
-          data={Products}
+          data={Products.filter(p => p.price)}
           keyExtractor={(_, index) => index + '_create_bill_item'}
           renderItem={({item}, index) => (
             <BillProductCard
