@@ -32,7 +32,6 @@ const Invoice = () => {
   );
   const handleCloseBottomSheet = useCallback(() => {
     bottomSheetRef.current?.close();
-    console.info('close');
   }, []);
 
   const renderBackdrop = useMemo(

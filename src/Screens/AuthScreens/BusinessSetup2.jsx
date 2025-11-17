@@ -121,7 +121,6 @@ const BusinessSetup2 = () => {
       });
       if (data?.status) {
         const businessData = await businessService.getBusiness(token);
-        console.log('businessData', businessData);
         const newUser = {...user, businessId: businessData?.data?.id};
         await setUserData(newUser);
         const business = businessData?.data;

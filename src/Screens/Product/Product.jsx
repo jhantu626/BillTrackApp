@@ -136,7 +136,6 @@ const Product = () => {
 
   const getProducts = async () => {
     try {
-      console.log('api is calling');
       setIsLoading(true);
       const data = await productService.getAllProducts(token);
       if (data?.status) {
@@ -220,7 +219,6 @@ const Product = () => {
             position: 'top',
           });
           await addProduct(data?.data);
-          console.log('data: ', data.data);
           setTimeout(() => {
             handleCloseModal();
           }, 500);
@@ -253,7 +251,6 @@ const Product = () => {
           type: 'success',
           position: 'top',
         });
-        console.log('data: ', data);
         await addProduct(data?.data);
         setTimeout(() => {
           handleCloseModal();

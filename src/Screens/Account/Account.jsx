@@ -48,7 +48,6 @@ const Account = memo(() => {
   const token = useAuthToken();
   const updateUserFields = useUpdateUserFields();
 
-  console.log(logoUrl);
   //STATE VARIABLES
   const [name, setName] = useState(userName);
   const [email, setEmail] = useState(userEmail);
@@ -74,7 +73,6 @@ const Account = memo(() => {
 
   const updateDetails = async () => {
     if (name === userName && userEmail === email) {
-      console.log('No changes found');
       ToastService.show({
         message: 'No changes found',
         type: 'error',
@@ -107,7 +105,6 @@ const Account = memo(() => {
         email: email,
         token: token,
       });
-      console.log(data);
       if (data.status) {
         // ToastService.show({
         //   message: data.message,
@@ -125,7 +122,6 @@ const Account = memo(() => {
         });
       }
     } catch (error) {
-      console.log(error);
       ToastService.show({
         message: 'Something went wrong',
         type: 'error',
