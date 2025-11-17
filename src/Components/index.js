@@ -35,6 +35,9 @@ import GstSelectModal from './modals/GstSelectModal';
 import ItemCardShimmer from './Shimmers/ItemCardShimmer';
 import ShimmerProductCard from './Shimmers/ShimmerProductCard';
 
+// Loaders
+import Loader from './Loaders/Loader';
+
 export {
   SimpleTextInput,
   BottomSheetInput,
@@ -57,5 +60,6 @@ export {
   ProductUnitModal,
   ItemCardShimmer,
   ShimmerProductCard,
-  GstSelectModal
+  GstSelectModal,
+  Loader,
 };
