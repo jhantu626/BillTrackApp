@@ -17,25 +17,30 @@ import {
 } from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
+import {API_URL} from '../../utils/config';
 
-const ProductCardRow = ({onpressCard = () => {}}) => {
+const ProductCardRow = ({item, onpressCard = () => {}}) => {
   return (
     <Pressable style={styles.container} onPress={onpressCard}>
       <View style={styles.leftCOntainer}>
         <Image
-          source={require('./../../../asset/images/emptyimg.jpg')}
+          source={
+            item.image
+              ? {uri: `${API_URL}files/product/${item.image}`}
+              : require('./../../../asset/images/emptyimg.jpg')
+          }
           style={styles.image}
           resizeMode="cover"
         />
         <View style={styles.leftRightContainer}>
-          <Text style={styles.nameText}>Tandoori Kebab</Text>
-          <Text style={styles.subNameText}>Per Piece</Text>
+          <Text style={styles.nameText}>{item?.title}</Text>
+          <Text style={styles.subNameText}>Per {item?.unit}</Text>
         </View>
       </View>
       <View>
-        <Text style={styles.priceText}>₹ NA</Text>
+        <Text style={styles.priceText}>₹ {item?.price}</Text>
         <Text style={[styles.subNameText, {color: colors.error}]}>
-          Per plate
+          Per {item?.unit}
         </Text>
       </View>
     </Pressable>

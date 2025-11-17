@@ -125,7 +125,16 @@ const Product = () => {
           editFunction={() => handleEdit(item)}
         />
       ) : (
-        <ProductCardRow onpressCard={handleOpenModal} />
+        <ProductCardRow
+          onpressCard={()=>handleEdit(item)}
+          item={{
+            id: item.id,
+            title: item.name,
+            price: item.price,
+            image: item?.logo,
+            unit: item.unitType,
+          }}
+        />
       ),
     [isColumn],
   );
