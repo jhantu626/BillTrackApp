@@ -145,7 +145,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Account"
+      initialRouteName="Product"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

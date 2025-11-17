@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -268,30 +269,50 @@ const Product = () => {
     }
   };
 
-  const handleDeleteProduct = async () => {
-    try {
-      setIsDeleteLoading(true);
-      const data = await productService.deleteProductById(token, productId);
-      if (data?.status) {
-        ToastService.show({
-          message: data?.message,
-          type: 'success',
-          position: 'top',
-        });
-        await removeProduct(productId);
-        handleCloseModal();
-      } else {
-        ToastService.show({
-          message: data?.message,
-          type: 'error',
-          position: 'top',
-        });
-      }
-    } catch (error) {
-      ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
-    } finally {
-      setIsDeleteLoading(false);
-    }
+  const handleDeleteProduct = () => {
+    Alert.alert(
+      'Delete Product',
+      'Are you sure you want to delete this product?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              setIsDeleteLoading(true);
+              const data = await productService.deleteProductById(
+                token,
+                productId,
+              );
+              if (data?.status) {
+                ToastService.show({
+                  message: data?.message,
+                  type: 'success',
+                  position: 'top',
+                });
+                await removeProduct(productId);
+                handleCloseModal();
+              } else {
+                ToastService.show({
+                  message: data?.message,
+                  type: 'error',
+                  position: 'top',
+                });
+              }
+            } catch (error) {
+              ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+            } finally {
+              setIsDeleteLoading(false);
+            }
+          },
+        },
+      ],
+      {cancelable: false},
+    );
   };
 
   useEffect(() => {
@@ -420,7 +441,7 @@ const Product = () => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={[styles.saveBtn, {backgroundColor: colors.error}]}
-                disabled={isDeleteLoading}
+                disabled={isDeleteLoading || isNewProduct}
                 onPress={handleDeleteProduct}>
                 {isDeleteLoading ? (
                   <ActivityIndicator color={'#fff'} size={'small'} />
