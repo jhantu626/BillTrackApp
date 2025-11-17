@@ -15,7 +15,6 @@ import {
   SecondaryHeader,
   SimpleTextInput,
 } from '../../Components';
-import {products} from '../../utils/data';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -25,7 +24,14 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {fonts} from '../../utils/fonts';
 import {validateIndianPhone} from '../../utils/validator';
 import {colors} from '../../utils/colors';
-import {font, gap, isTabletDevice, margin, padding} from '../../utils/responsive';
+import {
+  font,
+  gap,
+  isTabletDevice,
+  margin,
+  padding,
+} from '../../utils/responsive';
+import {useProduct} from '../../Contexts/ProductContexts';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -39,6 +45,7 @@ const ITEM_WIDTH =
   NUM_COLUMNS;
 
 const CreateBill = () => {
+  const {Products} = useProduct();
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
@@ -76,7 +83,7 @@ const CreateBill = () => {
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={styles.container}
-          data={products}
+          data={Products}
           keyExtractor={(_, index) => index + '_create_bill_item'}
           renderItem={({item}, index) => (
             <BillProductCard

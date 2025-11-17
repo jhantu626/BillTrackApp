@@ -12,6 +12,7 @@ const ProductProvider = ({children}) => {
     const loadProducts = async () => {
       try {
         const data = await AsyncStorage.getItem(STORAGE_KEY);
+        console.log('Loaded products:', data);
         if (data) setProducts(JSON.parse(data));
       } catch (error) {
         console.log('Error loading products:', error);
@@ -22,10 +23,13 @@ const ProductProvider = ({children}) => {
   }, []);
 
   useEffect(() => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(Products));
+    const saveProducts = async () => {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(Products));
+    };
+    saveProducts();
   }, [Products]);
 
-  const addProduct = async product => {
+  const addProduct = product => {
     setProducts(prev => {
       const exists = prev.find(p => p.id === product.id);
 
@@ -37,11 +41,11 @@ const ProductProvider = ({children}) => {
     });
   };
 
-  const removeProduct = async id => {
+  const removeProduct = id => {
     setProducts(prev => prev.filter(product => product.id !== id));
   };
 
-  const resetProducts = async (productList = []) => {
+  const resetProducts = (productList = []) => {
     setProducts(productList);
   };
 

@@ -115,7 +115,7 @@ const Product = () => {
         <ProductCard
           width={ITEM_WIDTH}
           item={{
-            id: index,
+            id: item.id,
             title: item.name,
             price: item.price,
             image: item?.logo,

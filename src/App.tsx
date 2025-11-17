@@ -143,7 +143,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Product"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -180,22 +180,14 @@ const AppStack = memo(() => {
       />
       <Tab.Screen
         name="Product"
-        component={() => (
-          <ProductProvider>
-            <Product />
-          </ProductProvider>
-        )}
+        component={Product}
         options={{
           tabBarIcon: renderTabIcon(icons.Product),
         }}
       />
       <Tab.Screen
         name="Create"
-        component={() => (
-          <ProductProvider>
-            <CreateBill />
-          </ProductProvider>
-        )}
+        component={CreateBill}
         options={{
           tabBarStyle: {
             display: 'none',
@@ -255,9 +247,11 @@ const AppNav = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <NavigationContainer>
-        <AppNav />
-      </NavigationContainer>
+      <ProductProvider>
+        <NavigationContainer>
+          <AppNav />
+        </NavigationContainer>
+      </ProductProvider>
     </AuthProvider>
   );
 };

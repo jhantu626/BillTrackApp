@@ -11,11 +11,13 @@ import React, {memo, useCallback, useMemo, useState} from 'react';
 import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
+import { API_URL } from '../../utils/config';
 
 const BillProductCard = memo(
   ({width = 113, item, setQuantity, setTotalPrice}) => {
     const PADDING = 8;
     const [count, setCount] = useState(item?.count || 0);
+    console.log(JSON.stringify(item));
 
     useMemo(() => {
       imageWidth = width - PADDING * 2;
@@ -39,7 +41,7 @@ const BillProductCard = memo(
             }
             return prev + 1;
           });
-          setTotalPrice(prev => prev + item.price);
+          setTotalPrice(prev => prev + new Number(item.price));
         } else {
           if (item.count > 0) {
             item.count -= 1;
@@ -48,7 +50,7 @@ const BillProductCard = memo(
               if (newCount === 0) {
                 setQuantity(q => q - 1);
               }
-              setTotalPrice(p => p - item.price);
+              setTotalPrice(p => p - new Number(item.price));
               return newCount;
             });
           }
@@ -68,8 +70,8 @@ const BillProductCard = memo(
           <Image
             style={[styles.image, {height: imageHeight}]}
             source={
-              item?.image
-                ? item.image
+              item?.logo
+                ? {uri: `${API_URL}files/product/${item.logo}`}
                 : require('./../../../asset/images/emptyimg.jpg')
             }
             resizeMode="cover"
@@ -78,7 +80,7 @@ const BillProductCard = memo(
         <Text
           style={[styles.titleText, {fontSize: titleFontSize}]}
           numberOfLines={1}>
-          {item?.title}
+          {item?.name}
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
           <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
