@@ -4,8 +4,11 @@ import {Layout} from '../Layout';
 import {NavigationCard, SecondaryHeader} from '../../Components';
 import {margin, padding} from '../../utils/responsive';
 import {colors} from '../../utils/colors';
+import {aboutScreenNavigations} from '../../utils/data';
+import {useNavigation} from '@react-navigation/native';
 
 const About = memo(() => {
+  const navigation = useNavigation();
   return (
     <Layout>
       <SecondaryHeader title="About billtrack" isSearch={false} />
@@ -13,10 +16,17 @@ const About = memo(() => {
         style={{flex: 1, backgroundColor: '#fff'}}
         contentContainerStyle={styles.container}>
         <View style={styles.contentContainer}>
-          <NavigationCard title={'About Billtrack App'} />
-          <NavigationCard title={'Privacy Policy'} />
-          <NavigationCard title={'Terms & Conditions'} />
-          <NavigationCard title={'Cancelation Policy'} />
+          {aboutScreenNavigations.map((item, index) => (
+            <NavigationCard
+              key={index}
+              title={item.name}
+              onpress={() => {
+                navigation.navigate('Browser', {
+                  uri: item.url,
+                });
+              }}
+            />
+          ))}
         </View>
       </ScrollView>
     </Layout>

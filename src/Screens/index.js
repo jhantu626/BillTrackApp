@@ -27,6 +27,9 @@ import ItemMaster from './Account/ItemMaster';
 // PRODUCT
 import Product from './Product/Product';
 
+// BORWSER SCREEN
+import BrowserScreen from './BrowserScreen/BrowserScreen';
+
 export {
   Onboarding,
   AuthHome,
@@ -44,5 +47,6 @@ export {
   HelpAndSupport,
   About,
   SalesReport,
-  ItemMaster
+  ItemMaster,
+  BrowserScreen
 };

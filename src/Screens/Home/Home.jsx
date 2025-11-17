@@ -10,6 +10,7 @@ import {Layout} from '../Layout';
 import {
   HomeChartComponent,
   InvoiceCard,
+  Loader,
   PrimaryHeader,
   SalesAreaChart,
 } from '../../Components';

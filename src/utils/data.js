@@ -448,4 +448,23 @@ const products = [
   {id: '100', title: 'Gulab Jamun', price: 900},
 ];
 
-export {invoice, products};
+const aboutScreenNavigations = [
+  {
+    name: 'About Billtrack App',
+    url: 'https://billtrack.co.in/about',
+  },
+  {
+    name: 'Privacy Policy',
+    url: 'https://billtrack.co.in/privacy-policy',
+  },
+  {
+    name: 'Terms and Conditions',
+    url: 'https://billtrack.co.in/terms-condition',
+  },
+  {
+    name: 'Refund Policy',
+    url: 'https://billtrack.co.in/refund-policy',
+  },
+];
+
+export {invoice, products,aboutScreenNavigations};
