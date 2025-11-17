@@ -12,10 +12,8 @@ const ProductProvider = ({children}) => {
     const loadProducts = async () => {
       try {
         const data = await AsyncStorage.getItem(STORAGE_KEY);
-        console.log('Loaded products:', data);
         if (data) setProducts(JSON.parse(data));
       } catch (error) {
-        console.log('Error loading products:', error);
       }
     };
 

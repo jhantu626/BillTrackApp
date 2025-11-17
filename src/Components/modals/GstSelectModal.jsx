@@ -77,7 +77,6 @@ const GstSelectModal = ({
         }
       } catch (error) {
         if (error.name !== 'AbortError') {
-          console.error('Search error:', error);
           setData([]);
         }
       } finally {

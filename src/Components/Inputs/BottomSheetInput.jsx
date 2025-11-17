@@ -19,7 +19,6 @@ const BottomSheetInput = memo(
     backgroundColor = '#fff',
     label = 'Bottom Sheet Input',
     onPress = () => {
-      console.info('Default Onpress');
     },
   }) => {
     return (

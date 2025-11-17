@@ -113,7 +113,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="ItemMaster"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',

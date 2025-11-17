@@ -21,7 +21,6 @@ import {gap, padding, font, icon} from '../../utils/responsive';
 const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
-  console.info(invoice);
 
   const sentWhatapp = async () => {
     const link = 'whatsapp://send?text=test&phone=919775746484';

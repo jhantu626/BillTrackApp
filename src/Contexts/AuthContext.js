@@ -117,7 +117,6 @@ export const useUpdateUserFields = () => {
       const updatedUser = {...(user || {}), ...fields};
       await setUserData(updatedUser);
     } catch (error) {
-      console.log(error);
     }
   };
   return updateUserFields;

@@ -17,7 +17,6 @@ const BillProductCard = memo(
   ({width = 113, item, setQuantity, setTotalPrice}) => {
     const PADDING = 8;
     const [count, setCount] = useState(item?.count || 0);
-    console.log(JSON.stringify(item));
 
     useMemo(() => {
       imageWidth = width - PADDING * 2;
