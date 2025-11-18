@@ -25,16 +25,11 @@ import {
   Subscription,
 } from './Screens';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Octicons from '@react-native-vector-icons/octicons';
 import {fonts} from './utils/fonts';
 import {colors} from './utils/colors';
 import {memo, useCallback, useMemo} from 'react';
 import {font, icon, margin, padding} from './utils/responsive';
-import AuthProvider, {
-  useAuth,
-  useBusiness,
-  useUser,
-} from './Contexts/AuthContext';
+import AuthProvider, {useAuth, useUser} from './Contexts/AuthContext';
 import ProductProvider from './Contexts/ProductContexts';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';

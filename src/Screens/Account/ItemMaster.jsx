@@ -96,11 +96,18 @@ const ItemMaster = () => {
         });
         navigation.reset({
           index: 0,
-          routes: [{name: 'Product'}],
+          routes: [
+            {
+              name: 'Product',
+              params: {
+                doRefresh: true,
+              },
+            },
+          ],
         });
       }
     } catch (error) {
-    }finally {
+    } finally {
       setIsSaveLoading(false);
     }
   }, [navigation, selectedItems, token]);

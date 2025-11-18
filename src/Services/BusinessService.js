@@ -8,7 +8,7 @@ class BusinessService {
 
   async createBusiness({
     name,
-    gstNumber,
+    gstNumber = null,
     street,
     city,
     state,
@@ -23,7 +23,9 @@ class BusinessService {
       const uri = this.baseUrl;
       const formData = new FormData();
       formData.append('name', name);
-      formData.append('gstNumber', gstNumber);
+      if (gstNumber) {
+        formData.append('gstNumber', gstNumber);
+      }
       formData.append('street', street);
       formData.append('city', city);
       formData.append('state', state);
@@ -34,6 +36,7 @@ class BusinessService {
       if (phone) {
         formData.append('phone', phone);
       }
+
       formData.append('businessCategoryId', businessCategoryId);
       formData.append('logo', logo);
       const response = await axios.post(uri, formData, {
@@ -46,6 +49,7 @@ class BusinessService {
       const data = await response.data;
       return data;
     } catch (error) {
+      console.log(error);
       const data = await error.response.data;
       return data;
     }

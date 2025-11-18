@@ -50,7 +50,7 @@ const BusinessSetup = () => {
   const bottomSheetRef = useRef(null);
   const [query, setQuery] = useState('');
   const [businessName, setBusinessName] = useState('Turain Software');
-  const [gstNumber, setGstNumber] = useState('22AAAAA0000A1Z5');
+  const [gstNumber, setGstNumber] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessTypes, setBusinessTypes] = useState([]);
   const [email, setEmail] = useState('');
@@ -90,7 +90,7 @@ const BusinessSetup = () => {
       });
       return;
     }
-    if (gstNumber.length === 0 || !validateIndianGST(gstNumber)) {
+    if (gstNumber.length > 0 && !validateIndianGST(gstNumber)) {
       Toast.show({
         message: 'Enter a valid GST number',
         type: 'error',
@@ -172,7 +172,7 @@ const BusinessSetup = () => {
               }
             />
             <SimpleTextInput
-              placeholder="GST Number"
+              placeholder="GST Number(Optional)"
               maxLength={15}
               upperCase={true}
               value={gstNumber}

@@ -11,7 +11,8 @@ import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
-import { API_URL } from '../../utils/config';
+import {API_URL} from '../../utils/config';
+import {SlideOutDown} from 'react-native-reanimated';
 
 const ProductCard = memo(
   ({
@@ -22,7 +23,8 @@ const ProductCard = memo(
     editFunction = () => {},
   }) => {
     const PADDING = 8;
-
+    console.log(item);
+    console.log(`${API_URL}files/product/${item.image}`);
     useMemo(() => {
       imageWidth = width - PADDING * 2;
       imageHeight = (imageWidth * 3) / 4;
@@ -43,7 +45,7 @@ const ProductCard = memo(
             style={[styles.image, {height: imageHeight}]}
             source={
               item?.image
-                ? {uri: `${API_URL}files/product/${item.image}`}
+                ? {uri: `${API_URL}files/product/${item?.image}`}
                 : require('./../../../asset/images/emptyimg.jpg')
             }
             resizeMode="cover"

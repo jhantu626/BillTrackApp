@@ -47,6 +47,7 @@ import {useAuthToken} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
 import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import {useProduct} from '../../Contexts/ProductContexts';
+import {useRoute} from '@react-navigation/native';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUMBER_OF_COLUMNS = isTabletDevice ? 4 : 3;
@@ -61,6 +62,8 @@ const imageWidth = screenWidth - HORIZONTAL_PADDING * 2;
 const imageHeight = imageWidth * 2;
 
 const Product = () => {
+  const route = useRoute();
+  const doRefreshPage = route.params?.doRefresh || false;
   const {Products, resetProducts, addProduct, removeProduct} = useProduct();
   const token = useAuthToken();
   const [showModal, setShowModal] = useState(false);
@@ -126,7 +129,7 @@ const Product = () => {
         />
       ) : (
         <ProductCardRow
-          onpressCard={()=>handleEdit(item)}
+          onpressCard={() => handleEdit(item)}
           item={{
             id: item.id,
             title: item.name,
@@ -149,7 +152,6 @@ const Product = () => {
       setIsLoading(true);
       const data = await productService.getAllProducts(token);
       if (data?.status) {
-        // setProducts(data?.data || []);
         await resetProducts(data?.data || []);
       }
     } catch (error) {
@@ -324,7 +326,7 @@ const Product = () => {
   };
 
   useEffect(() => {
-    if (Products.length === 0) {
+    if (Products.length === 0 || doRefreshPage) {
       getProducts();
     }
   }, []);

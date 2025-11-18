@@ -39,6 +39,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {validateEmail, validateName} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {userService} from '../../Services/UserService';
+import { useProduct } from '../../Contexts/ProductContexts';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -47,6 +48,7 @@ const Account = memo(() => {
   const logoUrl = useBusiness('logoUrl');
   const token = useAuthToken();
   const updateUserFields = useUpdateUserFields();
+  const {clearAllProducts}=useProduct()
 
   //STATE VARIABLES
   const [name, setName] = useState(userName);

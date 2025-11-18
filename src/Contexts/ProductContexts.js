@@ -13,8 +13,7 @@ const ProductProvider = ({children}) => {
       try {
         const data = await AsyncStorage.getItem(STORAGE_KEY);
         if (data) setProducts(JSON.parse(data));
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     loadProducts();
@@ -47,6 +46,10 @@ const ProductProvider = ({children}) => {
     setProducts(productList);
   };
 
+  const clearAllProducts = () => {
+    setProducts([]);
+  };
+
   return (
     <ProductContext.Provider
       value={{
@@ -54,6 +57,7 @@ const ProductProvider = ({children}) => {
         addProduct,
         removeProduct,
         resetProducts,
+        clearAllProducts
       }}>
       {children}
     </ProductContext.Provider>
