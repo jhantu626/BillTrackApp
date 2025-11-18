@@ -44,13 +44,22 @@ class ProductService {
   }
 
   // CREATE PRODUCT
-  async createProduct({token, name, price, hsnId, unit, productImage = null}) {
+  async createProduct({
+    token,
+    name,
+    price,
+    hsnId = null,
+    unit,
+    productImage = null,
+  }) {
     try {
       const uri = this.baseUrl;
       const formData = new FormData();
 
       formData.append('name', name);
-      formData.append('hsnId', hsnId);
+      if (hsnId) {
+        formData.append('hsnId', hsnId);
+      }
       formData.append('unitType', unit);
       formData.append('price', price);
 

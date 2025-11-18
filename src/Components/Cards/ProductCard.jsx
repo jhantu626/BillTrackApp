@@ -23,8 +23,6 @@ const ProductCard = memo(
     editFunction = () => {},
   }) => {
     const PADDING = 8;
-    console.log(item);
-    console.log(`${API_URL}files/product/${item.image}`);
     useMemo(() => {
       imageWidth = width - PADDING * 2;
       imageHeight = (imageWidth * 3) / 4;

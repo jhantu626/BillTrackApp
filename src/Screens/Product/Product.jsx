@@ -17,6 +17,7 @@ import React, {Activity, useCallback, useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BottomSheetInput,
+  EmptyProductComponent,
   GstSelectModal,
   ProductCard,
   ProductCardRow,
@@ -205,18 +206,17 @@ const Product = () => {
     }
 
     if (isNewProduct) {
-      if (!hsnCode) {
-        return showError('Please select HSN Code');
-      }
       try {
         setIsSaveLoading(true);
         const payload = {
-          hsnId: hsnCode?.id,
           name: productName,
           price: productPrice,
           unit: productUnit,
           token: token,
         };
+        if (hsnCode) {
+          payload.hsnId = hsnCode?.id;
+        }
         if (isImageInserted) {
           payload.productImage = {
             uri: productImage.path,
@@ -235,6 +235,8 @@ const Product = () => {
           setTimeout(() => {
             handleCloseModal();
           }, 500);
+        } else {
+          console.log(data);
         }
       } catch (error) {
       } finally {
@@ -364,6 +366,7 @@ const Product = () => {
             tintColor={colors.sucess}
           />
         }
+        ListEmptyComponent={() => <EmptyProductComponent />}
       />
       <TouchableOpacity
         style={styles.addBtn}
@@ -423,7 +426,9 @@ const Product = () => {
                   />
                 </View>
                 <View style={[styles.inputSubContainer, {width: '45%'}]}>
-                  <Text style={styles.labelText}>Price</Text>
+                  <Text style={styles.labelText}>
+                    Price{isGstEnbaled ? '(Including GST)' : '(Selling Price)'}
+                  </Text>
                   <SimpleTextInput
                     placeholder={''}
                     value={productPrice}
@@ -433,7 +438,7 @@ const Product = () => {
                   />
                 </View>
               </View>
-              {isNewProduct && (
+              {isGstEnbaled && (
                 <View style={styles.inputSubContainer}>
                   <Text style={styles.labelText}>HSN Code</Text>
                   <BottomSheetInput

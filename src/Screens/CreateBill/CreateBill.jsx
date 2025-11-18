@@ -12,6 +12,7 @@ import {Layout} from '../Layout';
 import {
   BillProductCard,
   CreateBillBottom,
+  EmptyProductComponent,
   SecondaryHeader,
   SimpleTextInput,
   ToastContainer,
@@ -109,6 +110,7 @@ const CreateBill = () => {
           )}
           numColumns={NUM_COLUMNS}
           columnWrapperStyle={styles.columnWrapperStyle}
+          ListEmptyComponent={() => <EmptyProductComponent />}
         />
         <CreateBillBottom
           totalQuanity={quantity}

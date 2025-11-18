@@ -38,6 +38,9 @@ import ShimmerProductCard from './Shimmers/ShimmerProductCard';
 // Loaders
 import Loader from './Loaders/Loader';
 
+// Empty Components
+import EmptyProductComponent from './EmtyComponents/EmptyProductComponent';
+
 export {
   SimpleTextInput,
   BottomSheetInput,
@@ -62,4 +65,5 @@ export {
   ShimmerProductCard,
   GstSelectModal,
   Loader,
+  EmptyProductComponent
 };
