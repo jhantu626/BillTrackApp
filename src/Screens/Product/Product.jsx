@@ -43,7 +43,7 @@ import {requestPermission} from '../../utils/helper';
 import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
-import {useAuthToken} from '../../Contexts/AuthContext';
+import {useAuthToken, useGstEnabled} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
 import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import {useProduct} from '../../Contexts/ProductContexts';
@@ -65,6 +65,7 @@ const Product = () => {
   const route = useRoute();
   const doRefreshPage = route.params?.doRefresh || false;
   const {Products, resetProducts, addProduct, removeProduct} = useProduct();
+  const isGstEnbaled = useGstEnabled();
   const token = useAuthToken();
   const [showModal, setShowModal] = useState(false);
   const [products, setProducts] = useState([]);

@@ -121,7 +121,7 @@ export const useUpdateUserFields = () => {
   return updateUserFields;
 };
 
-export const useIsGstEnabled = () => {
+export const useGstEnabled = () => {
   const {business} = useAuth();
   return Boolean(business?.gstNumber);
 };

@@ -18,13 +18,16 @@ import {font, gap, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import ItemCard from '../../Components/Cards/ItemCard';
 import {productService} from '../../Services/ProductService';
-import {useAuthToken} from '../../Contexts/AuthContext';
+import {useAuthToken, useGstEnabled} from '../../Contexts/AuthContext';
 import ToastService from '../../Components/Toasts/ToastService';
 import {useNavigation} from '@react-navigation/native';
 
 const ItemMaster = () => {
+  const isGstEnbaled = useGstEnabled();
   const navigation = useNavigation();
   const token = useAuthToken();
+
+  console.log(isGstEnbaled);
 
   const [products, setProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -77,7 +80,7 @@ const ItemMaster = () => {
 
     const finalPayload = selectedItems.map(item => ({
       name: item?.name,
-      hsnId: item?.hsnId,
+      hsnId: isGstEnbaled ? item?.hsnId : null,
       unitType: item?.unitType,
       description: item?.description,
       logo: item?.logo,
