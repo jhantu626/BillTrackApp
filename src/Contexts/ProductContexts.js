@@ -46,7 +46,7 @@ const ProductProvider = ({children}) => {
     setProducts(productList);
   };
 
-  const clearAllProducts = () => {
+  const clearAllProducts = async () => {
     setProducts([]);
   };
 

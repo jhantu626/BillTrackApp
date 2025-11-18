@@ -39,7 +39,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {validateEmail, validateName} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {userService} from '../../Services/UserService';
-import { useProduct } from '../../Contexts/ProductContexts';
+import {useProduct} from '../../Contexts/ProductContexts';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -48,7 +48,7 @@ const Account = memo(() => {
   const logoUrl = useBusiness('logoUrl');
   const token = useAuthToken();
   const updateUserFields = useUpdateUserFields();
-  const {clearAllProducts}=useProduct()
+  const {clearAllProducts} = useProduct();
 
   //STATE VARIABLES
   const [name, setName] = useState(userName);
@@ -62,6 +62,13 @@ const Account = memo(() => {
 
   const navigation = useNavigation();
   const {logout} = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      await clearAllProducts();
+    } catch (error) {}
+  };
 
   const handleNavigation = ({screen, data = {}}) => {
     navigation.navigate(screen, {
@@ -226,7 +233,7 @@ const Account = memo(() => {
               />
             }
             title="Logout"
-            onpress={async () => logout()}
+            onpress={handleLogout}
           />
         </View>
         <View style={styles.deleteContainer}>
