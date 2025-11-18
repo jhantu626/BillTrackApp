@@ -116,10 +116,14 @@ export const useUpdateUserFields = () => {
     try {
       const updatedUser = {...(user || {}), ...fields};
       await setUserData(updatedUser);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
   return updateUserFields;
+};
+
+export const useIsGstEnabled = () => {
+  const {business} = useAuth();
+  return Boolean(business?.gstNumber);
 };
 
 export default AuthProvider;
