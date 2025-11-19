@@ -3,7 +3,7 @@ import {API_URL} from '../utils/config';
 
 class InvoiceService {
   constructor() {
-    this.baseUrl = API_URL + 'invoice/';
+    this.baseUrl = API_URL + 'invoice';
   }
 
   async createInvoice({token, customerNumber, items = []}) {
@@ -29,15 +29,15 @@ class InvoiceService {
     }
   }
 
-  async getInvoices(token, page, limit) {
+  async getInvoices(token, page = 0, limit = 10) {
     try {
-      const uri = this.baseUrl;
+      const uri = `${this.baseUrl}?page=${page}&limit=${limit}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data=await response.data;
+      const data = await response.data;
       return data;
     } catch (error) {
       const data = await error.response.data;
