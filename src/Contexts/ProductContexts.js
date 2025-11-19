@@ -1,18 +1,34 @@
 import {createContext, useState, useEffect, useContext} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useAuthToken} from './AuthContext';
+import {productService} from '../Services/ProductService';
 
 const ProductContext = createContext();
 
 const STORAGE_KEY = 'PRODUCTS';
 
 const ProductProvider = ({children}) => {
+  const token = useAuthToken();
   const [Products, setProducts] = useState([]);
+
+  const fetchApiToGetData = async () => {
+    try {
+      const data = await productService.getAllProducts(token);
+      if (data?.status) {
+        await resetProducts(data?.data || []);
+      }
+    } catch (error) {}
+  };
 
   useEffect(() => {
     const loadProducts = async () => {
       try {
         const data = await AsyncStorage.getItem(STORAGE_KEY);
-        if (data) setProducts(JSON.parse(data));
+        if (data && !data.includes('[]')) {
+          setProducts(JSON.parse(data));
+        } else {
+          await fetchApiToGetData();
+        }
       } catch (error) {}
     };
 
@@ -62,7 +78,7 @@ const ProductProvider = ({children}) => {
         removeProduct,
         resetProducts,
         clearAllProducts,
-        resetProductCount
+        resetProductCount,
       }}>
       {children}
     </ProductContext.Provider>

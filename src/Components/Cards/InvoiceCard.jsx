@@ -22,7 +22,6 @@ import {formatDate} from '../../utils/helper';
 const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
-  console.log('invoice', JSON.stringify(invoice));
   const sentWhatapp = async () => {
     const link = 'whatsapp://send?text=test&phone=919775746484';
     const supported = await Linking.canOpenURL(link);
@@ -39,7 +38,9 @@ const InvoiceCard = memo(({invoice}) => {
         <View style={styles.left}>
           <Text style={[styles.tsText]}>{invoice?.invoiceNumber}</Text>
           {invoice?.customerNumber && (
-            <Text style={[styles.numberText]}>+91 {invoice?.customerNumber}</Text>
+            <Text style={[styles.numberText]}>
+              +91 {invoice?.customerNumber}
+            </Text>
           )}
         </View>
         <Text style={[styles.dateText]}>{formatDate(invoice?.createdAt)}</Text>
