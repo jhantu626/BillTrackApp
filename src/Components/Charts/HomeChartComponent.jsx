@@ -24,7 +24,7 @@ import HomeChartShimmer from '../Shimmers/HomeChartShimmer';
 const {width} = Dimensions.get('screen');
 
 const HomeChartComponent = memo(
-  ({salesDurations = ['Today', 'Week', 'Month']}) => {
+  ({salesDurations = ['Today', 'Week', 'Month'], refreshTrigger}) => {
     const token = useAuthToken();
     const [selectedPriod, setSelectedPriod] = React.useState('Today');
     const [salesData, setSalesData] = useState(null);
@@ -72,7 +72,7 @@ const HomeChartComponent = memo(
 
     useEffect(() => {
       fetchSales();
-    }, [selectedPriod]);
+    }, [selectedPriod, refreshTrigger]);
 
     if (isLoading) {
       return <HomeChartShimmer />;

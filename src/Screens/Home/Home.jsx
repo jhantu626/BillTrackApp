@@ -1,11 +1,12 @@
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   HomeChartComponent,
@@ -29,6 +30,14 @@ import {
 
 const Home = () => {
   const navigation = useNavigation();
+  const [isRefreshing, setRefreshing] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setRefreshTrigger(prev => prev + 1);
+    setRefreshing(false);
+  };
 
   return (
     <Layout>
@@ -37,8 +46,16 @@ const Home = () => {
         style={{flex: 1}}
         contentContainerStyle={{
           paddingBottom: padding(30),
-        }}>
-        <HomeChartComponent />
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary, colors.sucess, colors.error]}
+            tintColor={colors.primary}
+          />
+        }>
+        <HomeChartComponent refreshTrigger={refreshTrigger} />
         <View style={styles.invoiceContainer}>
           <View style={styles.invoiceHeader}>
             <Text style={fonts.headerText}>All Invoice List</Text>
