@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback, useMemo, useState} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
-import { API_URL } from '../../utils/config';
+import {API_URL} from '../../utils/config';
 
 const BillProductCard = memo(
   ({width = 113, item, setQuantity, setTotalPrice}) => {
@@ -57,6 +57,10 @@ const BillProductCard = memo(
       },
       [item, setQuantity, setTotalPrice],
     );
+
+    useEffect(() => {
+      setCount(item?.count || 0);
+    }, [item?.count]);
 
     return (
       <View style={[styles.container, {width: width}]}>

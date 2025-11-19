@@ -46,6 +46,10 @@ const ProductProvider = ({children}) => {
     setProducts(productList);
   };
 
+  const resetProductCount = () => {
+    setProducts(prev => prev.map(p => ({...p, count: 0})));
+  };
+
   const clearAllProducts = async () => {
     setProducts([]);
   };
@@ -57,7 +61,8 @@ const ProductProvider = ({children}) => {
         addProduct,
         removeProduct,
         resetProducts,
-        clearAllProducts
+        clearAllProducts,
+        resetProductCount
       }}>
       {children}
     </ProductContext.Provider>

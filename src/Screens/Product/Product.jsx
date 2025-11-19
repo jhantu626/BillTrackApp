@@ -106,11 +106,13 @@ const Product = () => {
   };
 
   const handleEdit = item => {
+    console.log(item);
     setProductId(item.id);
     setProductName(item.name);
     setProductPrice(item.price || '');
     setProductUnit(item.unitType.toUpperCase() || '');
     setProductImage(item.logo);
+    setHsnCode(item.hsn);
     handleOpenModal();
     setIsNewProduct(false);
   };
