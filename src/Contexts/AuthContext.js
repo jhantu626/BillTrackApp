@@ -40,6 +40,7 @@ const AuthProvider = ({children}) => {
   const logout = async () => {
     try {
       await AsyncStorage.multiRemove(['token', 'user', 'business']);
+      await AsyncStorage.clear();
       setAuthToken(null);
       setUser(null);
       setBusiness(null);

@@ -35,6 +35,7 @@ import GstSelectModal from './modals/GstSelectModal';
 import ItemCardShimmer from './Shimmers/ItemCardShimmer';
 import ShimmerProductCard from './Shimmers/ShimmerProductCard';
 import HomeChartShimmer from './Shimmers/HomeChartShimmer';
+import InvoiceCardShimmer from './Shimmers/InvoiceCardShimmer';
 
 // Loaders
 import Loader from './Loaders/Loader';
@@ -68,4 +69,5 @@ export {
   Loader,
   EmptyProductComponent,
   HomeChartShimmer,
+  InvoiceCardShimmer,
 };

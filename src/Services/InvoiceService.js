@@ -28,6 +28,22 @@ class InvoiceService {
       return data;
     }
   }
+
+  async getInvoices(token, page, limit) {
+    try {
+      const uri = this.baseUrl;
+      const response = await axios.get(uri, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data=await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
 }
 
 const invoiceService = new InvoiceService();

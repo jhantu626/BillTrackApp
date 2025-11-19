@@ -15,13 +15,14 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {gap, padding, font, icon} from '../../utils/responsive';
+import {formatDate} from '../../utils/helper';
 
 // const {width} = Dimensions.get('screen');
 
 const InvoiceCard = memo(({invoice}) => {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
-
+  console.log('invoice', JSON.stringify(invoice));
   const sentWhatapp = async () => {
     const link = 'whatsapp://send?text=test&phone=919775746484';
     const supported = await Linking.canOpenURL(link);
@@ -36,15 +37,17 @@ const InvoiceCard = memo(({invoice}) => {
     <View style={styles.mainContainer}>
       <View style={styles.container}>
         <View style={styles.left}>
-          <Text style={[styles.tsText]}>{invoice?.ts}</Text>
-          <Text style={[styles.numberText]}>{invoice?.invoiceNumber}</Text>
+          <Text style={[styles.tsText]}>{invoice?.invoiceNumber}</Text>
+          {invoice?.customerNumber && (
+            <Text style={[styles.numberText]}>+91 {invoice?.customerNumber}</Text>
+          )}
         </View>
-        <Text style={[styles.dateText]}>{invoice?.date}</Text>
+        <Text style={[styles.dateText]}>{formatDate(invoice?.createdAt)}</Text>
         <View style={styles.right}>
           <View style={styles.paidContainer}>
             <Text style={[styles.paidText]}>{invoice?.status}</Text>
           </View>
-          <Text style={[styles.priceText]}>₹ {invoice?.amount}</Text>
+          <Text style={[styles.priceText]}>₹ {invoice?.totalAmount}</Text>
         </View>
       </View>
       <DottedDivider />

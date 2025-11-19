@@ -1,4 +1,4 @@
-import { PermissionsAndroid, Platform } from "react-native";
+import {PermissionsAndroid, Platform} from 'react-native';
 
 const requestPermission = async () => {
   if (Platform.OS === 'android') {
@@ -14,4 +14,29 @@ const requestPermission = async () => {
   return true;
 };
 
-export {requestPermission};
+function formatDate(isoString) {
+  const date = new Date(isoString);
+
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const month = months[date.getMonth()];
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  return `${month} ${day} ${year}`;
+}
+
+export {requestPermission, formatDate};

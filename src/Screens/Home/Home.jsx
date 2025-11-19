@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   HomeChartComponent,
   InvoiceCard,
+  InvoiceCardShimmer,
   Loader,
   PrimaryHeader,
   SalesAreaChart,
@@ -19,7 +20,6 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
-import {invoice} from '../../utils/data';
 import {
   font,
   gap,
@@ -27,17 +27,44 @@ import {
   margin,
   padding,
 } from '../../utils/responsive';
+import {invoiceService} from '../../Services/InvoiceService';
+import {useAuthToken} from '../../Contexts/AuthContext';
 
 const Home = () => {
   const navigation = useNavigation();
+  const token = useAuthToken();
+
+  // Loading State
   const [isRefreshing, setRefreshing] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // state variables
+  const [invoices, setInvoices] = useState([]);
+
+  const fetchInvoice = async () => {
+    try {
+      setIsLoading(true);
+      const data = await invoiceService.getInvoices(token, 0, 10);
+      if (data?.status) {
+        setInvoices(data?.data);
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
+    fetchInvoice();
     setRefreshTrigger(prev => prev + 1);
     setRefreshing(false);
   };
+
+  useEffect(() => {
+    fetchInvoice();
+  }, []);
 
   return (
     <Layout>
@@ -68,9 +95,15 @@ const Home = () => {
               <Ionicons name="arrow-forward" size={12} color={colors.primary} />
             </TouchableOpacity>
           </View>
-          {invoice.map((item, index) => (
-            <InvoiceCard invoice={item} key={index + 'invoice_card'} />
-          ))}
+          {isLoading
+            ? Array(3)
+                .fill(null)
+                .map((_, index) => (
+                  <InvoiceCardShimmer key={'invoiceShimmer' + index} />
+                ))
+            : invoices.map((item, index) => (
+                <InvoiceCard invoice={item} key={index + '_invoice_card'} />
+              ))}
         </View>
       </ScrollView>
     </Layout>
