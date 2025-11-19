@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useMemo} from 'react';
+import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Ionicons from '@react-native-vector-icons/ionicons';
@@ -17,15 +17,66 @@ import {
   margin,
   padding,
 } from '../../utils/responsive';
+import {salesReportService} from '../../Services/SalesReportService';
+import {useAuthToken} from '../../Contexts/AuthContext';
+import HomeChartShimmer from '../Shimmers/HomeChartShimmer';
 
 const {width} = Dimensions.get('screen');
 
 const HomeChartComponent = memo(
-  ({
-    selectedPriod,
-    handleChangePriod,
-    salesDurations = ['Today', 'Week', 'Month'],
-  }) => {
+  ({salesDurations = ['Today', 'Week', 'Month']}) => {
+    const token = useAuthToken();
+    const [selectedPriod, setSelectedPriod] = React.useState('Today');
+    const [salesData, setSalesData] = useState(null);
+    const [salesPercentage, setSalesPercentage] = useState(0);
+
+    // Loading State
+    const [isLoading, setIsLaoding] = useState(false);
+
+    const fetchSales = useCallback(async () => {
+      try {
+        setIsLaoding(true);
+        const data = await salesReportService.getSalesReportByPeriod(
+          token,
+          selectedPriod.toLowerCase(),
+        );
+        if (data?.status) {
+          setSalesData(data?.data);
+
+          const totalSales = data?.data?.totalSales ?? 0;
+          const previousTotalSales = data?.data?.previousTotalSales ?? 0;
+
+          let percentage = 0;
+
+          if (previousTotalSales === 0) {
+            // If no previous sales:
+            percentage = totalSales > 0 ? 100 : 0;
+          } else {
+            // Normal calculation
+            percentage =
+              ((totalSales - previousTotalSales) / previousTotalSales) * 100;
+          }
+          setSalesPercentage(percentage);
+        }
+      } catch (error) {
+      } finally {
+        setIsLaoding(false);
+      }
+    }, [selectedPriod]);
+
+    const handleChangePriod = period => {
+      try {
+        setSelectedPriod(period);
+      } catch (error) {}
+    };
+
+    useEffect(() => {
+      fetchSales();
+    }, [selectedPriod]);
+
+    if (isLoading) {
+      return <HomeChartShimmer />;
+    }
 
     return (
       <View style={styles.container}>
@@ -56,15 +107,22 @@ const HomeChartComponent = memo(
         <View style={styles.salesContainer}>
           <Text style={[styles.salesText]}>{selectedPriod}'s Sales</Text>
           <View style={styles.sales}>
-            <Text style={[styles.salesAmount]}>₹ 5104.00</Text>
+            <Text style={[styles.salesAmount]}>₹ {salesData?.totalSales}</Text>
             <View style={styles.salesPercentage}>
-              <Ionicons name="arrow-up" size={12} color={colors.sucess} />
-              <Text style={[styles.salesPercentageText]}>1.3% increased</Text>
+              <Ionicons
+                name={salesPercentage > 0 ? 'arrow-up' : 'arrow-down'}
+                size={12}
+                color={colors.sucess}
+              />
+              <Text style={[styles.salesPercentageText]}>
+                {salesPercentage.toFixed(2)}%{' '}
+                {salesPercentage > 0 ? 'increased' : 'decreased'}
+              </Text>
             </View>
           </View>
         </View>
         <View style={{paddingBottom: padding(5)}}>
-          <SalesAreaChart />
+          <SalesAreaChart barData={salesData?.data} key={'saled-chart-home'} />
         </View>
       </View>
     );

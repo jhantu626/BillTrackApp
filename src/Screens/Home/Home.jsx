@@ -29,11 +29,7 @@ import {
 
 const Home = () => {
   const navigation = useNavigation();
-  // STATE VARIABLES
-  const [selectedPriod, setSelectedPriod] = React.useState('Today');
-  const handleChangePriod = useCallback(priod => {
-    setSelectedPriod(priod);
-  }, []);
+
   return (
     <Layout>
       <PrimaryHeader />
@@ -42,10 +38,7 @@ const Home = () => {
         contentContainerStyle={{
           paddingBottom: padding(30),
         }}>
-        <HomeChartComponent
-          selectedPriod={selectedPriod}
-          handleChangePriod={handleChangePriod}
-        />
+        <HomeChartComponent />
         <View style={styles.invoiceContainer}>
           <View style={styles.invoiceHeader}>
             <Text style={fonts.headerText}>All Invoice List</Text>
