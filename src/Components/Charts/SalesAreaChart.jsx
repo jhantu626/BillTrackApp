@@ -1,27 +1,32 @@
 import {View} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
 import {colors} from '../../utils/colors';
+import {font} from '../../utils/responsive';
 
-const SalesAreaChart = () => {
-  const barData = [
-    {value: 250, label: 'M', frontColor: colors.primary},
-    {value: 500, label: 'T', frontColor: colors.primary},
-    {value: 745, label: 'W', frontColor: colors.primary},
-    {value: 320, label: 'T', frontColor: colors.primary},
-    {value: 600, label: 'F', frontColor: colors.primary},
-    {value: 256, label: 'S', frontColor: colors.primary},
-    {value: 300, label: 'S', frontColor: colors.primary},
-  ];
+const SalesAreaChart = ({
+  barData = [
+    {value: 250, label: 'Mon'},
+    {value: 500, label: 'Tue'},
+    {value: 745, label: 'Wed'},
+    {value: 320, label: 'Thu'},
+    {value: 600, label: 'Fri'},
+    {value: 256, label: 'Sat'},
+    {value: 300, label: 'Sun'},
+  ],
+}) => {
   return (
     <View>
       <BarChart
         barWidth={22}
         noOfSections={3}
         barBorderRadius={4}
-        frontColor="lightgray"
+        frontColor={colors.primary}
         data={barData}
         yAxisThickness={0}
         xAxisThickness={0}
+        xAxisLabelTextStyle={{
+          fontSize: font(10),
+        }}
       />
     </View>
   );
