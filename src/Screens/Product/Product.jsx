@@ -93,6 +93,7 @@ const Product = () => {
     setProductName('');
     setProductUnit('');
     setProductPrice('');
+    setHsnCode('');
   };
 
   const handleOpenModal = () => {

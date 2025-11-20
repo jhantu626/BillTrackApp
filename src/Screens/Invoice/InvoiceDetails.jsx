@@ -6,12 +6,25 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
 import {fonts} from '../../utils/fonts';
+import {useBusiness} from '../../Contexts/AuthContext';
+import {useRoute} from '@react-navigation/native';
+import {invoiceService} from '../../Services/InvoiceService';
+import {API_URL} from '../../utils/config';
+import {icon} from '../../utils/responsive';
+import {formatDate, formatTime12Hour} from '../../utils/helper';
+import {parse} from 'react-native-svg';
 
 const InvoiceDetails = () => {
+  // ROUTE - NAVIGATION
+  const route = useRoute();
+  const {invoice} = route.params;
+  console.log('invoice', JSON.stringify(invoice));
+  const business = useBusiness();
+  console.log('business', JSON.stringify(business));
   const invoiceData = {
     businessName: 'Turain Software',
     businessPhone: '+91 6290 397200',
@@ -41,6 +54,15 @@ const InvoiceDetails = () => {
       {name: 'Chicken Kebab', quantity: 1, price: 180},
     ],
   };
+
+  // STATE VARIABLES
+  const [invoiceItems, setInvoiceItems] = useState([]);
+  const [gstList, setGstList] = useState([]);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [subTotalAmount, setSubTotalAmount] = useState(0);
+
+  // LOADING STATE
+  const [isLoading, setIsLoading] = useState(false);
 
   const {width} = useWindowDimensions();
 
@@ -92,6 +114,79 @@ const InvoiceDetails = () => {
     };
   }, [width]);
 
+  console.log('invoiceItems');
+
+  const fetchInvoices = async () => {
+    try {
+      setIsLoading(true);
+      const data = await invoiceService.getInvoiceItems(invoice.id);
+      console.log('invoice items', JSON.stringify(data));
+      if (data?.status) {
+        let items = [];
+        const gstListCalculate = [];
+        let subTotal = 0;
+        let totalGST = 0;
+        data?.items.forEach(item => {
+          const rate = parseFloat(item?.rate);
+          let actualRate;
+          const quantity = Number(item?.quantity);
+          setTotalQuantity(prev => prev + quantity);
+
+          if (item?.gstType !== null && item?.gstPercentage !== 0) {
+            const gstPercentage = parseFloat(item?.gstPercentage);
+
+            // Correct formula: actualRate = rate / (1 + gstPercentage/100)
+            actualRate = rate / (1 + gstPercentage / 100);
+
+            // GST amount is the difference
+            const gstAmount = rate - actualRate;
+
+            totalGST += gstAmount * quantity;
+
+            gstListCalculate.push({
+              gstType: 'CGST',
+              gstPercentage: gstPercentage / 2,
+              gstAmount: (gstAmount / 2) * quantity,
+              rate: actualRate * quantity,
+            });
+
+            gstListCalculate.push({
+              gstType: 'SGST',
+              gstAmount: (gstAmount / 2) * quantity,
+              gstPercentage: gstPercentage / 2,
+              rate: actualRate * quantity,
+            });
+          } else {
+            actualRate = rate;
+          }
+
+          subTotal += actualRate * quantity;
+
+          setSubTotalAmount(prev => prev + actualRate * Number(item?.quantity));
+          items.push({
+            name: item?.productName,
+            quantity: item?.quantity,
+            rate: actualRate,
+          });
+        });
+
+        const finalTotal = subTotal + totalGST;
+
+        setInvoiceItems(items);
+        setGstList(gstListCalculate);
+        console.log('final Items', JSON.stringify(items));
+        console.log('gstList', JSON.stringify(gstListCalculate));
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchInvoices();
+  }, [invoice]);
+
   return (
     <Layout>
       <SecondaryHeader
@@ -118,7 +213,7 @@ const InvoiceDetails = () => {
               },
             ]}>
             <Image
-              source={invoiceData.businessLogo}
+              source={{uri: `${API_URL}files/logo/${business?.logoUrl}`}}
               style={styles.logo}
               resizeMode="contain"
             />
@@ -127,17 +222,23 @@ const InvoiceDetails = () => {
                 styles.businessText,
                 {fontSize: sizes.businessTextFontSize},
               ]}>
-              {invoiceData.businessName}
+              {business?.name}
             </Text>
-            <View style={styles.topKeyValueStyle}>
-              <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
-                Phone Numer:{' '}
-              </Text>
-              <Text
-                style={[styles.valueText, {fontSize: sizes.valueTextFontSize}]}>
-                {invoiceData.businessPhone}
-              </Text>
-            </View>
+            {business?.phone && (
+              <View style={styles.topKeyValueStyle}>
+                <Text
+                  style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
+                  Phone Numer:{' '}
+                </Text>
+                <Text
+                  style={[
+                    styles.valueText,
+                    {fontSize: sizes.valueTextFontSize},
+                  ]}>
+                  {invoiceData.businessPhone}
+                </Text>
+              </View>
+            )}
             <View style={styles.topKeyValueStyle}>
               <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
                 Address:{' '}
@@ -147,18 +248,25 @@ const InvoiceDetails = () => {
                   styles.valueText,
                   {width: '50%', fontSize: sizes.valueTextFontSize},
                 ]}>
-                {invoiceData.businessAddress}
+                {business?.street}, {business?.city}, {business?.state},{' '}
+                {business?.pinCode}
               </Text>
             </View>
-            <View style={styles.topKeyValueStyle}>
-              <Text style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
-                GST NO :{' '}
-              </Text>
-              <Text
-                style={[styles.valueText, {fontSize: sizes.valueTextFontSize}]}>
-                {invoiceData.businessGstNo}
-              </Text>
-            </View>
+            {business?.gstNumber && (
+              <View style={styles.topKeyValueStyle}>
+                <Text
+                  style={[styles.keyText, {fontSize: sizes.keyTextFontSize}]}>
+                  GST NO :{' '}
+                </Text>
+                <Text
+                  style={[
+                    styles.valueText,
+                    {fontSize: sizes.valueTextFontSize},
+                  ]}>
+                  {business?.gstNumber}
+                </Text>
+              </View>
+            )}
           </View>
           <DottedDivider borderWidth={0.8} />
           <View
@@ -176,14 +284,14 @@ const InvoiceDetails = () => {
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Invoice No : {invoiceData.invoiceNumber}{' '}
+                Invoice No : {invoice.invoiceNumber}{' '}
               </Text>
               <Text
                 style={[
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Date : {invoiceData.invoiceDate}{' '}
+                Date : {formatDate(invoice?.createdAt)}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
@@ -192,41 +300,34 @@ const InvoiceDetails = () => {
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Billed By : {invoiceData.billedBy}
+                {/* Billed By : {invoiceData.billedBy} */}
               </Text>
               <Text
                 style={[
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Time : {invoiceData.invoiceTime}
+                Time : {formatTime12Hour(invoice?.createdAt)}
               </Text>
             </View>
           </View>
-          <DottedDivider borderWidth={0.8} />
+          {invoice?.customerNumber && <DottedDivider borderWidth={0.8} />}
           <View
             style={[
               styles.secondContainer,
               {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
             ]}>
-            <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                Name : {invoiceData.customerName}
-              </Text>
-            </View>
-            <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                Number : {invoiceData.customerPhone}
-              </Text>
-            </View>
+            {invoice.customerNumber && (
+              <View style={styles.subSecondContainer}>
+                <Text
+                  style={[
+                    styles.invoiceText,
+                    {fontSize: sizes.invoiceTextFontSize},
+                  ]}>
+                  Customer : +91 {invoice?.customerNumber}
+                </Text>
+              </View>
+            )}
           </View>
           <DottedDivider borderWidth={0.8} />
           <View style={styles.itemCotainer}>
@@ -272,7 +373,7 @@ const InvoiceDetails = () => {
             </Text>
           </View>
           <DottedDivider borderWidth={0.8} />
-          {invoiceData.items.map((item, index) => (
+          {invoiceItems.map((item, index) => (
             <View style={styles.itemCotainer} key={index + '_item'}>
               <Text
                 style={[
@@ -301,7 +402,7 @@ const InvoiceDetails = () => {
                     fontSize: sizes.invoiceItemFontSize,
                   },
                 ]}>
-                ₹{item.price}
+                ₹{item.rate.toFixed(2)}
               </Text>
               <Text
                 style={[
@@ -312,7 +413,7 @@ const InvoiceDetails = () => {
                     fontSize: sizes.invoiceTitleFontSize,
                   },
                 ]}>
-                ₹{item.price * item.quantity}
+                ₹{(Number(item.rate) * Number(item.quantity)).toFixed(2)}
               </Text>
             </View>
           ))}
@@ -330,7 +431,7 @@ const InvoiceDetails = () => {
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Total Quantity : 10
+                Total Quantity : {totalQuantity}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
@@ -339,63 +440,39 @@ const InvoiceDetails = () => {
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Sub Total : 1340.95
+                Sub Total : ₹{subTotalAmount.toFixed(2)}
               </Text>
             </View>
           </View>
           <DottedDivider borderWidth={0.8} />
-          <View
-            style={[
-              styles.secondContainer,
-              {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
-            ]}>
-            <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                1280.95 @ CGST - 2.5%
-              </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                1280.95 @ SGST - 2.5%
-              </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                Round Off
-              </Text>
+          {gstList.map((item, index) => (
+            <View
+              key={index + 'gst_list'}
+              style={[
+                styles.secondContainer,
+                {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+              ]}>
+              <View style={styles.subSecondContainer}>
+                <Text
+                  style={[
+                    styles.invoiceText,
+                    {fontSize: sizes.invoiceTextFontSize},
+                  ]}>
+                  ₹{item?.rate.toFixed(2)} @ {item?.gstType} -{' '}
+                  {item?.gstPercentage}%
+                </Text>
+              </View>
+              <View style={styles.subSecondContainer}>
+                <Text
+                  style={[
+                    styles.invoiceText,
+                    {fontSize: sizes.invoiceTextFontSize},
+                  ]}>
+                  ₹{item?.gstAmount.toFixed(2)}
+                </Text>
+              </View>
             </View>
-            <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                ₹32.02
-              </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                ₹32.02
-              </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: sizes.invoiceTextFontSize},
-                ]}>
-                ₹0.01
-              </Text>
-            </View>
-          </View>
+          ))}
           <DottedDivider borderWidth={0.8} />
           <View
             style={[
@@ -413,7 +490,7 @@ const InvoiceDetails = () => {
                   styles.invoiceText,
                   {fontSize: sizes.invoiceTextFontSize},
                 ]}>
-                Total Amount : ₹1405.00
+                Total Amount : ₹{invoice.totalAmount}
               </Text>
             </View>
           </View>
@@ -440,8 +517,9 @@ const styles = StyleSheet.create({
     // gap: 7,
   },
   logo: {
-    height: 24,
-    tintColor: '#00000090',
+    width: icon(100),
+    height: icon(100),
+    // tintColor: '#00000090',
   },
   businessText: {
     fontFamily: fonts.onBold,

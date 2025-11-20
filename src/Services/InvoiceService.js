@@ -6,6 +6,7 @@ class InvoiceService {
     this.baseUrl = API_URL + 'invoice';
   }
 
+  // CREATE - INVOICE
   async createInvoice({token, customerNumber, items = []}) {
     try {
       const uri = this.baseUrl;
@@ -29,6 +30,7 @@ class InvoiceService {
     }
   }
 
+  // GET - INVOICE
   async getInvoices(token, page = 0, limit = 10) {
     try {
       const uri = `${this.baseUrl}?page=${page}&limit=${limit}`;
@@ -37,6 +39,19 @@ class InvoiceService {
           Authorization: `Bearer ${token}`,
         },
       });
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
+
+  // GET - INVOICE ITEMS
+  async getInvoiceItems(invoiceId) {
+    try {
+      const uri = `${this.baseUrl}/items/${invoiceId}`;
+      const response = await axios.get(uri);
       const data = await response.data;
       return data;
     } catch (error) {

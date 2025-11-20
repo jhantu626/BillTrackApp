@@ -80,7 +80,7 @@ const InvoiceCard = memo(({invoice}) => {
         <TouchableOpacity
           style={styles.subBottomContainer}
           onPress={() => {
-            navigation.navigate('InvoiceDetails');
+            navigation.navigate('InvoiceDetails', {invoice: invoice});
           }}>
           <Lucide name="eye" size={icon(18)} color={'#00000090'} />
           <Text style={[{color: '#00000090'}, styles.subBottomContainerText]}>

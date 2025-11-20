@@ -39,4 +39,18 @@ function formatDate(isoString) {
   return `${month} ${day} ${year}`;
 }
 
-export {requestPermission, formatDate};
+function formatTime12Hour(isoString) {
+  const date = new Date(isoString);
+
+  let hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+
+  const period = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const minutesStr = minutes.toString().padStart(2, '0');
+
+  return `${hours.toString().padStart(2, '0')}:${minutesStr} ${period}`;
+}
+
+export {requestPermission, formatDate, formatTime12Hour};
