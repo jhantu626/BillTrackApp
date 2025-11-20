@@ -5,10 +5,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback, useMemo, useRef, useState} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {Layout} from '../Layout';
 import {
   DottedDivider,
+  HomeChartShimmer,
   SalesAreaChart,
   SecondaryHeader,
 } from '../../Components';
@@ -23,11 +31,21 @@ import BottomSheet, {
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 import AntDesign from '@react-native-vector-icons/ant-design';
+import {useAuthToken} from '../../Contexts/AuthContext';
+import {salesReportService} from '../../Services/SalesReportService';
 
 const SalesReport = memo(() => {
+  const token = useAuthToken();
+
   const [selectedPriod, setSelectedPriod] = useState('Monthly');
   const [selectedDownload, setSelectedDownload] = useState('Today');
   const [selectedDownloadType, setSelectedDownloadType] = useState('CSV');
+  const [chartData, setChartData] = useState(null);
+  const [currentSalesPercentage, setCurrentSalesPercentage] = useState(0);
+  const [previousSalesPercentage, setPreviousSalesPercentage] = useState(0);
+
+  // Loading State
+  const [isLoading, setIsLaoding] = useState(false);
 
   // bottomsheet contents
   const bottomSheetRef = useRef(null);
@@ -53,6 +71,56 @@ const SalesReport = memo(() => {
       ),
     [],
   );
+
+  const fetchGraphData = async () => {
+    try {
+      setIsLaoding(true);
+      const period =
+        selectedPriod === 'Monthly'
+          ? 'month'
+          : selectedPriod.trim().toLowerCase().replace(/\s+/g, '');
+
+      console.log(period);
+      const data = await salesReportService.getSalesReportByPeriod(
+        token,
+        period,
+      );
+      if (data?.status) {
+        setChartData(data?.data);
+        const currentSales = Number(data?.data?.totalSales) || 0;
+        const previousSales = Number(data?.data?.previousTotalSales) || 0;
+        let currentSalesP;
+        let prevSalesPercentage;
+
+        // ----- Current Sales Percentage (compared to previous month) -----
+        if (previousSales === 0) {
+          // If last month was 0
+          currentSalesP = currentSales > 0 ? 100 : 0;
+        } else {
+          currentSalesP =
+            ((currentSales - previousSales) / previousSales) * 100;
+        }
+
+        if (currentSales === 0) {
+          prevSalesPercentage = previousSales > 0 ? 100 : 0;
+        } else {
+          prevSalesPercentage =
+            ((previousSales - currentSales) / currentSales) * 100;
+        }
+
+        setCurrentSalesPercentage(currentSalesP);
+        setPreviousSalesPercentage(prevSalesPercentage);
+      }
+      console.log(JSON.stringify(data));
+    } catch (error) {
+    } finally {
+      setIsLaoding(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGraphData();
+  }, [selectedPriod]);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
@@ -83,61 +151,107 @@ const SalesReport = memo(() => {
               <View style={styles.sales}>
                 <View style={styles.salesHeader}>
                   <Text style={styles.salesText}>Sales</Text>
-                  <Text style={[styles.salesText, {color: colors.sucess}]}>
-                    +2.5%
+                  <Text
+                    style={[
+                      styles.salesText,
+                      {
+                        color:
+                          currentSalesPercentage >= 0
+                            ? colors.sucess
+                            : colors.error,
+                      },
+                    ]}>
+                    {currentSalesPercentage >= 0 ? '+' : ''}
+                    {currentSalesPercentage}%
                   </Text>
-                  <Ionicons name="arrow-up" color={colors.sucess} />
+                  <Ionicons
+                    name={currentSalesPercentage >= 0 ? 'arrow-up' : 'arrow-up'}
+                    color={
+                      currentSalesPercentage >= 0 ? colors.sucess : colors.error
+                    }
+                  />
                 </View>
-                <Text style={styles.salesAmount}>₹ 10289.00</Text>
+                <Text style={styles.salesAmount}>
+                  ₹ {chartData?.totalSales}
+                </Text>
                 <Text style={styles.salesBottomText} numberOfLines={2}>
-                  Compared to (₹ 9340.00 last month)
+                  Compared to (₹{' '}
+                  {chartData?.totalSales - chartData?.previousTotalSales} last
+                  period)
                 </Text>
               </View>
               <View style={styles.sales}>
                 <View style={styles.salesHeader}>
                   <Text style={styles.salesText}>Sales</Text>
-                  <Text style={[styles.salesText, {color: colors.sucess}]}>
-                    +2.5%
+                  <Text
+                    style={[
+                      styles.salesText,
+                      {
+                        color:
+                          previousSalesPercentage >= 0
+                            ? colors.sucess
+                            : colors.error,
+                      },
+                    ]}>
+                    {previousSalesPercentage >= 0 ? '+' : ''}
+                    {previousSalesPercentage}%
                   </Text>
-                  <Ionicons name="arrow-up" color={colors.sucess} />
+                  <Ionicons
+                    name={
+                      previousSalesPercentage >= 0 ? 'arrow-up' : 'arrow-down'
+                    }
+                    color={
+                      previousSalesPercentage >= 0
+                        ? colors.sucess
+                        : colors.error
+                    }
+                  />
                 </View>
-                <Text style={styles.salesAmount}>₹ 10289.00</Text>
+                <Text style={styles.salesAmount}>
+                  ₹ {chartData?.previousTotalSales}
+                </Text>
                 <Text style={styles.salesBottomText} numberOfLines={2}>
-                  Compared to (₹ 9340.00 last month)
+                  Compared to (₹{' '}
+                  {chartData?.previousTotalSales - chartData?.totalSales}{' '}
+                  current period)
                 </Text>
               </View>
             </View>
           </View>
-          <View style={styles.container}>
-            <View style={styles.selectableContainer}>
-              {['Monthly', '3 Months', '6 Months'].map(period => (
-                <TouchableOpacity
-                  key={period}
-                  style={[
-                    styles.selectable,
-                    selectedPriod === period && {
-                      backgroundColor: '#fff',
-                      borderRadius: 5,
-                      borderWidth: 0.5,
-                      borderColor: colors.primary,
-                    },
-                  ]}
-                  onPress={() => setSelectedPriod(period)}>
-                  <Text
+          {isLoading ? (
+            <HomeChartShimmer />
+          ) : (
+            <View style={styles.container}>
+              <View style={styles.selectableContainer}>
+                {['Monthly', '3 Months', '6 Months'].map(period => (
+                  <TouchableOpacity
+                    key={period}
                     style={[
-                      styles.selectedText,
-                      {fontSize: 12},
-                      selectedPriod === period && {color: colors.primary},
-                    ]}>
-                    {period}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                      styles.selectable,
+                      selectedPriod === period && {
+                        backgroundColor: '#fff',
+                        borderRadius: 5,
+                        borderWidth: 0.5,
+                        borderColor: colors.primary,
+                      },
+                    ]}
+                    onPress={() => setSelectedPriod(period)}>
+                    <Text
+                      style={[
+                        styles.selectedText,
+                        {fontSize: 12},
+                        selectedPriod === period && {color: colors.primary},
+                      ]}>
+                      {period}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <View style={{paddingBottom: padding(5)}}>
+                <SalesAreaChart barData={chartData?.data} />
+              </View>
             </View>
-            <View style={{paddingBottom: padding(5)}}>
-              <SalesAreaChart />
-            </View>
-          </View>
+          )}
         </ScrollView>
       </Layout>
       <BottomSheet
@@ -363,7 +477,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     marginHorizontal: margin(16),
-    marginVertical: margin(20)
+    marginVertical: margin(20),
   },
   downloadButtonText: {
     fontSize: font(16),
