@@ -112,9 +112,13 @@ const HomeChartComponent = memo(
               <Ionicons
                 name={salesPercentage > 0 ? 'arrow-up' : 'arrow-down'}
                 size={12}
-                color={colors.sucess}
+                color={salesPercentage > 0 ? colors.sucess : colors.error}
               />
-              <Text style={[styles.salesPercentageText]}>
+              <Text
+                style={[
+                  styles.salesPercentageText,
+                  salesPercentage <=0 && {color: colors.error},
+                ]}>
                 {salesPercentage.toFixed(2)}%{' '}
                 {salesPercentage > 0 ? 'increased' : 'decreased'}
               </Text>
