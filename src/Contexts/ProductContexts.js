@@ -33,7 +33,7 @@ const ProductProvider = ({children}) => {
     };
 
     loadProducts();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const saveProducts = async () => {

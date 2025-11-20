@@ -1,4 +1,5 @@
 import {
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -46,6 +47,7 @@ const SalesReport = memo(() => {
 
   // Loading State
   const [isLoading, setIsLaoding] = useState(false);
+  const [isRefreshing, setRefreshing] = useState(false);
 
   // bottomsheet contents
   const bottomSheetRef = useRef(null);
@@ -122,11 +124,26 @@ const SalesReport = memo(() => {
     fetchGraphData();
   }, [selectedPriod]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchGraphData();
+    setRefreshing(false);
+  };
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Layout>
         <SecondaryHeader title="Sales report" isSearch={false} />
-        <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+        <ScrollView
+          style={{flex: 1, backgroundColor: '#fff'}}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={onRefresh}
+              colors={[colors.primary, colors.sucess, colors.error]}
+              tintColor={colors.primary}
+            />
+          }>
           <View style={styles.topContainer}>
             <View style={styles.topButtonContainer}>
               <View style={styles.downloadContainer}>
@@ -182,7 +199,7 @@ const SalesReport = memo(() => {
               </View>
               <View style={styles.sales}>
                 <View style={styles.salesHeader}>
-                  <Text style={styles.salesText}>Sales</Text>
+                  <Text style={styles.salesText}>Previous</Text>
                   <Text
                     style={[
                       styles.salesText,
