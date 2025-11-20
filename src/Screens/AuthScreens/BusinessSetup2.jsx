@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {AuthLayout} from '../Layout';
-import {SimpleTextInput, } from '../../Components';
+import {SimpleTextInput} from '../../Components';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
@@ -84,6 +84,7 @@ const BusinessSetup2 = () => {
         type: 'error',
         position: 'top',
       });
+      return;
     } else if (street.length === 0) {
       ToastService.show({
         message: 'Enter Street Address',
@@ -94,6 +95,13 @@ const BusinessSetup2 = () => {
     } else if (city.length === 0) {
       ToastService.show({
         message: 'Enter City',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    } else if (state.length === 0) {
+      ToastService.show({
+        message: 'Enter State',
         type: 'error',
         position: 'top',
       });
