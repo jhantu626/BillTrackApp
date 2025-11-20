@@ -15,7 +15,6 @@ import {
   EmptyProductComponent,
   SecondaryHeader,
   SimpleTextInput,
-  ToastContainer,
 } from '../../Components';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {
@@ -287,7 +286,6 @@ const CreateBill = () => {
           </View>
         </BottomSheetView>
       </BottomSheet>
-      <ToastContainer />
     </GestureHandlerRootView>
   );
 };

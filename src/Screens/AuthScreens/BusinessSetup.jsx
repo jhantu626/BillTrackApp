@@ -17,7 +17,6 @@ import {
   RadioInput,
   SearchInput,
   SimpleTextInput,
-  ToastContainer,
 } from '../../Components';
 import {
   validateBusinessName,
@@ -278,7 +277,6 @@ const BusinessSetup = () => {
           </View>
         </BottomSheet>
 
-        <ToastContainer />
       </GestureHandlerRootView>
     </AuthLayout>
   );

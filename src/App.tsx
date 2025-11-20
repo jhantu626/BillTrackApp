@@ -31,6 +31,7 @@ import {memo, useCallback, useMemo} from 'react';
 import {font, icon, margin, padding} from './utils/responsive';
 import AuthProvider, {useAuth, useUser} from './Contexts/AuthContext';
 import ProductProvider from './Contexts/ProductContexts';
+import {ToastContainer} from './Components';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -109,7 +110,7 @@ const InvoiceStack = memo(() => {
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="SalesAndReport"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -140,7 +141,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Account"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -247,6 +248,7 @@ const App = () => {
       <ProductProvider>
         <NavigationContainer>
           <AppNav />
+          <ToastContainer />
         </NavigationContainer>
       </ProductProvider>
     </AuthProvider>

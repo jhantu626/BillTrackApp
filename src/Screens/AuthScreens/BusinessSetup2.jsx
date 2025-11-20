@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {AuthLayout} from '../Layout';
-import {SimpleTextInput, ToastContainer} from '../../Components';
+import {SimpleTextInput, } from '../../Components';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
@@ -223,7 +223,6 @@ const BusinessSetup2 = () => {
           )}
         </TouchableOpacity>
       </ScrollView>
-      <ToastContainer />
     </AuthLayout>
   );
 };

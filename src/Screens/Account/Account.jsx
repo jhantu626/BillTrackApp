@@ -18,7 +18,6 @@ import {
   SecondaryHeader,
   SettingItemsCard,
   SimpleTextInput,
-  ToastContainer,
 } from '../../Components';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
@@ -245,8 +244,6 @@ const Account = memo(() => {
           <Text style={styles.deleteText}>Delete Account</Text>
         </View>
       </ScrollView>
-      <ToastContainer />
-
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -284,7 +281,6 @@ const Account = memo(() => {
             </Pressable>
           </Pressable>
         </Pressable>
-        <ToastContainer />
       </Modal>
     </Layout>
   );

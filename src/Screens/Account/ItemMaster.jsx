@@ -12,7 +12,6 @@ import {Layout} from '../Layout';
 import {
   ItemCardShimmer,
   SecondaryHeader,
-  ToastContainer,
 } from '../../Components';
 import {font, gap, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
@@ -167,7 +166,6 @@ const ItemMaster = () => {
         </TouchableOpacity>
       </View>
 
-      <ToastContainer />
     </Layout>
   );
 };

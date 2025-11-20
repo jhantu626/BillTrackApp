@@ -25,7 +25,6 @@ import {
   SecondaryHeader,
   ShimmerProductCard,
   SimpleTextInput,
-  ToastContainer,
 } from '../../Components';
 import {
   font,
@@ -482,7 +481,6 @@ const Product = () => {
             </View>
           </Pressable>
         </Pressable>
-        <ToastContainer />
       </Modal>
       <ProductUnitModal
         visible={unitModalVisible}
