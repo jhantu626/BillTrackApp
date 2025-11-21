@@ -1,4 +1,5 @@
 import {
+  Alert,
   Linking,
   StyleSheet,
   Text,
@@ -7,7 +8,7 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import React, {memo, useMemo} from 'react';
+import React, {memo, useEffect, useMemo, useState} from 'react';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import DottedDivider from '../Dividers/DottedDivider';
@@ -16,6 +17,7 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {gap, padding, font, icon} from '../../utils/responsive';
 import {formatDate} from '../../utils/helper';
+import ToastService from '../Toasts/ToastService';
 
 // const {width} = Dimensions.get('screen');
 
@@ -29,6 +31,18 @@ const InvoiceCard = memo(({invoice}) => {
       await Linking.openURL(link);
     } else {
       ToastAndroid.show('Please install whatsapp', ToastAndroid.SHORT);
+    }
+  };
+
+  const printBill = async () => {
+    try {
+    } catch (error) {
+      console.error('Print button error:', error);
+      ToastService.show({
+        message: 'Something went wrong',
+        type: 'error',
+        position: 'top',
+      });
     }
   };
 
@@ -71,7 +85,7 @@ const InvoiceCard = memo(({invoice}) => {
             Whatsapp
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.subBottomContainer}>
+        <TouchableOpacity style={styles.subBottomContainer} onPress={printBill}>
           <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
           <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
             Print
