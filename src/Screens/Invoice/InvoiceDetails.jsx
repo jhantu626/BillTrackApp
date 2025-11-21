@@ -124,8 +124,6 @@ const InvoiceDetails = () => {
       if (data?.status) {
         let items = [];
         const gstListCalculate = [];
-        let subTotal = 0;
-        let totalGST = 0;
         data?.items.forEach(item => {
           const rate = parseFloat(item?.rate);
           let actualRate;
@@ -140,8 +138,6 @@ const InvoiceDetails = () => {
 
             // GST amount is the difference
             const gstAmount = rate - actualRate;
-
-            totalGST += gstAmount * quantity;
 
             gstListCalculate.push({
               gstType: 'CGST',
@@ -160,7 +156,6 @@ const InvoiceDetails = () => {
             actualRate = rate;
           }
 
-          subTotal += actualRate * quantity;
 
           setSubTotalAmount(prev => prev + actualRate * Number(item?.quantity));
           items.push({
@@ -170,7 +165,6 @@ const InvoiceDetails = () => {
           });
         });
 
-        const finalTotal = subTotal + totalGST;
 
         setInvoiceItems(items);
         setGstList(gstListCalculate);
