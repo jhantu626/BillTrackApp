@@ -10,6 +10,7 @@ import React, {useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   HomeChartComponent,
+  HomeChartShimmer,
   InvoiceCard,
   InvoiceCardShimmer,
   Loader,
@@ -37,7 +38,8 @@ const Home = () => {
   // Loading State
   const [isRefreshing, setRefreshing] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // state variables
   const [invoices, setInvoices] = useState([]);
@@ -47,24 +49,25 @@ const Home = () => {
       setIsLoading(true);
       const data = await invoiceService.getInvoices(token, 0, 10);
       if (data?.status) {
-        setInvoices(data?.data);
+        setInvoices(data?.data || []);
       }
     } catch (error) {
     } finally {
       setIsLoading(false);
+      setIsInitialLoad(false);
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchInvoice();
+    await fetchInvoice();
     setRefreshTrigger(prev => prev + 1);
     setRefreshing(false);
   };
 
   useEffect(() => {
     fetchInvoice();
-  }, []);
+  }, [token]);
 
   return (
     <Layout>
@@ -82,7 +85,12 @@ const Home = () => {
             tintColor={colors.primary}
           />
         }>
-        <HomeChartComponent refreshTrigger={refreshTrigger} />
+        {isInitialLoad ? (
+          <HomeChartShimmer />
+        ) : (
+          <HomeChartComponent refreshTrigger={refreshTrigger} />
+        )}
+
         <View style={styles.invoiceContainer}>
           <View style={styles.invoiceHeader}>
             <Text style={fonts.headerText}>All Invoice List</Text>
