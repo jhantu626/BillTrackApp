@@ -3,13 +3,21 @@ import React from 'react';
 import {font, gap, padding, icon} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
+import {colors} from '../../utils/colors';
 
-const SettingItemsCard = ({mainIcon, title, onpress = () => {}}) => {
+const SettingItemsCard = ({
+  mainIcon,
+  title,
+  onpress = () => {},
+  tag = false,
+  tagText = '',
+}) => {
   return (
     <TouchableOpacity style={styles.settingCard} onPress={onpress}>
       <View style={styles.leftContainer}>
         {mainIcon}
         <Text style={styles.itemText}>{title}</Text>
+        {tag && <Text style={styles.newText}>{tagText}</Text>}
       </View>
       <TouchableOpacity style={styles.rightContainer}>
         <MaterialIcons
@@ -37,6 +45,15 @@ const styles = StyleSheet.create({
   itemText: {
     fontSize: font(14),
     fontFamily: fonts.popRegular,
+  },
+  newText: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: padding(10),
+    paddingVertical: padding(1),
+    borderRadius: icon(15),
+    color: '#fff',
+    fontFamily: fonts.inMedium,
+    fontSize: font(10),
   },
   rightContainer: {
     justifyContent: 'center',

@@ -197,13 +197,16 @@ const Account = memo(() => {
           />
           <SettingItemsCard
             mainIcon={
-              <AntDesign
-                name="transaction"
+              <MaterialIcons
+                name="settings"
                 size={icon(22)}
                 color={colors.primary}
               />
             }
-            title="Transactions"
+            title="Settings"
+            tag
+            tagText="New"
+            onpress={()=>handleNavigation({screen: 'Settings'})}
           />
           <SettingItemsCard
             mainIcon={

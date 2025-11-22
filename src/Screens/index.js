@@ -23,6 +23,7 @@ import HelpAndSupport from './Account/HelpAndSupport';
 import About from './Account/About';
 import SalesReport from './Account/SalesReport';
 import ItemMaster from './Account/ItemMaster';
+import Settings from './Account/Settings';
 
 // PRODUCT
 import Product from './Product/Product';
@@ -48,5 +49,6 @@ export {
   About,
   SalesReport,
   ItemMaster,
-  BrowserScreen
+  BrowserScreen,
+  Settings
 };
