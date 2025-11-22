@@ -1,6 +1,7 @@
 import BLEPrinter from 'react-native-bluetooth-classic';
 import {ToastContainer} from '../Components';
 import {Alert, PermissionsAndroid, Platform} from 'react-native';
+import {usePrinter} from '../Contexts/PrinterContext';
 
 class PrinterService {
   async requestPermission() {
@@ -41,6 +42,11 @@ class PrinterService {
     } catch (error) {
       return null;
     }
+  }
+
+  async print() {
+    const {printer} = usePrinter();
+    console.log(printer);
   }
 }
 

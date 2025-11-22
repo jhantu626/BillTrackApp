@@ -53,4 +53,59 @@ function formatTime12Hour(isoString) {
   return `${hours.toString().padStart(2, '0')}:${minutesStr} ${period}`;
 }
 
-export {requestPermission, formatDate, formatTime12Hour};
+// responsible to calculate the invoice data
+const calculateInvoiceData = items => {
+  const calculatedItems = [];
+  const gstListCalculate = [];
+  let totalQuantity = 0;
+  let subTotalAmount = 0;
+
+  items.forEach(item => {
+    const rate = parseFloat(item?.rate);
+    let actualRate;
+    const quantity = Number(item?.quantity);
+    totalQuantity += quantity;
+
+    if (item?.gstType !== null && item?.gstPercentage !== 0) {
+      const gstPercentage = parseFloat(item?.gstPercentage);
+
+      // Correct formula: actualRate = rate / (1 + gstPercentage/100)
+      actualRate = rate / (1 + gstPercentage / 100);
+
+      // GST amount is the difference
+      const gstAmount = rate - actualRate;
+
+      gstListCalculate.push({
+        gstType: 'CGST',
+        gstPercentage: gstPercentage / 2,
+        gstAmount: (gstAmount / 2) * quantity,
+        rate: actualRate * quantity,
+      });
+
+      gstListCalculate.push({
+        gstType: 'SGST',
+        gstAmount: (gstAmount / 2) * quantity,
+        gstPercentage: gstPercentage / 2,
+        rate: actualRate * quantity,
+      });
+    } else {
+      actualRate = rate;
+    }
+
+    subTotalAmount += actualRate * Number(item?.quantity);
+    calculatedItems.push({
+      name: item?.productName,
+      quantity: item?.quantity,
+      rate: actualRate,
+    });
+  });
+
+  return {
+    items: calculatedItems,
+    gstListCalculate,
+    totalQuantity,
+    subTotalAmount,
+  };
+};
+
+export {requestPermission, formatDate, formatTime12Hour, calculateInvoiceData};

@@ -15,8 +15,11 @@ import {useRoute} from '@react-navigation/native';
 import {invoiceService} from '../../Services/InvoiceService';
 import {API_URL} from '../../utils/config';
 import {icon} from '../../utils/responsive';
-import {formatDate, formatTime12Hour} from '../../utils/helper';
-import {parse} from 'react-native-svg';
+import {
+  calculateInvoiceData,
+  formatDate,
+  formatTime12Hour,
+} from '../../utils/helper';
 
 const InvoiceDetails = () => {
   // ROUTE - NAVIGATION
@@ -121,57 +124,22 @@ const InvoiceDetails = () => {
       setIsLoading(true);
       const data = await invoiceService.getInvoiceItems(invoice.id);
       console.log('invoice items', JSON.stringify(data));
+
       if (data?.status) {
-        let items = [];
-        const gstListCalculate = [];
-        data?.items.forEach(item => {
-          const rate = parseFloat(item?.rate);
-          let actualRate;
-          const quantity = Number(item?.quantity);
-          setTotalQuantity(prev => prev + quantity);
+        // Call the calculation function
+        const result = calculateInvoiceData(data?.items);
 
-          if (item?.gstType !== null && item?.gstPercentage !== 0) {
-            const gstPercentage = parseFloat(item?.gstPercentage);
+        // Update all states with the returned values
+        setTotalQuantity(result.totalQuantity);
+        setSubTotalAmount(result.subTotalAmount);
+        setInvoiceItems(result.items);
+        setGstList(result.gstListCalculate);
 
-            // Correct formula: actualRate = rate / (1 + gstPercentage/100)
-            actualRate = rate / (1 + gstPercentage / 100);
-
-            // GST amount is the difference
-            const gstAmount = rate - actualRate;
-
-            gstListCalculate.push({
-              gstType: 'CGST',
-              gstPercentage: gstPercentage / 2,
-              gstAmount: (gstAmount / 2) * quantity,
-              rate: actualRate * quantity,
-            });
-
-            gstListCalculate.push({
-              gstType: 'SGST',
-              gstAmount: (gstAmount / 2) * quantity,
-              gstPercentage: gstPercentage / 2,
-              rate: actualRate * quantity,
-            });
-          } else {
-            actualRate = rate;
-          }
-
-
-          setSubTotalAmount(prev => prev + actualRate * Number(item?.quantity));
-          items.push({
-            name: item?.productName,
-            quantity: item?.quantity,
-            rate: actualRate,
-          });
-        });
-
-
-        setInvoiceItems(items);
-        setGstList(gstListCalculate);
-        console.log('final Items', JSON.stringify(items));
-        console.log('gstList', JSON.stringify(gstListCalculate));
+        console.log('final Items', JSON.stringify(result.items));
+        console.log('gstList', JSON.stringify(result.gstListCalculate));
       }
     } catch (error) {
+      // Handle error
     } finally {
       setIsLoading(false);
     }
