@@ -32,8 +32,6 @@ const PrinterSetup = () => {
   const detectDevices = async () => {
     try {
       const devices = await printerService.detectDevices();
-      console.log('devices', devices);
-      console.log('selectedDevice', Array.isArray(devices));
       setPrinters(devices);
     } catch (error) {
     } finally {

@@ -9,13 +9,11 @@ const PrinterProvider = ({children}) => {
   const [printer, setPrinter] = useState(null);
 
   const setSelectedPrinter = async selectedPrinter => {
-    console.log('selectedPrinter', selectedPrinter);
     await clearPrinter();
     setPrinter(selectedPrinter);
   };
 
   const setAsDefaultPrinter = async printerToSave => {
-    console.log('printerToSave', printerToSave);
     try {
       await clearPrinter();
       await AsyncStorage.setItem(PRINTER_KEY, JSON.stringify(printerToSave));

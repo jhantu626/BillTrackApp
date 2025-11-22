@@ -49,6 +49,13 @@ const icons = {
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const defaultTabBarStyle = {
+  height: 85,
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingTop: padding(10),
+};
+
 const AuthStack = memo(() => {
   return (
     <Stack.Navigator
@@ -112,7 +119,7 @@ const InvoiceStack = memo(() => {
 
 const SettingStack = memo(() => (
   <Stack.Navigator
-    initialRouteName="PrinterSetup"
+    initialRouteName="Settings"
     screenOptions={{
       headerShown: false,
     }}>
@@ -124,7 +131,7 @@ const SettingStack = memo(() => (
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Settings"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -156,18 +163,13 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Account"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
         lazy: true,
         animation: 'shift',
-        tabBarStyle: {
-          height: 85,
-          justifyContent: 'center',
-          alignItems: 'center',
-          paddingTop: padding(10),
-        },
+        tabBarStyle: defaultTabBarStyle,
         tabBarLabelStyle: {
           fontSize: font(12),
           fontFamily: fonts.onMedium,
@@ -246,7 +248,8 @@ const AppStack = memo(() => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Account';
           return {
             tabBarIcon: renderTabIcon(icons.Account),
-            tabBarStyle: routeName === 'Settings' ? {display: 'none'} : {},
+            tabBarStyle:
+              routeName === 'Settings' ? {display: 'none'} : defaultTabBarStyle,
           };
         }}
       />
