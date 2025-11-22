@@ -22,7 +22,7 @@ const PrinterSetup = () => {
 
   // Data States
   const [printers, setPrinters] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState(printer);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +57,7 @@ const PrinterSetup = () => {
   };
 
   const handelSetAsDefault = async () => {
+    console.log('selectedDevice', selectedDevice);
     try {
       setIsDefaultSetLoading(true);
       if (!selectedDevice)
@@ -78,12 +79,12 @@ const PrinterSetup = () => {
   };
 
   const handleSetPrinter = async () => {
-    if (!selectedDevice)
-      return ToastService.show({
-        message: 'Select a printer first',
-        type: 'error',
-        position: 'top',
-      });
+    if (!selectedDevice) console.log('selectedDevice', selectedDevice);
+    return ToastService.show({
+      message: 'Select a printer first',
+      type: 'error',
+      position: 'top',
+    });
     try {
       setIsSetLoading(true);
       setSelectedPrinter(selectedDevice);

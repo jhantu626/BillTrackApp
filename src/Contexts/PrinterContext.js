@@ -17,7 +17,7 @@ const PrinterProvider = ({children}) => {
     try {
       await clearPrinter();
       await AsyncStorage.setItem(PRINTER_KEY, JSON.stringify(printerToSave));
-      setPrinter(prev => printerToSave);
+      setPrinter(printerToSave);
     } catch (error) {
       console.error('Error saving printer:', error);
     }

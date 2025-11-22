@@ -18,16 +18,20 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {gap, padding, font, icon} from '../../utils/responsive';
-import {formatDate} from '../../utils/helper';
+import {calculateInvoiceData, formatDate} from '../../utils/helper';
 import ToastService from '../Toasts/ToastService';
 import RNBluetooth from 'react-native-bluetooth-classic';
 import {BLEPrinter} from 'react-native-thermal-receipt-printer';
 import {usePrinter} from '../../Contexts/PrinterContext';
+import printerService from '../../utils/PrinterService';
+import {invoiceService} from '../../Services/InvoiceService';
+import {useBusiness} from '../../Contexts/AuthContext';
 
 // const {width} = Dimensions.get('screen');
 
 const InvoiceCard = memo(({invoice}) => {
   const {printer} = usePrinter();
+  const business = useBusiness();
 
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
@@ -42,7 +46,20 @@ const InvoiceCard = memo(({invoice}) => {
   };
 
   const printBill = async () => {
-    console.log('printer', printer);
+    try {
+      const invoiceItems = await invoiceService.getInvoiceItems(invoice?.id);
+      const {gstListCalculate, items, subTotalAmount, totalQuantity} =
+        calculateInvoiceData(invoiceItems?.items);
+      await printerService.printInvoice(
+        printer,
+        invoice,
+        items,
+        gstListCalculate,
+        totalQuantity,
+        subTotalAmount,
+        business,
+      );
+    } catch (error) {}
   };
 
   return (
