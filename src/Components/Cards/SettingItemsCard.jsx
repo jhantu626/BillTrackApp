@@ -11,12 +11,15 @@ const SettingItemsCard = ({
   onpress = () => {},
   tag = false,
   tagText = '',
+  textFontSize = 14,
 }) => {
   return (
     <TouchableOpacity style={styles.settingCard} onPress={onpress}>
       <View style={styles.leftContainer}>
         {mainIcon}
-        <Text style={styles.itemText}>{title}</Text>
+        <Text style={[styles.itemText, {fontSize: font(textFontSize)}]}>
+          {title}
+        </Text>
         {tag && <Text style={styles.newText}>{tagText}</Text>}
       </View>
       <TouchableOpacity style={styles.rightContainer}>
@@ -43,7 +46,6 @@ const styles = StyleSheet.create({
     gap: gap(16),
   },
   itemText: {
-    fontSize: font(14),
     fontFamily: fonts.popRegular,
   },
   newText: {

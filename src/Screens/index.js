@@ -23,7 +23,8 @@ import HelpAndSupport from './Account/HelpAndSupport';
 import About from './Account/About';
 import SalesReport from './Account/SalesReport';
 import ItemMaster from './Account/ItemMaster';
-import Settings from './Account/Settings';
+import Settings from './Account/Settings/Settings';
+import PrinterSetup from './Account/Settings/PrinterSetup';
 
 // PRODUCT
 import Product from './Product/Product';
@@ -50,5 +51,6 @@ export {
   SalesReport,
   ItemMaster,
   BrowserScreen,
-  Settings
+  Settings,
+  PrinterSetup
 };

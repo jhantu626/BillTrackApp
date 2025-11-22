@@ -20,6 +20,7 @@ import {
   Login,
   Onboarding,
   OtpVerify,
+  PrinterSetup,
   Product,
   SalesReport,
   Settings,
@@ -33,6 +34,7 @@ import {font, icon, margin, padding} from './utils/responsive';
 import AuthProvider, {useAuth, useUser} from './Contexts/AuthContext';
 import ProductProvider from './Contexts/ProductContexts';
 import {ToastContainer} from './Components';
+import PrinterProvider from './Contexts/PrinterContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -108,11 +110,21 @@ const InvoiceStack = memo(() => {
   );
 });
 
+const SettingStack = memo(() => (
+  <Stack.Navigator
+    initialRouteName="PrinterSetup"
+    screenOptions={{
+      headerShown: false,
+    }}>
+    <Stack.Screen name="Settings" component={Settings} />
+    <Stack.Screen name="PrinterSetup" component={PrinterSetup} />
+  </Stack.Navigator>
+));
 
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="Settings"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -124,7 +136,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="SalesAndReport" component={SalesReport} />
       <Stack.Screen name="ItemMaster" component={ItemMaster} />
       <Stack.Screen name="Browser" component={BrowserScreen} />
-      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Settings" component={SettingStack} />
     </Stack.Navigator>
   );
 });
@@ -230,8 +242,12 @@ const AppStack = memo(() => {
       <Tab.Screen
         name="Account"
         component={AccountStack}
-        options={{
-          tabBarIcon: renderTabIcon(icons.Account),
+        options={({route}) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Account';
+          return {
+            tabBarIcon: renderTabIcon(icons.Account),
+            tabBarStyle: routeName === 'Settings' ? {display: 'none'} : {},
+          };
         }}
       />
     </Tab.Navigator>
@@ -249,10 +265,12 @@ const App = () => {
   return (
     <AuthProvider>
       <ProductProvider>
-        <NavigationContainer>
-          <AppNav />
-          <ToastContainer />
-        </NavigationContainer>
+        <PrinterProvider>
+          <NavigationContainer>
+            <AppNav />
+            <ToastContainer />
+          </NavigationContainer>
+        </PrinterProvider>
       </ProductProvider>
     </AuthProvider>
   );

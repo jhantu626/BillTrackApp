@@ -1,0 +1,50 @@
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Layout} from '../../Layout';
+import {
+  DottedDivider,
+  SecondaryHeader,
+  SettingItemsCard,
+} from '../../../Components';
+import {icon, margin, padding} from '../../../utils/responsive';
+import Lucide from '@react-native-vector-icons/lucide';
+import {useNavigation} from '@react-navigation/native';
+
+const Settings = () => {
+  const navigation = useNavigation();
+  const handleNavigation = ({screen, data = {}}) => {
+    navigation.navigate(screen, {data});
+  };
+  return (
+    <Layout>
+      <SecondaryHeader
+        title="Settings"
+        isSearch={false}
+        isQuestion={false}
+        isNotification={false}
+      />
+      <ScrollView style={{flex: 1}}>
+        <View style={styles.cardItems}>
+          <SettingItemsCard
+            mainIcon={<Lucide name="printer" size={icon(24)} color={'#000'} />}
+            title={'Printer Setup'}
+            textFontSize={16}
+            tag
+            tagText={'New'}
+            onpress={() => handleNavigation({screen: 'PrinterSetup'})}
+          />
+        </View>
+        <DottedDivider marginVertical={0} />
+      </ScrollView>
+    </Layout>
+  );
+};
+
+const styles = StyleSheet.create({
+  cardItems: {
+    paddingHorizontal: padding(16),
+    // marginVertical: margin(5),
+  },
+});
+
+export default Settings;

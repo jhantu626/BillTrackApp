@@ -39,6 +39,7 @@ import InvoiceCardShimmer from './Shimmers/InvoiceCardShimmer';
 
 // Loaders
 import Loader from './Loaders/Loader';
+import ScanLoader from './Loaders/ScanLoader';
 
 // Empty Components
 import EmptyProductComponent from './EmtyComponents/EmptyProductComponent';
