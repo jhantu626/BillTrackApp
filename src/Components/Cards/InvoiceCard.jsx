@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Linking,
   PermissionsAndroid,
@@ -22,13 +23,16 @@ import {calculateInvoiceData, formatDate} from '../../utils/helper';
 import {usePrinter} from '../../Contexts/PrinterContext';
 import printerService from '../../utils/PrinterService';
 import {invoiceService} from '../../Services/InvoiceService';
-import {useBusiness} from '../../Contexts/AuthContext';
+import {useAuth, useBusiness} from '../../Contexts/AuthContext';
 
 // const {width} = Dimensions.get('screen');
 
 const InvoiceCard = ({invoice}) => {
+  const {setIsLoading} = useAuth();
   const {printer} = usePrinter();
   const business = useBusiness();
+
+  const [isPrintingLoading, setIsPrintingLoading] = useState(false);
 
   const navigation = useNavigation();
   const sentWhatapp = async () => {
@@ -43,6 +47,7 @@ const InvoiceCard = ({invoice}) => {
 
   const printBill = async () => {
     try {
+      setIsPrintingLoading(true);
       if (!printer) {
         Alert.alert(
           'Printer Not Selected',
@@ -64,7 +69,10 @@ const InvoiceCard = ({invoice}) => {
         subTotalAmount,
         business,
       );
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setIsPrintingLoading(false);
+    }
   };
 
   return (
@@ -106,11 +114,18 @@ const InvoiceCard = ({invoice}) => {
             Whatsapp
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.subBottomContainer} onPress={printBill}>
+        <TouchableOpacity
+          style={styles.subBottomContainer}
+          onPress={printBill}
+          disabled={isPrintingLoading}>
           <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
-          <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
-            Print
-          </Text>
+          {isPrintingLoading ? (
+            <ActivityIndicator color={'#ff393c'} size={'small'} />
+          ) : (
+            <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
+              Print
+            </Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.subBottomContainer}
