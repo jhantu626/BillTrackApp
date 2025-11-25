@@ -26,7 +26,6 @@ const ItemMaster = () => {
   const navigation = useNavigation();
   const token = useAuthToken();
 
-  console.log(isGstEnbaled);
 
   const [products, setProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);

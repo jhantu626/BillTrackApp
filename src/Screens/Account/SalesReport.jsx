@@ -82,7 +82,6 @@ const SalesReport = memo(() => {
           ? 'month'
           : selectedPriod.trim().toLowerCase().replace(/\s+/g, '');
 
-      console.log(period);
       const data = await salesReportService.getSalesReportByPeriod(
         token,
         period,
@@ -113,7 +112,6 @@ const SalesReport = memo(() => {
         setCurrentSalesPercentage(currentSalesP);
         setPreviousSalesPercentage(prevSalesPercentage);
       }
-      console.log(JSON.stringify(data));
     } catch (error) {
     } finally {
       setIsLaoding(false);

@@ -21,17 +21,14 @@ class InvoiceService {
         items: items,
         paymentMode: paymentMode,
       };
-      console.log('payload', JSON.stringify(payload));
       const response = await axios.post(uri, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('response', JSON.stringify(response));
       const data = await response.data;
       return data;
     } catch (error) {
-      console.log('error', error);
       const data = await error.response.data;
       return data;
     }

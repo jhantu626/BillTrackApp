@@ -119,7 +119,6 @@ const Invoice = () => {
         setPaginationHasNextPage(pagination?.hasNext);
       }
     } catch (error) {
-      console.error('Error fetching invoices:', error);
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +138,6 @@ const Invoice = () => {
           setPaginationHasNextPage(pagination?.hasNext);
         }
       } catch (error) {
-        console.error('Error fetching more invoices:', error);
       } finally {
         setIsLoading(false);
       }

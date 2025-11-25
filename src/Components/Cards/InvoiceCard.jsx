@@ -43,7 +43,6 @@ const InvoiceCard = ({invoice}) => {
 
   const printBill = async () => {
     try {
-      console.log('printer', printer);
       if (!printer) {
         Alert.alert(
           'Printer Not Selected',

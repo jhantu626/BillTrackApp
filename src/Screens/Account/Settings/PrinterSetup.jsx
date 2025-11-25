@@ -57,7 +57,6 @@ const PrinterSetup = () => {
   };
 
   const handelSetAsDefault = async () => {
-    console.log('selectedDevice', selectedDevice);
     try {
       setIsDefaultSetLoading(true);
       if (!selectedDevice)

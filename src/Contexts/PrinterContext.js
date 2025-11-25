@@ -19,7 +19,6 @@ const PrinterProvider = ({children}) => {
       await AsyncStorage.setItem(PRINTER_KEY, JSON.stringify(printerToSave));
       setPrinter(printerToSave);
     } catch (error) {
-      console.error('Error saving printer:', error);
     }
   };
 
@@ -30,7 +29,6 @@ const PrinterProvider = ({children}) => {
         setPrinter(JSON.parse(storedPrinter));
       }
     } catch (error) {
-      console.error('Error getting printer:', error);
     }
   };
 
@@ -39,7 +37,6 @@ const PrinterProvider = ({children}) => {
       await AsyncStorage.removeItem(PRINTER_KEY);
       setPrinter(null);
     } catch (error) {
-      console.error('Error clearing printer:', error);
     }
   };
 

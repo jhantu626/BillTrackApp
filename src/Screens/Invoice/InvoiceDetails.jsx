@@ -25,9 +25,7 @@ const InvoiceDetails = () => {
   // ROUTE - NAVIGATION
   const route = useRoute();
   const {invoice} = route.params;
-  console.log('invoice', JSON.stringify(invoice));
   const business = useBusiness();
-  console.log('business', JSON.stringify(business));
   const invoiceData = {
     businessName: 'Turain Software',
     businessPhone: '+91 6290 397200',
@@ -117,13 +115,11 @@ const InvoiceDetails = () => {
     };
   }, [width]);
 
-  console.log('invoiceItems');
 
   const fetchInvoices = async () => {
     try {
       setIsLoading(true);
       const data = await invoiceService.getInvoiceItems(invoice.id);
-      console.log('invoice items', JSON.stringify(data));
 
       if (data?.status) {
         // Call the calculation function
@@ -134,9 +130,6 @@ const InvoiceDetails = () => {
         setSubTotalAmount(result.subTotalAmount);
         setInvoiceItems(result.items);
         setGstList(result.gstListCalculate);
-
-        console.log('final Items', JSON.stringify(result.items));
-        console.log('gstList', JSON.stringify(result.gstListCalculate));
       }
     } catch (error) {
       // Handle error
