@@ -47,6 +47,16 @@ const InvoiceCard = memo(({invoice}) => {
 
   const printBill = async () => {
     try {
+      console.log('printer', printer);
+      if (!printer) {
+        Alert.alert(
+          'Printer Not Selected',
+          'To continue, please set up a printer:\n\n1. Open the Accounts section.\n2. Go to Settings.\n3. Choose Printer Setup.\n4. Add or select an available printer.',
+          [{text: 'OK', style: 'default'}],
+        );
+
+        return;
+      }
       const invoiceItems = await invoiceService.getInvoiceItems(invoice?.id);
       const {gstListCalculate, items, subTotalAmount, totalQuantity} =
         calculateInvoiceData(invoiceItems?.items);
