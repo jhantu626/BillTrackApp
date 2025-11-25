@@ -173,7 +173,6 @@ class PrinterService {
       printData += ALIGN_CENTER + BOLD_ON;
       printData += `Thank You & Visit Again${LINE_FEED}`;
       printData += BOLD_OFF;
-      printData += LINE_FEED;
 
       // Cut paper
       printData += CUT_PAPER;

@@ -7,14 +7,21 @@ class InvoiceService {
   }
 
   // CREATE - INVOICE
-  async createInvoice({token, customerNumber, items = []}) {
+  async createInvoice({
+    token,
+    customerNumber,
+    items = [],
+    paymentMode = 'cash',
+  }) {
     try {
       const uri = this.baseUrl;
       const payload = {
         status: 'paid',
         customerNumber: customerNumber,
         items: items,
+        paymentMode: paymentMode,
       };
+      console.log('payload', JSON.stringify(payload));
       const response = await axios.post(uri, payload, {
         headers: {
           Authorization: `Bearer ${token}`,

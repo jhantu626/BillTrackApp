@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   StyleSheet,
@@ -50,16 +51,23 @@ const ITEM_WIDTH =
     GAP_BETWEEN_ITEMS * (NUM_COLUMNS - 1)) /
   NUM_COLUMNS;
 
+const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
+
 const CreateBill = () => {
   const token = useAuthToken();
   const {Products, resetProductCount} = useProduct();
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState('cash');
 
   const product = Products;
 
   // STATE VARIABLES
   const [phoneNumber, setPhoneNumber] = useState('');
+
+  // LOADING STATE
+  const [isPrintLoading, setIsPrintLoading] = useState(false);
+  const [isSendLoading, setIsSendLoading] = useState(false);
 
   // BOTTOMSHEET
   const bottomSheetRef = useRef(null);
@@ -99,6 +107,7 @@ const CreateBill = () => {
 
   const printData = async () => {
     try {
+      setIsPrintLoading(true);
       const selectedItems = product
         .filter(item => item.count)
         .map(item => {
@@ -137,7 +146,10 @@ const CreateBill = () => {
         handleCloseBottomSheet();
       }
       console.log(data);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setIsPrintLoading(false);
+    }
   };
 
   const sentData = async () => {
@@ -150,6 +162,7 @@ const CreateBill = () => {
       return;
     }
     try {
+      setIsSendLoading(true);
       const selectedItems = product
         .filter(item => item.count)
         .map(item => {
@@ -174,6 +187,7 @@ const CreateBill = () => {
         token,
         customerNumber: phoneNumber,
         items: selectedItems,
+        paymentMode: paymentMethod,
       });
       if (data?.status) {
         ToastService.show({
@@ -188,7 +202,10 @@ const CreateBill = () => {
         handleCloseBottomSheet();
       }
       console.log(data);
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setIsSendLoading(false);
+    }
   };
 
   return (
@@ -272,16 +289,26 @@ const CreateBill = () => {
                   backgroundColor: colors.sucess,
                 },
               ]}
-              onPress={sentData}>
-              <Text style={styles.bottomSheetButtonText}>SEND</Text>
+              onPress={sentData}
+              disabled={isSendLoading}>
+              {isSendLoading ? (
+                <ActivityIndicator size={'small'} color={'#fff'} />
+              ) : (
+                <Text style={styles.bottomSheetButtonText}>SEND</Text>
+              )}{' '}
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.bottomSheetButton,
                 {backgroundColor: colors.error},
               ]}
-              onPress={printData}>
-              <Text style={styles.bottomSheetButtonText}>PRINT</Text>
+              onPress={printData}
+              disabled={isPrintLoading}>
+              {isPrintLoading ? (
+                <ActivityIndicator size={'small'} color={'#fff'} />
+              ) : (
+                <Text style={styles.bottomSheetButtonText}>PRINT</Text>
+              )}
             </TouchableOpacity>
           </View>
         </BottomSheetView>
