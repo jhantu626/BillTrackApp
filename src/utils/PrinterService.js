@@ -2,6 +2,7 @@ import BLEPrinter from 'react-native-bluetooth-classic';
 import {Alert, PermissionsAndroid, Platform} from 'react-native';
 import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import {formatDate, formatTime12Hour} from './helper';
+import {Invoice} from '../Screens';
 
 class PrinterService {
   async requestPermission() {
@@ -54,7 +55,7 @@ class PrinterService {
     business,
   ) {
     try {
-      console.log('printer', printer);
+      console.log('printer', invoice);
       const granted = await this.requestPermission();
       if (!granted) {
         Alert.alert('Permission Denied');
@@ -79,15 +80,18 @@ class PrinterService {
       const SIZE_NORMAL = GS + '!' + '\x00';
       const SIZE_LARGE = GS + '!' + '\x11';
       const SIZE_MEDIUM = GS + '!' + '\x00';
+      const SIZE_INBETWEEN = GS + '!' + '\x01';
       const CUT_PAPER = GS + 'V' + '1';
       const LINE_FEED = '\n';
+      const LINE_SPACING_NORMAL = '\x1B\x32'; // ESC 2
       const DOTTED_LINE = '--------------------------------';
 
       let printData = INIT;
 
       // Header - Business Info (Centered)
       printData += ALIGN_CENTER;
-      printData += SIZE_LARGE + BOLD_ON;
+      printData += SIZE_INBETWEEN + BOLD_ON;
+      printData += LINE_SPACING_NORMAL;
       printData += `${business?.name}${LINE_FEED}`;
       printData += SIZE_NORMAL + BOLD_OFF;
 
@@ -159,7 +163,7 @@ class PrinterService {
       }
 
       // Payment and Total
-      printData += this.formatTotalLine('Payment:', 'Cash');
+      printData += this.formatTotalLine('Payment:', invoice?.paymentMode.toUpperCase());
       printData += BOLD_ON + SIZE_MEDIUM;
       printData += this.formatTotalLine(
         'Total Amount:',
