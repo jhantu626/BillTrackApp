@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Modal,
   StyleSheet,
   Text,
   TextInput,
@@ -12,8 +13,10 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BillProductCard,
+  CommonModal,
   CreateBillBottom,
   EmptyProductComponent,
+  RadioInput,
   SecondaryHeader,
   SimpleTextInput,
 } from '../../Components';
@@ -35,9 +38,7 @@ import {
 } from '../../utils/responsive';
 import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
-import Product from '../Product/Product';
 import {invoiceService} from '../../Services/InvoiceService';
-import {assertEasingIsWorklet} from 'react-native-reanimated/lib/typescript/animation/util';
 import {useAuthToken} from '../../Contexts/AuthContext';
 
 const {width: screenWidth} = Dimensions.get('window');
@@ -59,6 +60,7 @@ const CreateBill = () => {
   const [quantity, setQuantity] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('cash');
+  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
 
   const product = Products;
 
@@ -132,6 +134,7 @@ const CreateBill = () => {
         token,
         customerNumber: phoneNumber,
         items: selectedItems,
+        paymentMode: paymentMethod,
       });
       if (data?.status) {
         ToastService.show({
@@ -208,6 +211,17 @@ const CreateBill = () => {
     }
   };
 
+  const openPaymentModal = () => {
+    setPaymentModalVisible(true);
+  };
+  const closePaymentModal = () => {
+    setPaymentModalVisible(false);
+  };
+
+  useEffect(() => {
+    closePaymentModal();
+  }, [paymentMethod]);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Layout>
@@ -234,6 +248,8 @@ const CreateBill = () => {
           totalQuanity={quantity}
           totalAmount={totalPrice}
           saveButtonFunciton={handleSave}
+          cashButtonFunction={openPaymentModal}
+          paymentMode={paymentMethod}
         />
       </Layout>
       <BottomSheet
@@ -313,6 +329,24 @@ const CreateBill = () => {
           </View>
         </BottomSheetView>
       </BottomSheet>
+      <CommonModal
+        visible={isPaymentModalVisible}
+        handleClose={closePaymentModal}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Select Payment Mode</Text>
+          <View style={styles.modalRadioContainer}>
+            {PAYMENT_OPTIONS.map((item, index) => (
+              <RadioInput
+                label={item.toUpperCase()}
+                setValue={setPaymentMethod}
+                value={item}
+                isSelected={paymentMethod === item}
+                key={index}
+              />
+            ))}
+          </View>
+        </View>
+      </CommonModal>
     </GestureHandlerRootView>
   );
 };
@@ -364,6 +398,21 @@ const styles = StyleSheet.create({
     fontSize: font(14),
     fontFamily: fonts.popSemiBold,
     color: '#fff',
+  },
+  modalContainer: {
+    width: '100%',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: padding(16),
+  },
+  modalTitle: {
+    fontSize: font(16),
+    fontFamily: fonts.popSemiBold,
+    color: '#000',
+  },
+  modalRadioContainer: {
+    marginTop: margin(20),
+    gap: gap(10),
   },
 });
 

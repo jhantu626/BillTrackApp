@@ -163,7 +163,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Create"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

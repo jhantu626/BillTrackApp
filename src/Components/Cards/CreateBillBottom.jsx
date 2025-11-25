@@ -15,7 +15,13 @@ import {font, icon, padding} from '../../utils/responsive';
 // const {width} = Dimensions.get('screen');
 
 const CreateBillBottom = memo(
-  ({totalAmount = 0, totalQuanity = 0, saveButtonFunciton}) => {
+  ({
+    totalAmount = 0,
+    totalQuanity = 0,
+    saveButtonFunciton,
+    paymentMode = 'cash',
+    cashButtonFunction,
+  }) => {
     const {width} = useWindowDimensions();
 
     const sizes = useMemo(() => {
@@ -54,9 +60,10 @@ const CreateBillBottom = memo(
                 backgroundColor: colors.sucess + 15,
                 paddingHorizontal: sizes.bottomButtonPaddingH,
               },
-            ]}>
+            ]}
+            onPress={cashButtonFunction}>
             <Text style={[styles.bottomButtonText, {color: colors.sucess}]}>
-              CASH
+              {paymentMode.toUpperCase()}
             </Text>
             <Ionicons name="caret-down" size={8} color={colors.sucess} />
           </TouchableOpacity>

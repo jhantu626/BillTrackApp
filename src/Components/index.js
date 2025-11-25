@@ -30,6 +30,7 @@ import ToastContainer from './Toasts/ToastContainer';
 // MODALS
 import ProductUnitModal from './modals/ProductUnitModal';
 import GstSelectModal from './modals/GstSelectModal';
+import CommonModal from './modals/CommonModal';
 
 // SHIMMERS
 import ItemCardShimmer from './Shimmers/ItemCardShimmer';
@@ -71,4 +72,5 @@ export {
   EmptyProductComponent,
   HomeChartShimmer,
   InvoiceCardShimmer,
+  CommonModal,
 };
