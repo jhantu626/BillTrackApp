@@ -135,7 +135,14 @@ const BusinessSetup2 = () => {
         await setBusinessData(business);
         navigation.reset({
           index: 0,
-          routes: [{name: 'Home'}],
+          routes: [
+            {
+              name: 'Account',
+              state: {
+                routes: [{name: 'ItemMaster'}],
+              },
+            },
+          ],
         });
         ToastService.show({
           message: data.message,
