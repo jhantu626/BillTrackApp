@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,7 +13,6 @@ import ScanLoader from '../../../Components/Loaders/ScanLoader';
 import printerService from '../../../utils/PrinterService';
 import {font, padding} from '../../../utils/responsive';
 import {usePrinter} from '../../../Contexts/PrinterContext';
-import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import ToastService from '../../../Components/Toasts/ToastService';
 
 const PrinterSetup = () => {
@@ -22,7 +20,7 @@ const PrinterSetup = () => {
 
   // Data States
   const [printers, setPrinters] = useState([]);
-  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [selectedDevice, setSelectedDevice] = useState(printer);
 
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
