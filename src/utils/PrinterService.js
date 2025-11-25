@@ -55,7 +55,6 @@ class PrinterService {
     business,
   ) {
     try {
-      console.log('printer', invoice);
       const granted = await this.requestPermission();
       if (!granted) {
         Alert.alert('Permission Denied');
@@ -131,7 +130,9 @@ class PrinterService {
 
       // Items
       invoiceItems.forEach(item => {
-        const itemName = this.truncateString(item.productName || item.name, 12);
+        // const itemName = this.truncateString(item.productName || item.name, 12);
+        const itemName = item.productName || item.name;
+
         const quantity = item.quantity.toString();
         const rate = parseFloat(item.rate).toFixed(2);
         const amount = (
@@ -163,7 +164,10 @@ class PrinterService {
       }
 
       // Payment and Total
-      printData += this.formatTotalLine('Payment:', invoice?.paymentMode.toUpperCase());
+      printData += this.formatTotalLine(
+        'Payment:',
+        invoice?.paymentMode.toUpperCase(),
+      );
       printData += BOLD_ON + SIZE_MEDIUM;
       printData += this.formatTotalLine(
         'Total Amount:',
