@@ -443,7 +443,7 @@ const InvoiceDetails = () => {
             ]}>
             <View style={styles.subSecondContainer}>
               <Text style={[styles.invoiceText, {fontSize: 15}]}>
-                Payment : Cash
+                Payment : {new String(invoice?.paymentMode).toUpperCase()}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
