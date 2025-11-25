@@ -79,12 +79,12 @@ const PrinterSetup = () => {
   };
 
   const handleSetPrinter = async () => {
-    if (!selectedDevice) console.log('selectedDevice', selectedDevice);
-    return ToastService.show({
-      message: 'Select a printer first',
-      type: 'error',
-      position: 'top',
-    });
+    if (!selectedDevice)
+      return ToastService.show({
+        message: 'Select a printer first',
+        type: 'error',
+        position: 'top',
+      });
     try {
       setIsSetLoading(true);
       setSelectedPrinter(selectedDevice);
