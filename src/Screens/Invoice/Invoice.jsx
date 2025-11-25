@@ -38,7 +38,7 @@ import {useAuthToken} from '../../Contexts/AuthContext';
 
 // Constants moved outside component to prevent recreation
 const SNAP_POINTS = ['50%'];
-const SHIMMER_DATA = [1, 2, 3, 4, 5];
+const SHIMMER_DATA = [1, 2, 3];
 const SORT_OPTIONS = [
   {label: 'Amount high to low', value: 'amount_high_to_low'},
   {label: 'Amount low to high', value: 'amount_low_to_high'},
@@ -69,7 +69,7 @@ const SortOption = memo(({label, value, isSelected, onSelect, isLast}) => (
         height={45}
       />
     </View>
-    {!isLast && <DottedDivider />}
+    {!isLast && <DottedDivider marginVertical={0} />}
   </>
 ));
 
@@ -80,7 +80,7 @@ const Invoice = () => {
   const [sortBy, setSortBy] = useState('');
   const [pageNumber, setPageNumber] = useState(0);
   const [invoices, setInvoices] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [paginationTotalPage, setPaginationTotalPage] = useState(0);
   const [paginationHasNextPage, setPaginationHasNextPage] = useState(false);
@@ -89,7 +89,7 @@ const Invoice = () => {
 
   // Memoized callbacks
   const handleOpenBottomSheet = useCallback(() => {
-    bottomSheetRef.current?.snapToIndex(0);
+    bottomSheetRef.current?.expand();
   }, []);
 
   const handleCloseBottomSheet = useCallback(() => {
@@ -112,7 +112,6 @@ const Invoice = () => {
     try {
       setIsLoading(true);
       const data = await invoiceService.getInvoices(token, pageNumber, 15);
-      console.log(JSON.stringify(data));
       if (data?.status) {
         setInvoices(data?.data);
         const pagination = data?.pagination;
@@ -160,7 +159,7 @@ const Invoice = () => {
   const onRefresh = useCallback(async () => {
     setPageNumber(0);
     setIsRefreshing(true);
-    await fetchInvoices();
+    fetchInvoices();
     setIsRefreshing(false);
   }, [fetchInvoices]);
 
@@ -261,9 +260,9 @@ const Invoice = () => {
           stickyHeaderIndices={STICKY_HEADER_INDICES}
           refreshControl={refreshControl}
           removeClippedSubviews={true}
-          maxToRenderPerBatch={10}
-          windowSize={10}
-          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={5}
+          initialNumToRender={5}
           onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}

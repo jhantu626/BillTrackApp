@@ -1,5 +1,5 @@
 import {Modal, Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {padding} from '../../utils/responsive';
 
 const CommonModal = ({
@@ -37,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommonModal;
+export default memo(CommonModal);

@@ -19,9 +19,6 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {gap, padding, font, icon} from '../../utils/responsive';
 import {calculateInvoiceData, formatDate} from '../../utils/helper';
-import ToastService from '../Toasts/ToastService';
-import RNBluetooth from 'react-native-bluetooth-classic';
-import {BLEPrinter} from 'react-native-thermal-receipt-printer';
 import {usePrinter} from '../../Contexts/PrinterContext';
 import printerService from '../../utils/PrinterService';
 import {invoiceService} from '../../Services/InvoiceService';
@@ -29,12 +26,11 @@ import {useBusiness} from '../../Contexts/AuthContext';
 
 // const {width} = Dimensions.get('screen');
 
-const InvoiceCard = memo(({invoice}) => {
+const InvoiceCard = ({invoice}) => {
   const {printer} = usePrinter();
   const business = useBusiness();
 
   const navigation = useNavigation();
-  const {width} = useWindowDimensions();
   const sentWhatapp = async () => {
     const link = 'whatsapp://send?text=test&phone=919775746484';
     const supported = await Linking.canOpenURL(link);
@@ -130,9 +126,9 @@ const InvoiceCard = memo(({invoice}) => {
       </View>
     </View>
   );
-});
+};
 
-export default InvoiceCard;
+export default memo(InvoiceCard);
 
 const styles = StyleSheet.create({
   mainContainer: {
