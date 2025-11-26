@@ -21,80 +21,74 @@ import {
 } from '../../utils/responsive';
 import SearchInput from '../Inputs/SearchInput';
 
-const SecondaryHeader = memo(
-  ({
-    title = 'Title',
-    isSearch = true,
-    isQuestion = true,
-    isNotification = true,
-    isApps = false,
-    handleAppClick = () => {},
-    query = '',
-    setQuery = () => {},
-  }) => {
-    const navigation = useNavigation();
+const SecondaryHeader = ({
+  title = 'Title',
+  isSearch = true,
+  isQuestion = true,
+  isNotification = true,
+  isApps = false,
+  handleAppClick = () => {},
+  query = '',
+  setQuery = () => {},
+}) => {
+  const navigation = useNavigation();
 
-    // State variables
-    const [isSearchActive, setSearchActive] = useState(false);
+  // State variables
+  const [isSearchActive, setSearchActive] = useState(false);
 
-    const handleBack = useCallback(() => {
-      navigation.goBack();
-    }, [navigation]);
+  const handleBack = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-    return (
-      <View style={styles.container}>
-        <View style={styles.leftContainer}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-            <Ionicons
-              name="arrow-back"
-              size={icon(24)}
-              color={colors.primary}
-            />
-          </TouchableOpacity>
-          {isSearchActive ? (
-            <View style={styles.searchContainer}>
-              <TextInput style={styles.searchInput} placeholder="Search" />
-              <Pressable
-                onPress={() => {
-                  console.log('cancel');
-                  setQuery('');
-                  setSearchActive(false);
-                }}>
-                <Text style={styles.cancelText}>Cancel</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Text style={styles.title}>{title}</Text>
-          )}
-        </View>
-        {!isSearchActive && (
-          <View style={styles.rightContainer}>
-            {isApps && (
-              <Pressable onPress={handleAppClick}>
-                <Octicons name="apps" size={icon(22)} />
-              </Pressable>
-            )}
-            {isSearch && (
-              <Pressable onPress={() => setSearchActive(true)}>
-                <Ionicons name="search" size={icon(22)} />
-              </Pressable>
-            )}
-            {isQuestion && (
-              <Pressable>
-                <Octicons name="question" size={icon(22)} />
-              </Pressable>
-            )}
-            {isNotification && (
-              <Pressable>
-                <Octicons name="bell" size={icon(22)} />
-              </Pressable>
-            )}
+  return (
+    <View style={styles.container}>
+      <View style={styles.leftContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+          <Ionicons name="arrow-back" size={icon(24)} color={colors.primary} />
+        </TouchableOpacity>
+        {isSearchActive ? (
+          <View style={styles.searchContainer}>
+            <TextInput style={styles.searchInput} placeholder="Search" />
+            <Pressable
+              onPress={() => {
+                console.log('cancel');
+                setQuery('');
+                setSearchActive(false);
+              }}>
+              <Text style={styles.cancelText}>Cancel</Text>
+            </Pressable>
           </View>
+        ) : (
+          <Text style={styles.title}>{title}</Text>
         )}
       </View>
-    );
-  },
-);
+      {!isSearchActive && (
+        <View style={styles.rightContainer}>
+          {isApps && (
+            <Pressable onPress={handleAppClick}>
+              <Octicons name="apps" size={icon(22)} />
+            </Pressable>
+          )}
+          {isSearch && (
+            <Pressable onPress={() => setSearchActive(true)}>
+              <Ionicons name="search" size={icon(22)} />
+            </Pressable>
+          )}
+          {isQuestion && (
+            <Pressable>
+              <Octicons name="question" size={icon(22)} />
+            </Pressable>
+          )}
+          {isNotification && (
+            <Pressable>
+              <Octicons name="bell" size={icon(22)} />
+            </Pressable>
+          )}
+        </View>
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -144,4 +138,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SecondaryHeader;
+export default memo(SecondaryHeader);
