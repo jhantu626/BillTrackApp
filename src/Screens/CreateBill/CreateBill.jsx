@@ -2,10 +2,8 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
-  Modal,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -61,6 +59,7 @@ const CreateBill = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const product = Products;
 
@@ -222,14 +221,28 @@ const CreateBill = () => {
     closePaymentModal();
   }, [paymentMethod]);
 
+  const filteredProduct = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return product;
+    }
+
+    return product.filter(productItem =>
+      productItem.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [searchQuery, Products]);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <Layout>
-        <SecondaryHeader title="Create Bill" />
+        <SecondaryHeader
+          title="Create Bill"
+          query={searchQuery}
+          onchangeText={text => setSearchQuery(text)}
+        />
         <FlatList
           style={{flex: 1}}
           contentContainerStyle={styles.container}
-          data={product.filter(p => p.price)}
+          data={filteredProduct.filter(p => p.price)}
           keyExtractor={(_, index) => index + '_create_bill_item'}
           renderItem={({item}, index) => (
             <BillProductCard
