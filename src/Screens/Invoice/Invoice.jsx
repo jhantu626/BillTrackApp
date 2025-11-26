@@ -111,7 +111,7 @@ const Invoice = () => {
   const fetchInvoices = useCallback(async () => {
     try {
       setIsLoading(true);
-      const data = await invoiceService.getInvoices(token, pageNumber, 15);
+      const data = await invoiceService.getInvoices(token, pageNumber, 8);
       if (data?.status) {
         setInvoices(data?.data);
         const pagination = data?.pagination;
@@ -130,7 +130,7 @@ const Invoice = () => {
 
       try {
         setIsLoading(true);
-        const data = await invoiceService.getInvoices(token, nextPage, 15);
+        const data = await invoiceService.getInvoices(token, nextPage, 8);
         if (data?.status) {
           setInvoices(prev => [...prev, ...data?.data]);
           const pagination = data?.pagination;
