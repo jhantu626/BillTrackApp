@@ -1,144 +1,167 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import Animated, {
-  useAnimatedStyle,
   useSharedValue,
+  useAnimatedStyle,
   withRepeat,
   withTiming,
+  interpolate,
   Easing,
+  withSequence,
+  withDelay,
 } from 'react-native-reanimated';
 
-const DashedCircle = ({ size, borderWidth = 1, color = '#444', dashWidth = 4, gapWidth = 4 }) => {
-  const circumference = Math.PI * size;
-  const dashCount = Math.floor(circumference / (dashWidth + gapWidth));
-  
-  return (
-    <View style={[styles.dashedCircle, { width: size, height: size }]}>
-      {Array.from({ length: dashCount }).map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.dash,
-            {
-              width: borderWidth,
-              height: dashWidth,
-              backgroundColor: color,
-              transform: [
-                { rotate: `${(360 / dashCount) * index}deg` }
-              ],
-            },
-          ]}
-        />
-      ))}
-    </View>
-  );
-};
+const AnimatedView = Animated.createAnimatedComponent(View);
+const AnimatedText = Animated.createAnimatedComponent(Text);
 
-const ScanLoader = () => {
+const ScanLoader = ({word = 'Scanning'}) => {
   const rotation = useSharedValue(0);
+  word += '...';
+  const letters = word.split('');
 
-  React.useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(360, {
-        duration: 2000,
-        easing: Easing.linear,
-      }),
-      -1,
-      false
-    );
-  }, []);
+  // Animation for rotating circle
+  rotation.value = withRepeat(
+    withTiming(360, {
+      duration: 2300,
+      easing: Easing.linear,
+    }),
+    -1,
+    false,
+  );
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const animatedCircleStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ rotate: `${rotation.value}deg` }],
+      transform: [{rotate: `${rotation.value}deg`}],
+      shadowColor: '#38bdf8',
+      shadowOffset: {
+        width: 0,
+        height: 0,
+      },
+      shadowOpacity: interpolate(
+        rotation.value,
+        [0, 90, 180, 270, 360],
+        [0.3, 0.5, 0.7, 0.5, 0.3],
+      ),
+      shadowRadius: interpolate(
+        rotation.value,
+        [0, 90, 180, 270, 360],
+        [3, 6, 9, 6, 3],
+      ),
     };
   });
 
+  // Letter animation function
+  const getLetterAnimation = index => {
+    const opacity = useSharedValue(0.4);
+    const translateY = useSharedValue(0);
+
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.4, {duration: 0}),
+        withDelay(
+          index * 100,
+          withSequence(
+            withTiming(1, {duration: 200}),
+            withTiming(0.7, {duration: 200}),
+            withTiming(0.4, {duration: 200}),
+          ),
+        ),
+      ),
+      -1,
+      false,
+    );
+
+    translateY.value = withRepeat(
+      withSequence(
+        withTiming(0, {duration: 0}),
+        withDelay(
+          index * 100,
+          withSequence(
+            withTiming(-2, {duration: 200}),
+            withTiming(0, {duration: 200}),
+          ),
+        ),
+      ),
+      -1,
+      false,
+    );
+
+    return useAnimatedStyle(() => ({
+      opacity: opacity.value,
+      transform: [{translateY: translateY.value}],
+    }));
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.loader}>
-        {/* Outer dashed circle */}
-        <DashedCircle size={110} />
-        
-        {/* Middle dashed circle */}
-        <DashedCircle size={110} dashWidth={3} gapWidth={6} />
-        
-        {/* Inner dashed circle */}
-        <DashedCircle size={50} dashWidth={2} gapWidth={4} />
-        
-        {/* Rotating radar */}
-        <Animated.View style={[styles.radar, animatedStyle]}>
-          <View style={styles.radarGlow} />
-        </Animated.View>
+    <LinearGradient
+      colors={['#1a3379', '#0f172a', '#000']}
+      style={styles.loader}
+      locations={[0, 0.5, 1]}>
+      <View style={styles.loaderWrapper}>
+        {letters.map((letter, index) => (
+          <AnimatedText
+            key={index}
+            style={[styles.loaderLetter, getLetterAnimation(index)]}>
+            {letter}
+          </AnimatedText>
+        ))}
+        <AnimatedView style={[styles.loaderCircle, animatedCircleStyle]} />
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
   loader: {
-    width: 150,
-    height: 150,
-    backgroundColor: 'transparent',
-    borderRadius: 75,
-    borderWidth: 1,
-    borderColor: '#333',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 8,
-      height: 8,
-    },
-    shadowOpacity: 0.55,
-    shadowRadius: 25,
-    elevation: 25,
-  },
-  dashedCircle: {
-    position: 'absolute',
-    borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-  },
-  dash: {
-    position: 'absolute',
-    top: 0,
-    left: '50%',
-    marginLeft: -0.5,
-  },
-  radar: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    width: '50%',
-    height: '100%',
-    backgroundColor: 'transparent',
-    transformOrigin: 'top left',
-  },
-  radarGlow: {
     position: 'absolute',
     top: 0,
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: '#FB833F90',
-    transformOrigin: 'top left',
-    transform: [{ rotate: '-55deg' }],
-    shadowColor: '#FB833F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 0,
+  },
+  loaderWrapper: {
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: 'transparent',
+  },
+  loaderCircle: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    borderRadius: 90,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.3)',
+    shadowColor: '#38bdf8',
     shadowOffset: {
       width: 0,
       height: 0,
     },
-    shadowOpacity: 0.8,
-    shadowRadius: 30,
-    elevation: 30,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  loaderLetter: {
+    fontFamily: 'System',
+    fontSize: 16,
+    fontWeight: '300',
+    color: 'white',
+    zIndex: 1,
+    borderRadius: 50,
+    textShadowColor: 'rgba(248, 252, 255, 0.8)',
+    textShadowOffset: {width: 0, height: 0},
+    textShadowRadius: 2,
   },
 });
 
