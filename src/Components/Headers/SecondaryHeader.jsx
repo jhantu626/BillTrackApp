@@ -19,7 +19,6 @@ import {
   icon,
   padding,
 } from '../../utils/responsive';
-import SearchInput from '../Inputs/SearchInput';
 
 const SecondaryHeader = ({
   title = 'Title',
@@ -48,7 +47,12 @@ const SecondaryHeader = ({
         </TouchableOpacity>
         {isSearchActive ? (
           <View style={styles.searchContainer}>
-            <TextInput style={styles.searchInput} placeholder="Search" />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search"
+              value={query}
+              onChangeText={text => setQuery(text)}
+            />
             <Pressable
               onPress={() => {
                 console.log('cancel');
