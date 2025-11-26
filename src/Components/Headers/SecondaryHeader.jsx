@@ -2,10 +2,11 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback} from 'react';
+import React, {memo, useCallback, useState} from 'react';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
@@ -18,6 +19,7 @@ import {
   icon,
   padding,
 } from '../../utils/responsive';
+import SearchInput from '../Inputs/SearchInput';
 
 const SecondaryHeader = memo(
   ({
@@ -27,11 +29,18 @@ const SecondaryHeader = memo(
     isNotification = true,
     isApps = false,
     handleAppClick = () => {},
+    query = '',
+    setQuery = () => {},
   }) => {
     const navigation = useNavigation();
+
+    // State variables
+    const [isSearchActive, setSearchActive] = useState(false);
+
     const handleBack = useCallback(() => {
       navigation.goBack();
     }, [navigation]);
+
     return (
       <View style={styles.container}>
         <View style={styles.leftContainer}>
@@ -42,30 +51,46 @@ const SecondaryHeader = memo(
               color={colors.primary}
             />
           </TouchableOpacity>
-          <Text style={styles.title}>{title}</Text>
-        </View>
-        <View style={styles.rightContainer}>
-          {isApps && (
-            <Pressable onPress={handleAppClick}>
-              <Octicons name="apps" size={icon(22)} />
-            </Pressable>
-          )}
-          {isSearch && (
-            <Pressable>
-              <Ionicons name="search" size={icon(22)} />
-            </Pressable>
-          )}
-          {isQuestion && (
-            <Pressable>
-              <Octicons name="question" size={icon(22)} />
-            </Pressable>
-          )}
-          {isNotification && (
-            <Pressable>
-              <Octicons name="bell" size={icon(22)} />
-            </Pressable>
+          {isSearchActive ? (
+            <View style={styles.searchContainer}>
+              <TextInput style={styles.searchInput} placeholder="Search" />
+              <Pressable
+                onPress={() => {
+                  console.log('cancel');
+                  setQuery('');
+                  setSearchActive(false);
+                }}>
+                <Text style={styles.cancelText}>Cancel</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Text style={styles.title}>{title}</Text>
           )}
         </View>
+        {!isSearchActive && (
+          <View style={styles.rightContainer}>
+            {isApps && (
+              <Pressable onPress={handleAppClick}>
+                <Octicons name="apps" size={icon(22)} />
+              </Pressable>
+            )}
+            {isSearch && (
+              <Pressable onPress={() => setSearchActive(true)}>
+                <Ionicons name="search" size={icon(22)} />
+              </Pressable>
+            )}
+            {isQuestion && (
+              <Pressable>
+                <Octicons name="question" size={icon(22)} />
+              </Pressable>
+            )}
+            {isNotification && (
+              <Pressable>
+                <Octicons name="bell" size={icon(22)} />
+              </Pressable>
+            )}
+          </View>
+        )}
       </View>
     );
   },
@@ -100,6 +125,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: font(16),
+    fontFamily: fonts.onMedium,
+  },
+  searchContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: gap(10),
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: font(14),
+    fontFamily: fonts.onMedium,
+  },
+  cancelText: {
+    fontSize: font(12),
     fontFamily: fonts.onMedium,
   },
 });
