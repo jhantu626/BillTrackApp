@@ -52,6 +52,7 @@ const SecondaryHeader = ({
               placeholder="Search"
               value={query}
               onChangeText={text => onchangeText(text)}
+              autoFocus
             />
             <Pressable
               onPress={() => {

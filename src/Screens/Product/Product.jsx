@@ -13,7 +13,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {Activity, useCallback, useEffect, useState} from 'react';
+import React, {
+  Activity,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {Layout} from '../Layout';
 import {
   BottomSheetInput,
@@ -68,7 +74,6 @@ const Product = () => {
   const isGstEnbaled = useGstEnabled();
   const token = useAuthToken();
   const [showModal, setShowModal] = useState(false);
-  const [products, setProducts] = useState([]);
   const [isNewProduct, setIsNewProduct] = useState(false);
   const [isColumn, setIsColumn] = useState(true);
   const [productId, setProductId] = useState(null);
@@ -348,6 +353,15 @@ const Product = () => {
     setSearchQuery(text);
   };
 
+  const filteredProduct = useMemo(() => {
+    if (searchQuery.trim() === '' || !searchQuery) {
+      return Products;
+    }
+    return Products.filter(item =>
+      item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [Products, searchQuery]);
+
   return (
     <Layout>
       <SecondaryHeader
@@ -363,7 +377,7 @@ const Product = () => {
         key={isColumn ? 'd' : 're'}
         style={{flex: 1}}
         contentContainerStyle={styles.container}
-        data={isLoading ? [1, 2, 3, 4, 5, 6] : Products}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] : filteredProduct}
         keyExtractor={(_, index) => index + '_items'}
         renderItem={isLoading ? renderLoadingItem : renderItem}
         numColumns={isColumn ? NUMBER_OF_COLUMNS : 1}
