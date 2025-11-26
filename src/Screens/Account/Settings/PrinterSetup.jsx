@@ -23,7 +23,7 @@ const PrinterSetup = () => {
   // Data States
   const [printers, setPrinters] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(printer);
-  const [printerSize, setPrinterSize] = useState('58');
+  const [printerSize, setPrinterSize] = useState(printer?.printerSize || '58');
   const [saveType, setSaveType] = useState('default');
 
   // Modal States
