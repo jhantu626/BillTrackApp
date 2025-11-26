@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,11 +12,12 @@ import {Layout} from '../../Layout';
 import {CommonModal, RadioInput, SecondaryHeader} from '../../../Components';
 import ScanLoader from '../../../Components/Loaders/ScanLoader';
 import printerService from '../../../utils/PrinterService';
-import {font, gap, margin, padding} from '../../../utils/responsive';
+import {font, gap, icon, margin, padding} from '../../../utils/responsive';
 import {usePrinter} from '../../../Contexts/PrinterContext';
 import ToastService from '../../../Components/Toasts/ToastService';
 import {fonts} from '../../../utils/fonts';
 import {colors} from '../../../utils/colors';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 
 const PrinterSetup = () => {
   const {printer, setSelectedPrinter, setAsDefaultPrinter} = usePrinter();
@@ -35,6 +37,7 @@ const PrinterSetup = () => {
 
   const detectDevices = async () => {
     try {
+      setIsLoading(true);
       const devices = await printerService.detectDevices();
       setPrinters(devices);
     } catch (error) {
@@ -143,6 +146,17 @@ const PrinterSetup = () => {
           data={printers}
           keyExtractor={(_, index) => index + 'contents'}
           renderItem={renderDevice}
+          ListEmptyComponent={
+            <View style={styles.emptyComponent}>
+              <MaterialDesignIcons name="printer-off" size={icon(100)} />
+              <Text style={styles.emptyText}>No printer found</Text>
+              <TouchableOpacity
+                style={styles.refreshButton}
+                onPress={detectDevices}>
+                <Text style={styles.refreshButtonText}>Refresh</Text>
+              </TouchableOpacity>
+            </View>
+          }
         />
       )}
       <View style={styles.bottomButtonContainer}>
@@ -313,6 +327,28 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: font(16),
     fontFamily: fonts.inSemiBold,
+  },
+  emptyComponent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: font(16),
+    fontFamily: fonts.inRegular,
+    color: '#000',
+  },
+  refreshButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(8),
+    borderRadius: 8,
+    marginVertical: margin(10),
+  },
+  refreshButtonText: {
+    fontSize: font(14),
+    fontFamily: fonts.inSemiBold,
+    color: '#fff',
   },
 });
 
