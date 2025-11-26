@@ -78,6 +78,8 @@ const Product = () => {
   const [productPrice, setProductPrice] = useState('');
   const [hsnCode, setHsnCode] = useState('');
 
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Loading state
   const [isLoading, setIsLoading] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
@@ -342,6 +344,10 @@ const Product = () => {
     setIsRefreshing(false);
   };
 
+  const searchQueryChange = text => {
+    setSearchQuery(text);
+  };
+
   return (
     <Layout>
       <SecondaryHeader
@@ -350,6 +356,8 @@ const Product = () => {
         handleAppClick={() => {
           setIsColumn(prev => !prev);
         }}
+        query={searchQuery}
+        onchangeText={searchQueryChange}
       />
       <FlatList
         key={isColumn ? 'd' : 're'}

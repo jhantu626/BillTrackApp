@@ -28,7 +28,7 @@ const SecondaryHeader = ({
   isApps = false,
   handleAppClick = () => {},
   query = '',
-  setQuery = () => {},
+  onchangeText = text => {},
 }) => {
   const navigation = useNavigation();
 
@@ -51,12 +51,12 @@ const SecondaryHeader = ({
               style={styles.searchInput}
               placeholder="Search"
               value={query}
-              onChangeText={text => setQuery(text)}
+              onChangeText={text => onchangeText(text)}
             />
             <Pressable
               onPress={() => {
                 console.log('cancel');
-                setQuery('');
+                onchangeText('');
                 setSearchActive(false);
               }}>
               <Text style={styles.cancelText}>Cancel</Text>
