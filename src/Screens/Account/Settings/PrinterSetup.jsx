@@ -8,12 +8,14 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Layout} from '../../Layout';
-import {SecondaryHeader} from '../../../Components';
+import {CommonModal, RadioInput, SecondaryHeader} from '../../../Components';
 import ScanLoader from '../../../Components/Loaders/ScanLoader';
 import printerService from '../../../utils/PrinterService';
-import {font, padding} from '../../../utils/responsive';
+import {font, gap, margin, padding} from '../../../utils/responsive';
 import {usePrinter} from '../../../Contexts/PrinterContext';
 import ToastService from '../../../Components/Toasts/ToastService';
+import {fonts} from '../../../utils/fonts';
+import {colors} from '../../../utils/colors';
 
 const PrinterSetup = () => {
   const {printer, setSelectedPrinter, setAsDefaultPrinter} = usePrinter();
@@ -21,10 +23,14 @@ const PrinterSetup = () => {
   // Data States
   const [printers, setPrinters] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(printer);
+  const [printerSize, setPrinterSize] = useState('58');
+  const [saveType, setSaveType] = useState('default');
+
+  // Modal States
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Loading State
   const [isLoading, setIsLoading] = useState(true);
-  const [isDefaultSetLoading, setIsDefaultSetLoading] = useState(false);
   const [isSetLoading, setIsSetLoading] = useState(false);
 
   const detectDevices = async () => {
@@ -56,14 +62,19 @@ const PrinterSetup = () => {
 
   const handelSetAsDefault = async () => {
     try {
-      setIsDefaultSetLoading(true);
+      setIsSetLoading(true);
       if (!selectedDevice)
         return ToastService.show({
           message: 'Select a printer first',
           type: 'error',
           position: 'top',
         });
-      await setAsDefaultPrinter(selectedDevice);
+      const savablePrinter = {
+        ...selectedDevice,
+        printerSize: printerSize,
+      };
+      console.log(savablePrinter);
+      await setAsDefaultPrinter(savablePrinter);
       ToastService.show({
         message: 'Default printer set successfully',
         type: 'success',
@@ -71,7 +82,8 @@ const PrinterSetup = () => {
       });
     } catch (error) {
     } finally {
-      setIsDefaultSetLoading(false);
+      setIsSetLoading(false);
+      handleCloseModal();
     }
   };
 
@@ -84,7 +96,11 @@ const PrinterSetup = () => {
       });
     try {
       setIsSetLoading(true);
-      setSelectedPrinter(selectedDevice);
+      const finalSetablePrinter = {
+        ...selectedDevice,
+        printerSize: printerSize,
+      };
+      setSelectedPrinter(finalSetablePrinter);
       ToastService.show({
         message: 'Printer set successfully',
         type: 'success',
@@ -93,6 +109,18 @@ const PrinterSetup = () => {
     } catch (error) {
     } finally {
       setIsSetLoading(false);
+      handleCloseModal();
+    }
+  };
+
+  const handleOpenModal = () => setIsModalVisible(true);
+  const handleCloseModal = () => setIsModalVisible(false);
+
+  const handleSetMainPrinter = () => {
+    if (saveType === 'default') {
+      handelSetAsDefault();
+    } else {
+      handleSetPrinter();
     }
   };
 
@@ -119,57 +147,107 @@ const PrinterSetup = () => {
       )}
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity
-          disabled={isDefaultSetLoading || isLoading}
-          onPress={handelSetAsDefault}
+          disabled={isLoading}
+          onPress={() => {
+            if (!selectedDevice)
+              return ToastService.show({
+                message: 'Select a printer first',
+                type: 'error',
+                position: 'top',
+              });
+            handleOpenModal();
+            setSaveType('default');
+          }}
           style={{
             backgroundColor: '#007AFF',
             paddingHorizontal: padding(16),
             paddingVertical: padding(12),
             borderRadius: 12,
           }}>
-          {isDefaultSetLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text
-              style={{
-                fontSize: font(16),
-                fontWeight: 'bold',
-                color: '#fff',
-                textAlign: 'center',
-              }}>
-              Set as Default
-            </Text>
-          )}
+          <Text
+            style={{
+              fontSize: font(16),
+              fontWeight: 'bold',
+              color: '#fff',
+              textAlign: 'center',
+            }}>
+            Set as Default
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          disabled={isSetLoading || isLoading}
-          onPress={handleSetPrinter}
+          disabled={isLoading}
+          onPress={() => {
+            if (!selectedDevice)
+              return ToastService.show({
+                message: 'Select a printer first',
+                type: 'error',
+                position: 'top',
+              });
+            handleOpenModal();
+            setSaveType('temporary');
+          }}
           style={{
             backgroundColor: '#007AFF',
             paddingHorizontal: padding(16),
             paddingVertical: padding(12),
             borderRadius: 12,
           }}>
-          {isSetLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text
-              style={{
-                fontSize: font(16),
-                fontWeight: 'bold',
-                color: '#fff',
-                textAlign: 'center',
-              }}>
-              Set Printer
-            </Text>
-          )}
+          <Text
+            style={{
+              fontSize: font(16),
+              fontWeight: 'bold',
+              color: '#fff',
+              textAlign: 'center',
+            }}>
+            Set Printer
+          </Text>
         </TouchableOpacity>
       </View>
+      <CommonModal visible={isModalVisible}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Printer Size</Text>
+          <View style={styles.radioContainer}>
+            <RadioInput
+              value="58"
+              label="58mm"
+              setValue={setPrinterSize}
+              isSelected={printerSize === '58'}
+            />
+            <RadioInput
+              value="80"
+              label="80mm"
+              setValue={setPrinterSize}
+              isSelected={printerSize === '80'}
+            />
+            <RadioInput
+              value="104"
+              label="104mm"
+              setValue={setPrinterSize}
+              isSelected={printerSize === '104'}
+            />
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={handleCloseModal}
+              style={[styles.button, {backgroundColor: colors.error + 80}]}>
+              <Text style={styles.btnText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              disabled={isSetLoading}
+              onPress={handleSetMainPrinter}>
+              {isSetLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={styles.btnText}>Set Preference</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </CommonModal>
     </Layout>
   );
 };
-
-export default PrinterSetup;
 
 const styles = StyleSheet.create({
   container: {
@@ -206,4 +284,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  modalContainer: {
+    backgroundColor: '#fff',
+    padding: padding(16),
+    borderRadius: 12,
+  },
+  modalTitle: {
+    fontSize: font(16),
+    fontFamily: fonts.inBold,
+  },
+  radioContainer: {
+    marginVertical: margin(5),
+    gap: gap(10),
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: margin(15),
+    gap: gap(10),
+  },
+  button: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(8),
+    borderRadius: 12,
+  },
+  btnText: {
+    color: '#fff',
+    fontSize: font(16),
+    fontFamily: fonts.inSemiBold,
+  },
 });
+
+export default PrinterSetup;
