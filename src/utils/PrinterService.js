@@ -60,7 +60,10 @@ class PrinterService {
         Alert.alert('Permission Denied');
         return null;
       }
+      console.log('Printer', JSON.stringify(printer));
       const address = printer?.address;
+      const printerSize = printer?.printerSize || '80'; // Default to 80mm
+      
       const connection = await BLEPrinter.connectToDevice(address);
       if (!connection) {
         Alert.alert('Printer not connected');
@@ -68,6 +71,7 @@ class PrinterService {
       }
       await connection.connect();
       console.log(business);
+      
       const ESC = '\x1B';
       const GS = '\x1D';
       const INIT = ESC + '@';
@@ -83,7 +87,10 @@ class PrinterService {
       const CUT_PAPER = GS + 'V' + '1';
       const LINE_FEED = '\n';
       const LINE_SPACING_NORMAL = '\x1B\x32'; // ESC 2
-      const DOTTED_LINE = '--------------------------------';
+
+      // Set layout configuration based on printer size
+      const config = this.getPrinterConfig(printerSize);
+      const DOTTED_LINE = '-'.repeat(config.lineWidth);
 
       let printData = INIT;
 
@@ -124,31 +131,30 @@ class PrinterService {
 
       // Items Header
       printData += BOLD_ON;
-      printData += this.formatLine('Item', 'Qty', 'Rate', 'Amount');
+      printData += this.formatLine('Item', 'Qty', 'Rate', 'Amount', config);
       printData += BOLD_OFF;
       printData += DOTTED_LINE + LINE_FEED;
 
       // Items
       invoiceItems.forEach(item => {
-        // const itemName = this.truncateString(item.productName || item.name, 12);
         const itemName = item.productName || item.name;
-
         const quantity = item.quantity.toString();
         const rate = parseFloat(item.rate).toFixed(2);
         const amount = (
           parseFloat(item.rate) * parseInt(item.quantity)
         ).toFixed(2);
 
-        printData += this.formatLine(itemName, quantity, rate, amount);
+        printData += this.formatLine(itemName, quantity, rate, amount, config);
       });
 
       printData += DOTTED_LINE + LINE_FEED;
 
       // Totals
-      printData += this.formatTotalLine('Total Qty:', totalQuantity.toString());
+      printData += this.formatTotalLine('Total Qty:', totalQuantity.toString(), config);
       printData += this.formatTotalLine(
         'Sub Total:',
         `RS ${subTotalAmount.toFixed(2)}`,
+        config
       );
 
       printData += DOTTED_LINE + LINE_FEED;
@@ -158,7 +164,7 @@ class PrinterService {
         gstList.forEach(gst => {
           const gstLabel = `${gst.gstType} @ ${gst.gstPercentage}%`;
           const gstAmount = `RS ${gst.gstAmount.toFixed(2)}`;
-          printData += this.formatTotalLine(gstLabel, gstAmount);
+          printData += this.formatTotalLine(gstLabel, gstAmount, config);
         });
         printData += DOTTED_LINE + LINE_FEED;
       }
@@ -167,11 +173,13 @@ class PrinterService {
       printData += this.formatTotalLine(
         'Payment:',
         invoice?.paymentMode.toUpperCase(),
+        config
       );
       printData += BOLD_ON + SIZE_MEDIUM;
       printData += this.formatTotalLine(
         'Total Amount:',
         `RS ${invoice.totalAmount}`,
+        config
       );
       printData += SIZE_NORMAL + BOLD_OFF;
 
@@ -193,21 +201,69 @@ class PrinterService {
     }
   }
 
-  formatLine(col1, col2, col3, col4) {
-    const c1 = this.padRight(col1, 12);
-    const c2 = this.padLeft(col2, 4);
-    const c3 = this.padLeft(col3, 6);
-    const c4 = this.padLeft(col4, 8);
+  // Get printer configuration based on size
+  getPrinterConfig(printerSize) {
+    const size = printerSize.toLowerCase();
+    
+    if (size.includes('58')) {
+      // 58mm printer - smaller format
+      return {
+        lineWidth: 32,
+        itemNameWidth: 10,
+        qtyWidth: 3,
+        rateWidth: 5,
+        amountWidth: 7,
+        totalLabelWidth: 20,
+        totalValueWidth: 12
+      };
+    } else if (size.includes('80')) {
+      // 80mm printer - standard format
+      return {
+        lineWidth: 48,
+        itemNameWidth: 18,
+        qtyWidth: 5,
+        rateWidth: 8,
+        amountWidth: 10,
+        totalLabelWidth: 28,
+        totalValueWidth: 20
+      };
+    } else if (size.includes('104')) {
+      // 104mm printer - larger format
+      return {
+        lineWidth: 64,
+        itemNameWidth: 28,
+        qtyWidth: 6,
+        rateWidth: 10,
+        amountWidth: 12,
+        totalLabelWidth: 40,
+        totalValueWidth: 24
+      };
+    } else {
+      // Default to 80mm
+      return {
+        lineWidth: 48,
+        itemNameWidth: 18,
+        qtyWidth: 5,
+        rateWidth: 8,
+        amountWidth: 10,
+        totalLabelWidth: 28,
+        totalValueWidth: 20
+      };
+    }
+  }
+
+  formatLine(col1, col2, col3, col4, config) {
+    const c1 = this.padRight(col1, config.itemNameWidth);
+    const c2 = this.padLeft(col2, config.qtyWidth);
+    const c3 = this.padLeft(col3, config.rateWidth);
+    const c4 = this.padLeft(col4, config.amountWidth);
     return `${c1}${c2} ${c3} ${c4}\n`;
   }
 
   // Helper function to format total lines (Label: Value)
-  formatTotalLine(label, value) {
-    const totalWidth = 32;
-    const valueWidth = 12;
-    const labelWidth = totalWidth - valueWidth;
-    const l = this.padRight(label, labelWidth);
-    const v = this.padLeft(value, valueWidth);
+  formatTotalLine(label, value, config) {
+    const l = this.padRight(label, config.totalLabelWidth);
+    const v = this.padLeft(value, config.totalValueWidth);
     return `${l}${v}\n`;
   }
 
