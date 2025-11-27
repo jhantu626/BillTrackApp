@@ -75,19 +75,40 @@ const calculateInvoiceData = items => {
       // GST amount is the difference
       const gstAmount = rate - actualRate;
 
-      gstListCalculate.push({
-        gstType: 'CGST',
-        gstPercentage: gstPercentage / 2,
-        gstAmount: (gstAmount / 2) * quantity,
-        rate: actualRate * quantity,
-      });
+      // Helper function to find or create GST entry
+      const addOrUpdateGst = (type, percentage, amount, baseRate) => {
+        const existing = gstListCalculate.find(
+          g => g.gstType === type && g.gstPercentage === percentage
+        );
 
-      gstListCalculate.push({
-        gstType: 'SGST',
-        gstAmount: (gstAmount / 2) * quantity,
-        gstPercentage: gstPercentage / 2,
-        rate: actualRate * quantity,
-      });
+        if (existing) {
+          existing.gstAmount += amount;
+          existing.rate += baseRate;
+        } else {
+          gstListCalculate.push({
+            gstType: type,
+            gstPercentage: percentage,
+            gstAmount: amount,
+            rate: baseRate,
+          });
+        }
+      };
+
+      // Add or update CGST
+      addOrUpdateGst(
+        'CGST',
+        gstPercentage / 2,
+        (gstAmount / 2) * quantity,
+        actualRate * quantity
+      );
+
+      // Add or update SGST
+      addOrUpdateGst(
+        'SGST',
+        gstPercentage / 2,
+        (gstAmount / 2) * quantity,
+        actualRate * quantity
+      );
     } else {
       actualRate = rate;
     }
