@@ -150,6 +150,10 @@ const BusinessSetup = () => {
     setSuggestions(filtered);
   };
 
+  const handleCloseOnSelectCategory = useMemo(() => {
+    bottomSheetRef.current?.close();
+  }, [businessType]);
+
   return (
     <AuthLayout>
       <GestureHandlerRootView style={{flex: 1}}>
@@ -276,7 +280,6 @@ const BusinessSetup = () => {
             />
           </View>
         </BottomSheet>
-
       </GestureHandlerRootView>
     </AuthLayout>
   );
