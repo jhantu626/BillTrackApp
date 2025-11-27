@@ -63,7 +63,7 @@ class PrinterService {
       console.log('Printer', JSON.stringify(printer));
       const address = printer?.address;
       const printerSize = printer?.printerSize || '80'; // Default to 80mm
-      
+
       const connection = await BLEPrinter.connectToDevice(address);
       if (!connection) {
         Alert.alert('Printer not connected');
@@ -71,7 +71,7 @@ class PrinterService {
       }
       await connection.connect();
       console.log(business);
-      
+
       const ESC = '\x1B';
       const GS = '\x1D';
       const INIT = ESC + '@';
@@ -135,7 +135,7 @@ class PrinterService {
       printData += BOLD_OFF;
       printData += DOTTED_LINE + LINE_FEED;
 
-      // Items
+      // Items - Now with full item name on separate line if needed
       invoiceItems.forEach(item => {
         const itemName = item.productName || item.name;
         const quantity = item.quantity.toString();
@@ -144,17 +144,36 @@ class PrinterService {
           parseFloat(item.rate) * parseInt(item.quantity)
         ).toFixed(2);
 
-        printData += this.formatLine(itemName, quantity, rate, amount, config);
+        // Print full item name on its own line(s) if it's long
+        if (itemName.length > config.itemNameWidth) {
+          // Print full item name on separate line(s)
+          printData += this.wrapText(itemName, config.lineWidth);
+          // Print quantity, rate, amount on next line with proper spacing
+          printData += this.formatLine('', quantity, rate, amount, config);
+        } else {
+          // Item name fits in one line with details
+          printData += this.formatLine(
+            itemName,
+            quantity,
+            rate,
+            amount,
+            config,
+          );
+        }
       });
 
       printData += DOTTED_LINE + LINE_FEED;
 
       // Totals
-      printData += this.formatTotalLine('Total Qty:', totalQuantity.toString(), config);
+      printData += this.formatTotalLine(
+        'Total Qty:',
+        totalQuantity.toString(),
+        config,
+      );
       printData += this.formatTotalLine(
         'Sub Total:',
         `RS ${subTotalAmount.toFixed(2)}`,
-        config
+        config,
       );
 
       printData += DOTTED_LINE + LINE_FEED;
@@ -173,13 +192,13 @@ class PrinterService {
       printData += this.formatTotalLine(
         'Payment:',
         invoice?.paymentMode.toUpperCase(),
-        config
+        config,
       );
       printData += BOLD_ON + SIZE_MEDIUM;
       printData += this.formatTotalLine(
         'Total Amount:',
         `RS ${invoice.totalAmount}`,
-        config
+        config,
       );
       printData += SIZE_NORMAL + BOLD_OFF;
 
@@ -204,7 +223,7 @@ class PrinterService {
   // Get printer configuration based on size
   getPrinterConfig(printerSize) {
     const size = printerSize.toLowerCase();
-    
+
     if (size.includes('58')) {
       // 58mm printer - smaller format
       return {
@@ -214,7 +233,7 @@ class PrinterService {
         rateWidth: 5,
         amountWidth: 7,
         totalLabelWidth: 20,
-        totalValueWidth: 12
+        totalValueWidth: 12,
       };
     } else if (size.includes('80')) {
       // 80mm printer - standard format
@@ -225,7 +244,7 @@ class PrinterService {
         rateWidth: 8,
         amountWidth: 10,
         totalLabelWidth: 28,
-        totalValueWidth: 20
+        totalValueWidth: 20,
       };
     } else if (size.includes('104')) {
       // 104mm printer - larger format
@@ -236,7 +255,7 @@ class PrinterService {
         rateWidth: 10,
         amountWidth: 12,
         totalLabelWidth: 40,
-        totalValueWidth: 24
+        totalValueWidth: 24,
       };
     } else {
       // Default to 80mm
@@ -247,9 +266,42 @@ class PrinterService {
         rateWidth: 8,
         amountWidth: 10,
         totalLabelWidth: 28,
-        totalValueWidth: 20
+        totalValueWidth: 20,
       };
     }
+  }
+
+  // New function to wrap long text across multiple lines
+  wrapText(text, maxWidth) {
+    let result = '';
+    let currentLine = '';
+    const words = text.split(' ');
+
+    for (let word of words) {
+      if ((currentLine + word).length <= maxWidth) {
+        currentLine += (currentLine ? ' ' : '') + word;
+      } else {
+        if (currentLine) {
+          result += currentLine + '\n';
+        }
+        // If single word is longer than maxWidth, break it
+        if (word.length > maxWidth) {
+          while (word.length > maxWidth) {
+            result += word.substring(0, maxWidth) + '\n';
+            word = word.substring(maxWidth);
+          }
+          currentLine = word;
+        } else {
+          currentLine = word;
+        }
+      }
+    }
+
+    if (currentLine) {
+      result += currentLine + '\n';
+    }
+
+    return result;
   }
 
   formatLine(col1, col2, col3, col4, config) {
