@@ -1,8 +1,6 @@
 import BLEPrinter from 'react-native-bluetooth-classic';
 import {Alert, PermissionsAndroid, Platform} from 'react-native';
-import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import {formatDate, formatTime12Hour} from './helper';
-import {Invoice} from '../Screens';
 
 class PrinterService {
   async requestPermission() {

@@ -172,7 +172,7 @@ const Account = memo(() => {
               style={styles.image}
               resizeMode="contain"
             />
-            <Text style={styles.text}>Sales report</Text>
+            <Text style={styles.text}>Active Products</Text>
           </Pressable>
         </View>
         <View style={styles.settingContainer}>

@@ -119,7 +119,7 @@ const InvoiceStack = memo(() => {
 
 const SettingStack = memo(() => (
   <Stack.Navigator
-    initialRouteName="PrinterSetup"
+    initialRouteName="Settings"
     screenOptions={{
       headerShown: false,
     }}>
