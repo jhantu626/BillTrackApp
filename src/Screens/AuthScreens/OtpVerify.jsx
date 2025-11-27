@@ -1,6 +1,8 @@
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -101,79 +103,89 @@ const OtpVerify = () => {
 
   return (
     <AuthLayout>
-      <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
-        <Image
-          style={styles.image}
-          resizeMode="contain"
-          source={require('./../../../asset/images/verify-otp.png')}
-        />
-        <View style={styles.topTextContainer}>
-          <Text style={styles.titleText}>Verify Your Mobile Number</Text>
-          <Text style={styles.descText} numberOfLines={2}>
-            Enter the OTP sent to{' '}
-            <Text style={styles.innerDescText}>+91 {mobile}</Text> to verify and
-            access your account securely.
-          </Text>
-        </View>
-        <View style={styles.otpParent}>
-          <Text style={styles.otpText}>Enter Your Otp</Text>
-          <View style={styles.otpContainer}>
-            {otp.map((value, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.otpBox,
-                  value !== '' && {
-                    backgroundColor: colors.primary,
-                  },
-                ]}>
-                <TextInput
-                  ref={ref => (otpRef.current[index] = ref)}
-                  value={value}
-                  keyboardType="numeric"
-                  maxLength={1}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}>
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <Image
+            style={styles.image}
+            resizeMode="contain"
+            source={require('./../../../asset/images/verify-otp.png')}
+          />
+          <View style={styles.topTextContainer}>
+            <Text style={styles.titleText}>Verify Your Mobile Number</Text>
+            <Text style={styles.descText} numberOfLines={2}>
+              Enter the OTP sent to{' '}
+              <Text style={styles.innerDescText}>+91 {mobile}</Text> to verify
+              and access your account securely.
+            </Text>
+          </View>
+          <View style={styles.otpParent}>
+            <Text style={styles.otpText}>Enter Your Otp</Text>
+            <View style={styles.otpContainer}>
+              {otp.map((value, index) => (
+                <View
+                  key={index}
                   style={[
-                    styles.otpInput,
+                    styles.otpBox,
                     value !== '' && {
-                      color: '#ffffff',
+                      backgroundColor: colors.primary,
                     },
-                  ]}
-                  selectionColor={value !== '' ? '#ffffff' : colors.primary}
-                  onChangeText={text => {
-                    handleChange(text, index);
-                  }}
-                  onKeyPress={e => {
-                    if (e.nativeEvent.key === 'Backspace' && index > 0) {
-                      otpRef.current[index - 1].focus();
-                    }
-                  }}
-                />
-              </View>
-            ))}
+                  ]}>
+                  <TextInput
+                    ref={ref => (otpRef.current[index] = ref)}
+                    value={value}
+                    keyboardType="numeric"
+                    maxLength={1}
+                    style={[
+                      styles.otpInput,
+                      value !== '' && {
+                        color: '#ffffff',
+                      },
+                    ]}
+                    selectionColor={value !== '' ? '#ffffff' : colors.primary}
+                    onChangeText={text => {
+                      handleChange(text, index);
+                    }}
+                    onKeyPress={e => {
+                      if (e.nativeEvent.key === 'Backspace' && index > 0) {
+                        otpRef.current[index - 1].focus();
+                      }
+                    }}
+                  />
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
-        <View style={styles.bottomContainer}>
-          <Text style={styles.bottomText}>Didn’t receive the OTP?</Text>
-          <View style={styles.resendContainer}>
-            <Text style={styles.resendText}>Resend in</Text>
-            <TouchableOpacity onPress={handleResendOtp} disabled={timer > 0}>
-              <Text style={styles.timeText}>
-                {timer > 0 ? formatTime(timer) : 'Resend'}
-              </Text>
-            </TouchableOpacity>
+          <View style={styles.bottomContainer}>
+            <Text style={styles.bottomText}>Didn’t receive the OTP?</Text>
+            <View style={styles.resendContainer}>
+              <Text style={styles.resendText}>Resend in</Text>
+              <TouchableOpacity onPress={handleResendOtp} disabled={timer > 0}>
+                <Text style={styles.timeText}>
+                  {timer > 0 ? formatTime(timer) : 'Resend'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={validateOtp}
-          disabled={isLoading}>
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>VERIFY OTP</Text>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={validateOtp}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>VERIFY OTP</Text>
+            )}
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </AuthLayout>
   );
 };
