@@ -1,6 +1,8 @@
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -56,58 +58,69 @@ const Login = () => {
   };
   return (
     <AuthLayout>
-      <ScrollView
+      <KeyboardAvoidingView
         style={{flex: 1}}
-        contentContainerStyle={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 10,
-        }}
-        showsVerticalScrollIndicator={false}>
-        <Image
-          source={require('./../../../asset/images/login.png')}
-          resizeMode="contain"
-          style={styles.image}
-        />
-        <View style={styles.contentContainer}>
-          <Text style={styles.title}>Log in to manage your bills</Text>
-          <Text numberOfLines={3} style={styles.description}>
-            Access your billing dashboard to generate invoices, track payments,
-            and manage expenses with ease.
-          </Text>
-        </View>
-        <View style={styles.bottomContainer}>
-          <Text style={styles.phoneText}>Phone number*</Text>
-          <View style={styles.phoneBox}>
-            <FontAwesome name="phone" size={icon(20)} color={colors.primary} />
-            <View style={styles.inputBar} />
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="9775746484"
-                maxLength={10}
-                value={mobile}
-                onChangeText={text => setMobile(text)}
-                keyboardType="phone-pad"
-              />
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <ScrollView
+          style={{flex: 1}}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 10,
+            paddingVertical: margin(20),
+          }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <Image
+            source={require('./../../../asset/images/login.png')}
+            resizeMode="contain"
+            style={styles.image}
+          />
+          <View style={styles.contentContainer}>
+            <Text style={styles.title}>Log in to manage your bills</Text>
+            <Text numberOfLines={3} style={styles.description}>
+              Access your billing dashboard to generate invoices, track
+              payments, and manage expenses with ease.
+            </Text>
+          </View>
+          <View style={styles.bottomContainer}>
+            <Text style={styles.phoneText}>Phone number*</Text>
+            <View style={styles.phoneBox}>
               <FontAwesome
-                name="check-circle"
+                name="phone"
                 size={icon(20)}
                 color={colors.primary}
               />
+              <View style={styles.inputBar} />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="9775746484"
+                  maxLength={10}
+                  value={mobile}
+                  onChangeText={text => setMobile(text)}
+                  keyboardType="phone-pad"
+                />
+                <FontAwesome
+                  name="check-circle"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              </View>
             </View>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+            <TouchableOpacity style={styles.button} onPress={sendOtp}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color={'#fff'} />
+              ) : (
+                <Text style={styles.buttonText}>GET OTP</Text>
+              )}
+            </TouchableOpacity>
           </View>
-          {error && <Text style={styles.errorText}>{error}</Text>}
-          <TouchableOpacity style={styles.button} onPress={sendOtp}>
-            {isLoading ? (
-              <ActivityIndicator size="small" color={'#fff'} />
-            ) : (
-              <Text style={styles.buttonText}>GET OTP</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </AuthLayout>
   );
 };
