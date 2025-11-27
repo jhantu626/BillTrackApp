@@ -28,7 +28,7 @@ const SalesAreaChart = ({barData = []}) => {
         maxValue={chartMaxValue}
         showValuesAsTopLabel={true}
         topLabelTextStyle={{
-          fontSize: font(7),
+          fontSize: font(8),
         }}
       />
     </View>
