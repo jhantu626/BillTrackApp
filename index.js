@@ -14,7 +14,7 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     body: remoteMessage.notification?.body,
     android: {
       channelId: 'default',
-      smallIcon: 'ic_launcher_foreground',
+      smallIcon: 'ic_launcher',
     },
   });
 });
