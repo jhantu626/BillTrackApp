@@ -64,7 +64,10 @@ class PrinterService {
 
       const connection = await BLEPrinter.connectToDevice(address);
       if (!connection) {
-        Alert.alert('Printer not connected');
+        Alert.alert(
+          'Printer Not Connected',
+          'Unable to establish connection with the printer. Please ensure the printer is turned on and within range.',
+        );
         return null;
       }
       await connection.connect();
@@ -209,12 +212,16 @@ class PrinterService {
 
       // Cut paper
       printData += CUT_PAPER;
-      console.log('printData', printData);
       // Send to printer
       await connection.write(printData);
       await connection.disconnect();
     } catch (error) {
       console.log(error);
+      Alert.alert(
+        'Printer Error',
+        'Failed to print invoice. Please check if the printer is connected and try again.',
+      );
+      return null;
     }
   }
 
