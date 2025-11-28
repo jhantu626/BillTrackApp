@@ -46,12 +46,11 @@ import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {requestPermission} from '../../utils/helper';
-import {isValidPrice, validateName, validatePrice} from '../../utils/validator';
+import {validateName, validatePrice} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
 import {useAuthToken, useGstEnabled} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
-import {print} from '@gorhom/bottom-sheet/lib/typescript/utilities/logger';
 import {useProduct} from '../../Contexts/ProductContexts';
 import {useRoute} from '@react-navigation/native';
 
