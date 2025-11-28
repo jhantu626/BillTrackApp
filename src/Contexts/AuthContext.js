@@ -1,7 +1,7 @@
 import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
-import {Text, View} from 'react-native';
+import {Text, ToastAndroid, View} from 'react-native';
 import {deviceService} from '../Services/DeviceService';
 import {getDeviceDetails} from '../utils/DeviceInfo';
 
@@ -42,16 +42,19 @@ const AuthProvider = ({children}) => {
 
   const logout = async () => {
     try {
-      // await AsyncStorage.multiRemove(['token', 'user', 'business']);
-      await AsyncStorage.clear();
-      setAuthToken(null);
-      setUser(null);
-      setBusiness(null);
       const {deviceUniqueKey} = await getDeviceDetails();
       const data = await deviceService.removeDevice({
         deviceUniqueKey: deviceUniqueKey,
       });
-      console.log(data);
+      if (data?.status) {
+        await AsyncStorage.multiRemove(['token', 'user', 'business']);
+        await AsyncStorage.clear();
+        setAuthToken(null);
+        setUser(null);
+        setBusiness(null);
+      } else {
+        ToastAndroid.show(data?.message, ToastAndroid.LONG);
+      }
     } catch (error) {}
   };
 

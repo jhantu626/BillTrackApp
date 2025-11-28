@@ -7,12 +7,9 @@ class DeviceService {
   }
 
   async removeDevice({deviceUniqueKey}) {
-    const uri = `${this.baseUrl}device/remove-device`;
-    const payload = {
-      deviceUniqueKey,
-    };
+    const uri = `${this.baseUrl}device/remove-device/${deviceUniqueKey}`;
     try {
-      const response = await axios.delete(uri, payload);
+      const response = await axios.delete(uri);
       const data = await response.data;
       return data;
     } catch (error) {

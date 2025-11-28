@@ -55,6 +55,7 @@ const Account = memo(() => {
 
   // LOADING STATE
   const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   // MODAL STATES
   const [isModalVisible, setModalVisible] = useState(false);
@@ -64,9 +65,13 @@ const Account = memo(() => {
 
   const handleLogout = async () => {
     try {
+      setLogoutLoading(true);
       await logout();
       await clearAllProducts();
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      setLogoutLoading(false);
+    }
   };
 
   const handleNavigation = ({screen, data = {}}) => {
@@ -206,7 +211,7 @@ const Account = memo(() => {
             title="Settings"
             tag
             tagText="New"
-            onpress={()=>handleNavigation({screen: 'Settings'})}
+            onpress={() => handleNavigation({screen: 'Settings'})}
           />
           <SettingItemsCard
             mainIcon={
@@ -234,8 +239,9 @@ const Account = memo(() => {
                 color={colors.primary}
               />
             }
-            title="Logout"
+            title={logoutLoading ? 'Logging out...' : 'Logout'}
             onpress={handleLogout}
+            disabled={logoutLoading}
           />
         </View>
         <View style={styles.deleteContainer}>

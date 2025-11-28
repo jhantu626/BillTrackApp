@@ -12,9 +12,10 @@ const SettingItemsCard = ({
   tag = false,
   tagText = '',
   textFontSize = 14,
+  disabled = false,
 }) => {
   return (
-    <TouchableOpacity style={styles.settingCard} onPress={onpress}>
+    <TouchableOpacity style={styles.settingCard} onPress={onpress} disabled={disabled}>
       <View style={styles.leftContainer}>
         {mainIcon}
         <Text style={[styles.itemText, {fontSize: font(textFontSize)}]}>

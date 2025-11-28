@@ -44,7 +44,6 @@ const OtpVerify = () => {
       const newOtp = parameterOtp || otp.join('');
       if (newOtp.length !== 4) return;
       const deviceInfo = await getDeviceDetails();
-      console.log(deviceInfo);
       const data = await authService.validateOtp(mobile, newOtp, deviceInfo);
       if (data?.status) {
         await login(data?.token, data?.data);
