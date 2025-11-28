@@ -1,9 +1,9 @@
-import {Image, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import { Image, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import {
   getFocusedRouteNameFromRoute,
   NavigationContainer,
 } from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   About,
   Account,
@@ -26,15 +26,17 @@ import {
   Settings,
   Subscription,
 } from './Screens';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {fonts} from './utils/fonts';
-import {colors} from './utils/colors';
-import {memo, useCallback, useMemo} from 'react';
-import {font, icon, margin, padding} from './utils/responsive';
-import AuthProvider, {useAuth, useUser} from './Contexts/AuthContext';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { fonts } from './utils/fonts';
+import { colors } from './utils/colors';
+import { memo, useCallback, useEffect, useMemo } from 'react';
+import { font, icon, margin, padding } from './utils/responsive';
+import AuthProvider, { useAuth, useUser } from './Contexts/AuthContext';
 import ProductProvider from './Contexts/ProductContexts';
-import {ToastContainer} from './Components';
+import { ToastContainer } from './Components';
 import PrinterProvider from './Contexts/PrinterContext';
+import { requestNotificationPermission } from './utils/permissionHelper';
+import { notificationService } from './utils/NotificationService';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -151,14 +153,14 @@ const AccountStack = memo(() => {
 const AppStack = memo(() => {
   const renderTabIcon = useCallback(
     iconSource =>
-      ({focused, color}) =>
-        (
-          <Image
-            source={iconSource}
-            style={[styles.tabbarIcon, {tintColor: focused ? color : 'gray'}]}
-            resizeMode="contain"
-          />
-        ),
+      ({ focused, color }) =>
+      (
+        <Image
+          source={iconSource}
+          style={[styles.tabbarIcon, { tintColor: focused ? color : 'gray' }]}
+          resizeMode="contain"
+        />
+      ),
     [],
   );
   return (
@@ -207,49 +209,49 @@ const AppStack = memo(() => {
           tabBarStyle: {
             display: 'none',
           },
-          tabBarIcon: ({focused, color}) => (
+          tabBarIcon: ({ focused, color }) => (
             <View style={styles.createTabParent}>
               <Image
                 source={icons.CreateBill}
-                style={[styles.tabbarIcon, {tintColor: '#fff'}]}
+                style={[styles.tabbarIcon, { tintColor: '#fff' }]}
                 resizeMode="contain"
               />
             </View>
           ),
           tabBarLabel: '',
-          tabBarLabelStyle: {display: 'none'},
+          tabBarLabelStyle: { display: 'none' },
         }}
       />
       <Tab.Screen
         name="Invoice"
         component={InvoiceStack}
-        options={({route}) => {
+        options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Invoice';
           return {
             tabBarIcon: renderTabIcon(icons.Invoice),
             tabBarStyle:
               routeName === 'InvoiceDetails'
                 ? {
-                    display: 'none',
-                  }
+                  display: 'none',
+                }
                 : {
-                    height: 85,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingTop: padding(10),
-                  },
+                  height: 85,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingTop: padding(10),
+                },
           };
         }}
       />
       <Tab.Screen
         name="Account"
         component={AccountStack}
-        options={({route}) => {
+        options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Account';
           return {
             tabBarIcon: renderTabIcon(icons.Account),
             tabBarStyle:
-              routeName === 'Settings' ? {display: 'none'} : defaultTabBarStyle,
+              routeName === 'Settings' ? { display: 'none' } : defaultTabBarStyle,
           };
         }}
       />
@@ -258,7 +260,22 @@ const AppStack = memo(() => {
 });
 
 const AppNav = () => {
-  const {authToken} = useAuth();
+  const { authToken } = useAuth();
+
+  useEffect(() => {
+    if (authToken) {
+      const request = async () => {
+        const result = await requestNotificationPermission();
+        if (result) {
+          notificationService.init();
+        }
+      }
+      setTimeout(() => {
+        request();
+      }, 300);
+    }
+  }, [authToken])
+
   if (!authToken) {
     return <AuthStack />;
   }
