@@ -23,17 +23,20 @@ class AuthService {
   }
 
   // VALIDATE OTP
-  async validateOtp(mobile, otp) {
+  async validateOtp(mobile, otp, deviceInfo = {}) {
     try {
       const uri = this.baseUrl + 'verify';
       const payload = {
         phone: mobile,
         otp: otp,
+        ...deviceInfo,
       };
+      console.log(payload);
       const response = await axios.post(uri, payload);
       const data = await response.data;
       return data;
     } catch (error) {
+      console.log(error);
       const data = await error.response.data;
       return data;
     }

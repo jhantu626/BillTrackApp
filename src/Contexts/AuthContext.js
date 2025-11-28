@@ -2,6 +2,8 @@ import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
 import {Text, View} from 'react-native';
+import {deviceService} from '../Services/DeviceService';
+import {getDeviceDetails} from '../utils/DeviceInfo';
 
 const AuthContext = createContext();
 
@@ -45,6 +47,11 @@ const AuthProvider = ({children}) => {
       setAuthToken(null);
       setUser(null);
       setBusiness(null);
+      const {deviceUniqueKey} = await getDeviceDetails();
+      const data = await deviceService.removeDevice({
+        deviceUniqueKey: deviceUniqueKey,
+      });
+      console.log(data);
     } catch (error) {}
   };
 

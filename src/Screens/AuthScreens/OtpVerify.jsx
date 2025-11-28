@@ -20,6 +20,7 @@ import {font, gap, icon, margin, widthResponsive} from '../../utils/responsive';
 import {authService} from '../../Services/AuthService';
 import {useAuth} from '../../Contexts/AuthContext';
 import {businessService} from '../../Services/BusinessService';
+import {getDeviceDetails} from '../../utils/DeviceInfo';
 
 const OtpVerify = () => {
   const {login, setBusinessData} = useAuth();
@@ -42,7 +43,9 @@ const OtpVerify = () => {
       setIsLoading(true);
       const newOtp = parameterOtp || otp.join('');
       if (newOtp.length !== 4) return;
-      const data = await authService.validateOtp(mobile, newOtp);
+      const deviceInfo = await getDeviceDetails();
+      console.log(deviceInfo);
+      const data = await authService.validateOtp(mobile, newOtp, deviceInfo);
       if (data?.status) {
         await login(data?.token, data?.data);
         if (data?.data?.businessId) {
