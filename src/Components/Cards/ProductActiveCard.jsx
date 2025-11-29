@@ -1,5 +1,5 @@
 import {Image, StyleSheet, Switch, Text, View} from 'react-native';
-import React from 'react';
+import React, {memo, useMemo} from 'react';
 import {
   font,
   gap,
@@ -12,19 +12,18 @@ import {colors} from '../../utils/colors';
 import {API_URL} from '../../utils/config';
 
 const ProductActiveCard = ({item, toggle}) => {
-  console.log(JSON.stringify(item));
+  const imageSource = useMemo(
+    () =>
+      item.image
+        ? {uri: `${API_URL}files/product/${item.image}`}
+        : require('../../../asset/images/emptyimg.jpg'),
+    [item.image],
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.leftCOntainer}>
-        <Image
-          source={
-            item.image
-              ? {uri: `${API_URL}files/product/${item.image}`}
-              : require('./../../../asset/images/emptyimg.jpg')
-          }
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <Image source={imageSource} style={styles.image} resizeMode="cover" />
         <View style={styles.leftRightContainer}>
           <Text style={styles.nameText}>{item?.name}</Text>
           <View style={styles.priceContainer}>
@@ -36,17 +35,15 @@ const ProductActiveCard = ({item, toggle}) => {
       <View>
         <View
           style={[
-            {borderRadius: 15},
-            item?.isActive
-              ? {backgroundColor: colors.primary}
-              : {backgroundColdor: '#D3D3D3'},
+            styles.switchContainer,
+            item.isActive ? styles.switchActive : styles.switchInactive,
           ]}>
           <Switch
             trackColor={{false: 'transparent', true: 'transparent'}}
             thumbColor={'#fff'}
             ios_backgroundColor="#D3D3D3"
             value={item?.isActive}
-            onValueChange={toggle}
+            onValueChange={() => toggle(item.id)}
           />
         </View>
       </View>
@@ -110,6 +107,9 @@ const styles = StyleSheet.create({
     paddingVertical: padding(2),
     borderRadius: 5,
   },
+  switchContainer: {borderRadius: 15},
+  switchActive: {backgroundColor: colors.primary},
+  switchInactive: {backgroundColor: '#D3D3D3'},
 });
 
-export default ProductActiveCard;
+export default memo(ProductActiveCard);

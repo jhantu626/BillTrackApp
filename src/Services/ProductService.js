@@ -158,6 +158,22 @@ class ProductService {
       return data;
     }
   }
+
+  // update status of products multiple
+  async updateProductStatus(products) {
+    try {
+      const uri = `${this.baseUrl}/update-products-status`;
+      const payload = {
+        products: products,
+      };
+      const response = await axios.put(uri, payload);
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
 }
 
 const productService = new ProductService();
