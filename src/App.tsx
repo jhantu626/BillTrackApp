@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   About,
   Account,
+  ActiveProducts,
   AuthHome,
   BrowserScreen,
   Business,
@@ -79,7 +80,7 @@ const HomeStack = memo(() => {
   const businessId = useUser('businessId');
   return (
     <Stack.Navigator
-      initialRouteName={businessId ? 'Business' : 'BusinessSetup'}
+      initialRouteName={businessId ? 'Home' : 'BusinessSetup'}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -135,7 +136,7 @@ const SettingStack = memo(() => (
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="ActiveProducts"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -148,6 +149,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="ItemMaster" component={ItemMaster} />
       <Stack.Screen name="Browser" component={BrowserScreen} />
       <Stack.Screen name="Settings" component={SettingStack} />
+      <Stack.Screen name="ActiveProducts" component={ActiveProducts} />
     </Stack.Navigator>
   );
 });
@@ -167,7 +169,7 @@ const AppStack = memo(() => {
   );
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

@@ -98,6 +98,24 @@ class ProductService {
     }
   }
 
+  // getallactiveinactive
+  async getAllActiveInactiveProducts(token) {
+    try {
+      const uri = `${this.baseUrl}/all-active-inactive`;
+      const response = await axios.get(uri, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
+
   // UPDATE PRODUCT
   async updateproduct(token, {name, id, price, unit, productImage = null}) {
     try {

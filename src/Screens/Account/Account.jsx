@@ -171,7 +171,9 @@ const Account = memo(() => {
             />
             <Text style={styles.text}>Sales report</Text>
           </Pressable>
-          <Pressable style={styles.card}>
+          <Pressable
+            style={styles.card}
+            onPress={() => handleNavigation({screen: 'ActiveProducts'})}>
             <Image
               source={require('./../../../asset/images/sales_icon.png')}
               style={styles.image}

@@ -26,6 +26,7 @@ import SalesReport from './Account/SalesReport';
 import ItemMaster from './Account/ItemMaster';
 import Settings from './Account/Settings/Settings';
 import PrinterSetup from './Account/Settings/PrinterSetup';
+import ActiveProducts from './Account/ActiveProducts';
 
 // PRODUCT
 import Product from './Product/Product';
@@ -54,5 +55,6 @@ export {
   BrowserScreen,
   Settings,
   PrinterSetup,
+  ActiveProducts,
   Business
 };
