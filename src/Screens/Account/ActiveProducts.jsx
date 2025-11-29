@@ -1,167 +1,280 @@
+import React, { useCallback, useEffect, useMemo, useState, memo } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  RefreshControl,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Layout} from '../Layout';
-import {ProductActiveCard, SecondaryHeader} from '../../Components';
-import {productService} from '../../Services/ProductService';
-import {useAuthToken} from '../../Contexts/AuthContext';
-import {colors} from '../../utils/colors';
-import {font, gap, padding} from '../../utils/responsive';
-import {fonts} from '../../utils/fonts';
+
+import { Layout } from '../Layout';
+import { ProductActiveCard, SecondaryHeader } from '../../Components';
+import { productService } from '../../Services/ProductService';
+import { useAuthToken } from '../../Contexts/AuthContext';
+import { useProduct } from '../../Contexts/ProductContexts';
+import { colors } from '../../utils/colors';
+import { font, gap, padding } from '../../utils/responsive';
+import { fonts } from '../../utils/fonts';
 import ToastService from '../../Components/Toasts/ToastService';
-import {useProduct} from '../../Contexts/ProductContexts';
+
+// Memoized components
+const MemoizedProductCard = memo(ProductActiveCard);
+const MemoizedSecondaryHeader = memo(SecondaryHeader);
 
 const ActiveProducts = () => {
-  const {resetProducts} = useProduct();
+  const { resetProducts } = useProduct();
   const token = useAuthToken();
 
   const [originalProducts, setOriginalProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // loading state
-  const [isLoading, setIsLoading] = useState(false);
+  // Loading states
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
 
-  // Fetch products
-  const fetchProducts = useCallback(async () => {
+  // Fetch products with optimized dependency array
+  const fetchProducts = useCallback(async (isRefresh = false) => {
     try {
-      setIsLoading(true);
+      isRefresh ? setIsRefreshing(true) : setIsLoading(true);
 
-      const data = await productService.getAllActiveInactiveProducts(token);
-      if (data?.status) {
-        setProducts(data.data);
-        setOriginalProducts(data.data);
+      const response = await productService.getAllActiveInactiveProducts(token);
+      if (response?.status) {
+        setProducts(response.data);
+        setOriginalProducts(response.data);
       }
     } catch (error) {
-      console.log('Fetch error:', error);
+      ToastService.show({ message: 'Failed to load products', type: 'error' });
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, [token]);
 
+  // Initial load effect
   useEffect(() => {
     fetchProducts();
     Alert.alert(
       '*Notice',
-      "• This page contains editable settings.\n• If you make any changes, they will not be saved automatically.\n• Please click the 'Save Changes' button after updating anything.",
+      '• This page contains editable settings.\n• Changes are NOT saved automatically.\n• Tap "SAVE CHANGES" after editing.',
+      [{ text: 'Got it' }]
     );
   }, [fetchProducts]);
 
-  // Optimized filtering
+  // Refresh handler
+  const onRefresh = useCallback(() => {
+    fetchProducts(true);
+  }, [fetchProducts]);
+
+  // Optimized search with stable reference
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
-
-    const q = searchQuery.toLowerCase();
-    return products.filter(item => item.name.toLowerCase().includes(q));
+    const query = searchQuery.toLowerCase();
+    return products.filter(item => 
+      item.name.toLowerCase().includes(query)
+    );
   }, [products, searchQuery]);
 
-  // Optimized toggle function
-  const toggle = useCallback(id => {
-    setProducts(prev =>
-      prev.map(item =>
-        item.id === id ? {...item, isActive: !item.isActive} : item,
-      ),
-    );
+  // Stable toggle function
+  const toggle = useCallback((id) => {
+    setProducts(prev => prev.map(item =>
+      item.id === id ? { ...item, isActive: !item.isActive } : item
+    ));
   }, []);
 
   // Optimized save function
   const saveProduct = useCallback(async () => {
     try {
       setIsSaveLoading(true);
-      const originalMap = new Map(originalProducts.map(o => [o.id, o]));
 
-      const payload = products.filter(p => {
+      // Fast changed detection using Set
+      const originalMap = new Map();
+      originalProducts.forEach(p => originalMap.set(p.id, p));
+      
+      const changed = products.filter(p => {
         const orig = originalMap.get(p.id);
-        return orig && orig.isActive !== p.isActive;
+        return orig?.isActive !== p.isActive;
       });
 
-      if (!payload || payload.length === 0) {
-        ToastService.show({
-          message: 'No changes detected',
-          type: 'warning',
-        });
+      if (!changed.length) {
+        ToastService.show({ message: 'No changes to save', type: 'info' });
         return;
       }
-      const data = await productService.updateProductStatus(payload);
-      if (data?.status) {
-        ToastService.show({
-          message: 'Products updated successfully',
-          type: 'success',
+
+      const result = await productService.updateProductStatus(changed);
+      if (result?.status) {
+        ToastService.show({ 
+          message: 'Changes saved successfully!', 
+          type: 'success' 
         });
         await fetchProducts();
-        const savedProducts = await productService.getAllProducts(token);
-        if (savedProducts?.status) {
-          console.log(savedProducts);
-          await resetProducts(savedProducts.data);
-        }
+        const allProducts = await productService.getAllProducts(token);
+        if (allProducts?.status) resetProducts(allProducts.data);
       }
     } catch (error) {
-      console.log(error);
+      ToastService.show({ message: 'Failed to save changes', type: 'error' });
     } finally {
       setIsSaveLoading(false);
     }
-  }, [products, originalProducts]);
+  }, [products, originalProducts, fetchProducts, resetProducts, token]);
+
+  // Optimized render item with stable reference
+  const renderItem = useCallback(({ item }) => (
+    <MemoizedProductCard item={item} toggle={toggle} />
+  ), [toggle]);
+
+  // Stable key extractor
+  const keyExtractor = useCallback((item) => item.id.toString(), []);
+
+  // Memoized list empty component
+  const ListEmptyComponent = useMemo(() => (
+    <View style={styles.emptyState}>
+      <Text style={styles.emptyText}>
+        {searchQuery ? 'No products match your search' : 'No products available'}
+      </Text>
+    </View>
+  ), [searchQuery]);
+
+  // Memoized refresh control
+  const refreshControl = useMemo(() => (
+    <RefreshControl
+      refreshing={isRefreshing}
+      onRefresh={onRefresh}
+      colors={[colors.primary]}
+      tintColor={colors.primary}
+    />
+  ), [isRefreshing, onRefresh]);
+
+  // Memoized save button content
+  const saveButtonContent = useMemo(() => (
+    <View style={styles.saveBtnContent}>
+      {isSaveLoading ? (
+        <>
+          <ActivityIndicator size="small" color="#fff" />
+          <Text style={[styles.saveBtnText, { marginLeft: 10 }]}>Saving...</Text>
+        </>
+      ) : (
+        <Text style={styles.saveBtnText}>SAVE CHANGES</Text>
+      )}
+    </View>
+  ), [isSaveLoading]);
+
+  if (isLoading && !isRefreshing) {
+    return (
+      <Layout>
+        <MemoizedSecondaryHeader
+          title="Active products"
+          query={searchQuery}
+          onchangeText={setSearchQuery}
+        />
+        <View style={styles.fullLoader}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.loaderText}>Loading products...</Text>
+        </View>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
-      <SecondaryHeader
+      <MemoizedSecondaryHeader
         title="Active products"
         query={searchQuery}
         onchangeText={setSearchQuery}
       />
 
       <FlatList
-        style={{flex: 1}}
-        contentContainerStyle={styles.listContent}
         data={filteredProducts}
-        keyExtractor={item => String(item.id)}
-        renderItem={({item}) => (
-          <ProductActiveCard item={item} toggle={toggle} />
-        )}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={
+          filteredProducts.length === 0 ? styles.emptyContainer : styles.list
+        }
+        refreshControl={refreshControl}
+        ListEmptyComponent={ListEmptyComponent}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        removeClippedSubviews={true}
       />
 
       <TouchableOpacity
-        style={styles.floatButton}
+        style={[styles.saveBtn, isSaveLoading && styles.saveBtnDisabled]}
         onPress={saveProduct}
-        disabled={isSaveLoading}>
-        {isSaveLoading ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <Text style={styles.floatButtonText}>SAVE CHANGES</Text>
-        )}
+        disabled={isSaveLoading || isLoading}>
+        {saveButtonContent}
       </TouchableOpacity>
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  listContent: {
-    flexGrow: 1,
+  fullLoader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loaderText: {
+    marginTop: 16,
+    fontSize: font(16),
+    color: '#666',
+    fontFamily: fonts.inRegular,
+  },
+  list: {
     paddingHorizontal: padding(16),
     paddingTop: padding(16),
-    paddingBottom: padding(70),
+    paddingBottom: padding(100),
+    flexGrow: 1,
   },
-  floatButton: {
+  emptyContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: padding(20),
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: font(16),
+    color: '#999',
+    textAlign: 'center',
+    fontFamily: fonts.inRegular,
+  },
+  saveBtn: {
     position: 'absolute',
-    bottom: gap(25),
-    backgroundColor: colors.sucess,
-    paddingHorizontal: padding(16),
-    paddingVertical: padding(10),
-    borderRadius: gap(10),
+    bottom: gap(30),
     alignSelf: 'center',
+    backgroundColor: '#28A745',
+    paddingHorizontal: padding(28),
+    paddingVertical: padding(14),
+    borderRadius: gap(12),
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
-  floatButtonText: {
+  saveBtnDisabled: {
+    opacity: 0.7,
+  },
+  saveBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveBtnText: {
     color: '#fff',
-    fontSize: font(14),
-    fontFamily: fonts.inMedium,
+    fontSize: font(15),
+    fontFamily: fonts.inSemiBold,
+    letterSpacing: 0.5,
   },
 });
 
-export default ActiveProducts;
+export default memo(ActiveProducts);
