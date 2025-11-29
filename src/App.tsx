@@ -9,6 +9,7 @@ import {
   Account,
   AuthHome,
   BrowserScreen,
+  Business,
   BusinessSetup,
   BusinessSetup2,
   CreateBill,
@@ -84,6 +85,7 @@ const HomeStack = memo(() => {
         animation: 'slide_from_right',
       }}>
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Business" component={Business} />
       <Stack.Screen
         name="InvoiceDetails"
         component={InvoiceDetails}

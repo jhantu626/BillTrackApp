@@ -8,6 +8,7 @@ import BusinessSetup2 from './AuthScreens/BusinessSetup2';
 
 // HOME
 import Home from './Home/Home';
+import Business from './Home/Business';
 
 // INVOICE
 import Invoice from './Invoice/Invoice';
@@ -52,5 +53,6 @@ export {
   ItemMaster,
   BrowserScreen,
   Settings,
-  PrinterSetup
+  PrinterSetup,
+  Business
 };
