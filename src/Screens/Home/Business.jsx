@@ -1,17 +1,35 @@
 import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import {SecondaryHeader} from '../../Components';
+import {NavigationCardWithValue, SecondaryHeader} from '../../Components';
 import {Layout} from '../Layout';
 import {font, gap, icon, margin, padding} from '../../utils/responsive';
 import {useBusiness} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
 import {colors} from '../../utils/colors';
+import MaterialIcons from '@react-native-vector-icons/material-icons';
+import Lucide from '@react-native-vector-icons/lucide';
+import Ionicons from '@react-native-vector-icons/ionicons';
+import {businessCategoryService} from '../../Services/BusinessCategoryService';
 
 const Business = () => {
   const business = useBusiness();
-  console.log(business);
-  console.log(`${API_URL}files/logo/${business?.logoUrl}`);
+  const [businessCategory, setBusinessCategory] = useState([]);
+
+  const fetchBusinessCategory = async () => {
+    try {
+      const data = await businessCategoryService.getAllBusinessCategory();
+      setBusinessCategory(data);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBusinessCategory();
+  }, []);
+
   return (
     <Layout>
       <SecondaryHeader title="Business Setting" isSearch={false} />
@@ -37,15 +55,97 @@ const Business = () => {
             </View>
           </View>
         </View>
+        <View style={styles.rowContainer}>
+          <Text>Primary Information</Text>
+          <View style={styles.primaryInfoContainer}>
+            <NavigationCardWithValue
+              mainIcon={
+                <MaterialIcons
+                  name="phone"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              }
+              title="Phone Number"
+              onpress={() => {}}
+              textFontSize={14}
+              disabled={false}
+              value={business?.phoneNumber}
+            />
+            <NavigationCardWithValue
+              mainIcon={
+                <MaterialIcons
+                  name="email"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              }
+              title="Email Address"
+              onpress={() => {}}
+              textFontSize={14}
+              disabled={false}
+              value={business?.email}
+            />
+            <NavigationCardWithValue
+              mainIcon={
+                <Lucide
+                  name="layout-dashboard"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              }
+              title="Business Category"
+              onpress={() => {}}
+              textFontSize={14}
+              disabled={false}
+              value={
+                businessCategory.find(
+                  item => item.id === business?.businessCategoryId,
+                )?.name
+              }
+            />
+          </View>
+        </View>
+        <View style={styles.rowContainer}>
+          <Text>Business Information</Text>
+          <View style={styles.primaryInfoContainer}>
+            <NavigationCardWithValue
+              mainIcon={
+                <Lucide
+                  name="badge-percent"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              }
+              title="GST Number"
+              onpress={() => {}}
+              textFontSize={14}
+              disabled={false}
+              value={business?.gstNumber}
+            />
+            <NavigationCardWithValue
+              mainIcon={
+                <Ionicons
+                  name="location-outline"
+                  size={icon(20)}
+                  color={colors.primary}
+                />
+              }
+              title="Business Address"
+              onpress={() => {}}
+              textFontSize={14}
+              disabled={false}
+              value={`${business?.city}, ${business?.pinCode}`}
+            />
+          </View>
+        </View>
       </ScrollView>
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    gap: gap(20),
-  },
+  container: {},
   rowContainer: {
     backgroundColor: '#fff',
     marginVertical: margin(16),
@@ -94,6 +194,9 @@ const styles = StyleSheet.create({
     height: icon(64),
     borderRadius: icon(64),
     backgroundColor: '#fff',
+  },
+  primaryInfoContainer: {
+    marginVertical: gap(10),
   },
 });
 

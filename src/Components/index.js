@@ -19,6 +19,7 @@ import SettingItemsCard from './Cards/SettingItemsCard';
 import ProductCard from './Cards/ProductCard';
 import ProductCardRow from './Cards/ProductCardRow';
 import NavigationCard from './Cards/NavigationCard';
+import NavigationCardWithValue from './Cards/NavigationCardWithValue';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -73,4 +74,5 @@ export {
   HomeChartShimmer,
   InvoiceCardShimmer,
   CommonModal,
+  NavigationCardWithValue,
 };
