@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState, memo } from 'react';
+import React, {useCallback, useEffect, useMemo, useState, memo} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -10,22 +10,23 @@ import {
   View,
 } from 'react-native';
 
-import { Layout } from '../Layout';
-import { ProductActiveCard, SecondaryHeader } from '../../Components';
-import { productService } from '../../Services/ProductService';
-import { useAuthToken } from '../../Contexts/AuthContext';
-import { useProduct } from '../../Contexts/ProductContexts';
-import { colors } from '../../utils/colors';
-import { font, gap, padding } from '../../utils/responsive';
-import { fonts } from '../../utils/fonts';
+import {Layout} from '../Layout';
+import {ProductActiveCard, SecondaryHeader} from '../../Components';
+import {productService} from '../../Services/ProductService';
+import {useAuthToken} from '../../Contexts/AuthContext';
+import {useProduct} from '../../Contexts/ProductContexts';
+import {colors} from '../../utils/colors';
+import {font, gap, padding} from '../../utils/responsive';
+import {fonts} from '../../utils/fonts';
 import ToastService from '../../Components/Toasts/ToastService';
+import {useFocusEffect} from '@react-navigation/native';
 
 // Memoized components
 const MemoizedProductCard = memo(ProductActiveCard);
 const MemoizedSecondaryHeader = memo(SecondaryHeader);
 
 const ActiveProducts = () => {
-  const { resetProducts } = useProduct();
+  const {resetProducts} = useProduct();
   const token = useAuthToken();
 
   const [originalProducts, setOriginalProducts] = useState([]);
@@ -38,32 +39,41 @@ const ActiveProducts = () => {
   const [isSaveLoading, setIsSaveLoading] = useState(false);
 
   // Fetch products with optimized dependency array
-  const fetchProducts = useCallback(async (isRefresh = false) => {
-    try {
-      isRefresh ? setIsRefreshing(true) : setIsLoading(true);
+  const fetchProducts = useCallback(
+    async (isRefresh = false) => {
+      try {
+        isRefresh ? setIsRefreshing(true) : setIsLoading(true);
 
-      const response = await productService.getAllActiveInactiveProducts(token);
-      if (response?.status) {
-        setProducts(response.data);
-        setOriginalProducts(response.data);
+        const response = await productService.getAllActiveInactiveProducts(
+          token,
+        );
+        if (response?.status) {
+          setProducts(response.data);
+          setOriginalProducts(response.data);
+        }
+      } catch (error) {
+        ToastService.show({message: 'Failed to load products', type: 'error'});
+      } finally {
+        setIsLoading(false);
+        setIsRefreshing(false);
       }
-    } catch (error) {
-      ToastService.show({ message: 'Failed to load products', type: 'error' });
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [token]);
+    },
+    [token],
+  );
 
-  // Initial load effect
   useEffect(() => {
-    fetchProducts();
     Alert.alert(
       '*Notice',
       '• This page contains editable settings.\n• Changes are NOT saved automatically.\n• Tap "SAVE CHANGES" after editing.',
-      [{ text: 'Got it' }]
+      [{text: 'Got it'}],
     );
-  }, [fetchProducts]);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchProducts();
+    }, [fetchProducts]),
+  );
 
   // Refresh handler
   const onRefresh = useCallback(() => {
@@ -74,16 +84,16 @@ const ActiveProducts = () => {
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
     const query = searchQuery.toLowerCase();
-    return products.filter(item => 
-      item.name.toLowerCase().includes(query)
-    );
+    return products.filter(item => item.name.toLowerCase().includes(query));
   }, [products, searchQuery]);
 
   // Stable toggle function
-  const toggle = useCallback((id) => {
-    setProducts(prev => prev.map(item =>
-      item.id === id ? { ...item, isActive: !item.isActive } : item
-    ));
+  const toggle = useCallback(id => {
+    setProducts(prev =>
+      prev.map(item =>
+        item.id === id ? {...item, isActive: !item.isActive} : item,
+      ),
+    );
   }, []);
 
   // Optimized save function
@@ -94,74 +104,88 @@ const ActiveProducts = () => {
       // Fast changed detection using Set
       const originalMap = new Map();
       originalProducts.forEach(p => originalMap.set(p.id, p));
-      
+
       const changed = products.filter(p => {
         const orig = originalMap.get(p.id);
         return orig?.isActive !== p.isActive;
       });
 
       if (!changed.length) {
-        ToastService.show({ message: 'No changes to save', type: 'info' });
+        ToastService.show({message: 'No changes to save', type: 'info'});
         return;
       }
 
       const result = await productService.updateProductStatus(changed);
       if (result?.status) {
-        ToastService.show({ 
-          message: 'Changes saved successfully!', 
-          type: 'success' 
+        ToastService.show({
+          message: 'Changes saved successfully!',
+          type: 'success',
         });
         await fetchProducts();
         const allProducts = await productService.getAllProducts(token);
         if (allProducts?.status) resetProducts(allProducts.data);
       }
     } catch (error) {
-      ToastService.show({ message: 'Failed to save changes', type: 'error' });
+      ToastService.show({message: 'Failed to save changes', type: 'error'});
     } finally {
       setIsSaveLoading(false);
     }
   }, [products, originalProducts, fetchProducts, resetProducts, token]);
 
   // Optimized render item with stable reference
-  const renderItem = useCallback(({ item }) => (
-    <MemoizedProductCard item={item} toggle={toggle} />
-  ), [toggle]);
+  const renderItem = useCallback(
+    ({item}) => <MemoizedProductCard item={item} toggle={toggle} />,
+    [toggle],
+  );
 
   // Stable key extractor
-  const keyExtractor = useCallback((item) => item.id.toString(), []);
+  const keyExtractor = useCallback(item => item.id.toString(), []);
 
   // Memoized list empty component
-  const ListEmptyComponent = useMemo(() => (
-    <View style={styles.emptyState}>
-      <Text style={styles.emptyText}>
-        {searchQuery ? 'No products match your search' : 'No products available'}
-      </Text>
-    </View>
-  ), [searchQuery]);
+  const ListEmptyComponent = useMemo(
+    () => (
+      <View style={styles.emptyState}>
+        <Text style={styles.emptyText}>
+          {searchQuery
+            ? 'No products match your search'
+            : 'No products available'}
+        </Text>
+      </View>
+    ),
+    [searchQuery],
+  );
 
   // Memoized refresh control
-  const refreshControl = useMemo(() => (
-    <RefreshControl
-      refreshing={isRefreshing}
-      onRefresh={onRefresh}
-      colors={[colors.primary]}
-      tintColor={colors.primary}
-    />
-  ), [isRefreshing, onRefresh]);
+  const refreshControl = useMemo(
+    () => (
+      <RefreshControl
+        refreshing={isRefreshing}
+        onRefresh={onRefresh}
+        colors={[colors.primary]}
+        tintColor={colors.primary}
+      />
+    ),
+    [isRefreshing, onRefresh],
+  );
 
   // Memoized save button content
-  const saveButtonContent = useMemo(() => (
-    <View style={styles.saveBtnContent}>
-      {isSaveLoading ? (
-        <>
-          <ActivityIndicator size="small" color="#fff" />
-          <Text style={[styles.saveBtnText, { marginLeft: 10 }]}>Saving...</Text>
-        </>
-      ) : (
-        <Text style={styles.saveBtnText}>SAVE CHANGES</Text>
-      )}
-    </View>
-  ), [isSaveLoading]);
+  const saveButtonContent = useMemo(
+    () => (
+      <View style={styles.saveBtnContent}>
+        {isSaveLoading ? (
+          <>
+            <ActivityIndicator size="small" color="#fff" />
+            <Text style={[styles.saveBtnText, {marginLeft: 10}]}>
+              Saving...
+            </Text>
+          </>
+        ) : (
+          <Text style={styles.saveBtnText}>SAVE CHANGES</Text>
+        )}
+      </View>
+    ),
+    [isSaveLoading],
+  );
 
   if (isLoading && !isRefreshing) {
     return (
@@ -257,7 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: gap(12),
     elevation: 8,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.3,
     shadowRadius: 6,
   },
