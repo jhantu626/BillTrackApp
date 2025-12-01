@@ -80,7 +80,7 @@ const HomeStack = memo(() => {
   const businessId = useUser('businessId');
   return (
     <Stack.Navigator
-      initialRouteName={businessId ? 'Home' : 'BusinessSetup'}
+      initialRouteName={businessId ? 'Business' : 'BusinessSetup'}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
