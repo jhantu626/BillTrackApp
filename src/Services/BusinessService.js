@@ -69,6 +69,55 @@ class BusinessService {
       return data;
     }
   }
+
+  async updateBusiness({
+    token,
+    gstNumber,
+    street,
+    city,
+    state,
+    pinCode,
+    email,
+    phone,
+  }) {
+    const uri = this.baseUrl + '/update';
+    const payload = {};
+    if (gstNumber) {
+      payload.gstNumber = gstNumber;
+    }
+    if (street) {
+      payload.street = street;
+    }
+    if (city) {
+      payload.city = city;
+    }
+    if (state) {
+      payload.state = state;
+    }
+    if (pinCode) {
+      payload.pinCode = pinCode;
+    }
+    if (email) {
+      payload.email = email;
+    }
+    if (phone) {
+      payload.phone = phone;
+    }
+    try {
+      const response = await axios.put(uri, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      console.log(error);
+      const data = await error.response.data;
+      return data;
+    }
+  }
 }
 
 const businessService = new BusinessService();

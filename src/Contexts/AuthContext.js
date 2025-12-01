@@ -40,6 +40,23 @@ const AuthProvider = ({children}) => {
     } catch (error) {}
   };
 
+  const resetBusiness = async (newBusinessData = null) => {
+    try {
+      // remove old business details
+      await AsyncStorage.removeItem('business');
+
+      // if new business details are provided, save them
+      if (newBusinessData) {
+        await AsyncStorage.setItem('business', JSON.stringify(newBusinessData));
+        setBusiness(newBusinessData);
+      } else {
+        setBusiness(null);
+      }
+    } catch (error) {
+      console.log('Error resetting business:', error);
+    }
+  };
+
   const logout = async () => {
     try {
       const {deviceUniqueKey} = await getDeviceDetails();
@@ -86,6 +103,7 @@ const AuthProvider = ({children}) => {
       setUserData,
       setBusinessData,
       business,
+      resetBusiness,
     };
   }, [authToken, user, business]);
 

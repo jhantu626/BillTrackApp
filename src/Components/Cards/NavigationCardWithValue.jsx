@@ -27,7 +27,7 @@ const NavigationCardWithValue = ({
         </Text>
         {tag && <Text style={styles.newText}>{tagText}</Text>}
       </View>
-      <TouchableOpacity style={styles.rightContainer}>
+      <View style={styles.rightContainer}>
         <Text style={[styles.itemText, {fontSize: font(textFontSize)}]}>
           {value}
         </Text>
@@ -36,7 +36,7 @@ const NavigationCardWithValue = ({
           size={icon(16)}
           color={'#000'}
         />
-      </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
 };
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     flex: 0.8,
     flexDirection: 'row',
     gap: gap(16),
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
 });

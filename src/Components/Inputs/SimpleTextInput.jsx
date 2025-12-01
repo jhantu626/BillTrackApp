@@ -5,67 +5,65 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import {font, heightResponsive, icon} from '../../utils/responsive';
 
-const SimpleTextInput = memo(
-  ({
-    placeholder = 'Enter Text',
-    color = colors.sucess,
-    width = '100%',
-    height = icon(45),
-    isBorder = true,
-    borderColor = colors.border,
-    borderRadius = 5,
-    backgroundColor = '#fff',
-    keyboardType = 'default',
-    minLength = 0,
-    maxLength = 100,
-    value = '',
-    setValue,
-    hasError = false,
-    upperCase = false,
-    placeholderTextColor = colors.border,
-    fontSize = font(14),
-    disabled = false,
-  }) => {
-    return (
-      <View
-        style={[
-          styles.container,
-          {width: width, height: height, backgroundColor: backgroundColor},
-          isBorder && {
-            borderWidth: 1,
-            borderColor: hasError ? colors.error : borderColor,
-            borderRadius: borderRadius,
-          },
-        ]}>
-        <TextInput
-          placeholder={placeholder}
-          keyboardType={keyboardType}
-          value={value}
-          onChangeText={text => {
-            if (upperCase) {
-              text = text.toUpperCase();
-            }
-            if (text.length <= maxLength && text.length >= minLength)
-              setValue(text);
-          }}
-          maxLength={maxLength}
-          style={[styles.inputBox, {fontSize: fontSize}]}
-          placeholderTextColor={placeholderTextColor}
-          editable={!disabled}
-        />
-        {value.length > 0 && (
-          <Octicons
+const SimpleTextInput = ({
+  placeholder = 'Enter Text',
+  color = colors.sucess,
+  width = '100%',
+  height = icon(45),
+  isBorder = true,
+  borderColor = colors.border,
+  borderRadius = 5,
+  backgroundColor = '#fff',
+  keyboardType = 'default',
+  minLength = 0,
+  maxLength = 100,
+  value = '',
+  setValue,
+  hasError = false,
+  upperCase = false,
+  placeholderTextColor = colors.border,
+  fontSize = font(14),
+  disabled = false,
+}) => {
+  return (
+    <View
+      style={[
+        styles.container,
+        {width: width, height: height, backgroundColor: backgroundColor},
+        isBorder && {
+          borderWidth: 1,
+          borderColor: hasError ? colors.error : borderColor,
+          borderRadius: borderRadius,
+        },
+      ]}>
+      <TextInput
+        placeholder={placeholder}
+        keyboardType={keyboardType}
+        value={value}
+        onChangeText={text => {
+          if (upperCase) {
+            text = text.toUpperCase();
+          }
+          if (text.length <= maxLength && text.length >= minLength)
+            setValue(text);
+        }}
+        maxLength={maxLength}
+        style={[styles.inputBox, {fontSize: fontSize}]}
+        placeholderTextColor={placeholderTextColor}
+        editable={!disabled}
+      />
+      {value.length > 0 && (
+        <Octicons
           name={hasError ? 'x-circle-fill' : 'check-circle-fill'}
           size={16}
           color={
             value.length > 0 ? (hasError ? colors.error : color) : colors.border
           }
         />
-        )}
-      </View>
-    );
-  },
-);
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

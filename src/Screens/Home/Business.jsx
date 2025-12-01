@@ -1,32 +1,73 @@
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
+  ToastAndroid,
+  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {
+  BottomSheetInput,
   CommonModal,
+  DottedDivider,
   NavigationCardWithValue,
+  RadioInput,
   SecondaryHeader,
+  SimpleTextInput,
 } from '../../Components';
 import {Layout} from '../Layout';
 import {font, gap, icon, margin, padding} from '../../utils/responsive';
-import {useBusiness} from '../../Contexts/AuthContext';
+import {useAuth, useAuthToken, useBusiness} from '../../Contexts/AuthContext';
 import {API_URL} from '../../utils/config';
 import {colors} from '../../utils/colors';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import Lucide from '@react-native-vector-icons/lucide';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {businessCategoryService} from '../../Services/BusinessCategoryService';
+import {fonts} from '../../utils/fonts';
+import {
+  validateEmail,
+  validateIndianGST,
+  validateIndianPhone,
+  validateIndianPincode,
+} from '../../utils/validator';
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetFlatList,
+  BottomSheetView,
+} from '@gorhom/bottom-sheet';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import ToastService from '../../Components/Toasts/ToastService';
+import {businessService} from '../../Services/BusinessService';
 
 const Business = () => {
   const business = useBusiness();
+  const token = useAuthToken();
+  const {resetBusiness} = useAuth();
   const [businessCategory, setBusinessCategory] = useState([]);
-  const [isModal, setIsModal] = useState(true);
+
+  // MODAL STATES
+  const [isModal, setIsModal] = useState(false);
+  const [modalType, setModalType] = useState('Phone Number');
+
+  // STATE VARIABLES
+  const [mobileNumber, setMobileNumber] = useState(business?.phone || '');
+  const [email, setEmail] = useState(business?.email || '');
+  const [gstNumber, setGstNumber] = useState(business?.gstNumber || '');
+  const [street, setStreet] = useState(business?.street || '');
+  const [city, setCity] = useState(business?.city || '');
+  const [pincode, setPincode] = useState(business?.pinCode || '');
+  const [state, setState] = useState(business?.state || '');
+
+  // LOADING STATE
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
 
   const fetchBusinessCategory = async () => {
     try {
@@ -39,130 +80,425 @@ const Business = () => {
     fetchBusinessCategory();
   }, []);
 
+  const handleOpenModal = ({type}) => {
+    setModalType(type);
+    setIsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModal(false);
+  };
+
+  const handleSave = async () => {
+    if (!isChanged) {
+      ToastService.show({
+        message: 'No changes detected',
+        type: 'info',
+      });
+      return;
+    }
+
+    if (mobileNumber && !validateIndianPhone(mobileNumber)) {
+      ToastService.show({
+        message: 'Invalid Phone Number',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (email && !validateEmail(email)) {
+      ToastService.show({
+        message: 'Invalid Email',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (gstNumber && !validateIndianGST(gstNumber)) {
+      ToastService.show({
+        message: 'Invalid GST Number',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (pincode && !validateIndianPincode(pincode)) {
+      ToastService.show({
+        message: 'Invalid Pincode',
+        type: 'error',
+      });
+      return;
+    }
+
+    try {
+      setIsSaveLoading(true);
+      const data = await businessService.updateBusiness({
+        token: token,
+        gstNumber: gstNumber,
+        street: street,
+        city: city,
+        state: state,
+        pinCode: pincode,
+        email: email,
+        phone: mobileNumber,
+      });
+      console.log(JSON.stringify(data));
+      if (data.status) {
+        ToastService.show({
+          message: 'Business updated successfully',
+          type: 'success',
+        });
+        const updatedBusiness = data?.business;
+        await resetBusiness(updatedBusiness);
+      }
+    } catch (error) {
+    } finally {
+      setIsSaveLoading(false);
+    }
+  };
+
+  const renderModalContent = useMemo(() => {
+    switch (modalType) {
+      case 'Phone Number':
+        return (
+          <SimpleTextInput
+            placeholder={`Enter ${modalType}`}
+            value={mobileNumber}
+            setValue={setMobileNumber}
+            keyboardType="numeric"
+            maxLength={10}
+            hasError={mobileNumber > 0 && !validateIndianPhone(mobileNumber)}
+          />
+        );
+      case 'Email Address':
+        return (
+          <SimpleTextInput
+            placeholder={`Enter Email Address`}
+            value={email}
+            setValue={setEmail}
+            keyboardType="email-address"
+            hasError={email && !validateEmail(email)}
+          />
+        );
+      case 'GST Number':
+        return (
+          <SimpleTextInput
+            placeholder={`Enter GST Number`}
+            value={gstNumber}
+            setValue={setGstNumber}
+            keyboardType="numeric"
+            hasError={gstNumber && !validateIndianGST(gstNumber)}
+          />
+        );
+      case 'State':
+        return (
+          <SimpleTextInput
+            label="Enter State"
+            value={state}
+            setValue={setState}
+            keyboardType="default"
+          />
+        );
+      case 'City':
+        return (
+          <SimpleTextInput
+            label="Enter City"
+            value={city}
+            setValue={setCity}
+            keyboardType="default"
+          />
+        );
+      case 'Pincode':
+        return (
+          <SimpleTextInput
+            label="Enter Pincode"
+            value={pincode}
+            setValue={setPincode}
+            keyboardType="numeric"
+            hasError={pincode && !validateIndianPincode(pincode)}
+          />
+        );
+      case 'Street':
+        return (
+          <SimpleTextInput
+            label="Enter Street"
+            value={street}
+            setValue={setStreet}
+            keyboardType="default"
+          />
+        );
+      default:
+        return null;
+    }
+  }, [modalType, mobileNumber, email, gstNumber, state, city, pincode, street]);
+
+  // Store original values for comparison
+  const initialValues = useMemo(
+    () => ({
+      phone: business?.phone || '',
+      email: business?.email || '',
+      gstNumber: business?.gstNumber || '',
+      street: business?.street || '',
+      city: business?.city || '',
+      pincode: business?.pinCode || '',
+      state: business?.state || '',
+    }),
+    [business],
+  );
+
+  // Detect if anything changed
+  const isChanged = useMemo(() => {
+    return (
+      mobileNumber !== initialValues.phone ||
+      email !== initialValues.email ||
+      gstNumber !== initialValues.gstNumber ||
+      street !== initialValues.street ||
+      city !== initialValues.city ||
+      pincode !== initialValues.pincode ||
+      state !== initialValues.state
+    );
+  }, [
+    mobileNumber,
+    email,
+    gstNumber,
+    street,
+    city,
+    pincode,
+    state,
+    initialValues,
+  ]);
+
   return (
-    <Layout>
-      <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-        <SecondaryHeader title="Business Setting" isSearch={false} />
-        <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
-          <View style={[styles.rowContainer, styles.profileContainer]}>
-            <LinearGradient
-              colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']}
-              start={{x: 0, y: 0}}
-              end={{x: 1, y: 1}}
-              style={styles.gradientBorder}>
-              <Image
-                style={styles.profileImage}
-                resizeMode="contain"
-                source={{uri: `${API_URL}files/logo/${business?.logoUrl}`}}
-              />
-            </LinearGradient>
-            <View style={styles.profileSubContainer}>
-              <Text style={styles.label}>
-                Business Name <Text style={styles.required}>*</Text>
-              </Text>
-              <View style={styles.businessNameContainer}>
-                <Text style={styles.businessNameText}>{business?.name}</Text>
+    <GestureHandlerRootView>
+      <Layout>
+        <KeyboardAvoidingView
+          style={{flex: 1}}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+          <SecondaryHeader title="Business Setting" isSearch={false} />
+          <ScrollView
+            style={{flex: 1}}
+            contentContainerStyle={styles.container}>
+            <View style={[styles.rowContainer, styles.profileContainer]}>
+              <LinearGradient
+                colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={styles.gradientBorder}>
+                <Image
+                  style={styles.profileImage}
+                  resizeMode="contain"
+                  source={{uri: `${API_URL}files/logo/${business?.logoUrl}`}}
+                />
+              </LinearGradient>
+              <View style={styles.profileSubContainer}>
+                <Text style={styles.label}>
+                  Business Name <Text style={styles.required}>*</Text>
+                </Text>
+                <View style={styles.businessNameContainer}>
+                  <Text style={styles.businessNameText}>{business?.name}</Text>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.rowContainer}>
-            <Text>Primary Information</Text>
-            <View style={styles.primaryInfoContainer}>
-              <NavigationCardWithValue
-                mainIcon={
-                  <MaterialIcons
-                    name="phone"
-                    size={icon(20)}
-                    color={colors.primary}
-                  />
-                }
-                title="Phone Number"
-                onpress={() => {}}
-                textFontSize={14}
-                disabled={false}
-                value={business?.phoneNumber}
-              />
-              <NavigationCardWithValue
-                mainIcon={
-                  <MaterialIcons
-                    name="email"
-                    size={icon(20)}
-                    color={colors.primary}
-                  />
-                }
-                title="Email Address"
-                onpress={() => {}}
-                textFontSize={14}
-                disabled={false}
-                value={business?.email}
-              />
-              <NavigationCardWithValue
-                mainIcon={
-                  <Lucide
-                    name="layout-dashboard"
-                    size={icon(20)}
-                    color={colors.primary}
-                  />
-                }
-                title="Business Category"
-                onpress={() => {}}
-                textFontSize={14}
-                disabled={false}
-                value={
-                  businessCategory.find(
-                    item => item.id === business?.businessCategoryId,
-                  )?.name
-                }
-              />
+            <View style={styles.rowContainer}>
+              <Text>Primary Information</Text>
+              <View style={styles.primaryInfoContainer}>
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="phone"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Phone Number"
+                  onpress={() => handleOpenModal({type: 'Phone Number'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={mobileNumber}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="email"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Email Address"
+                  onpress={() => handleOpenModal({type: 'Email Address'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={email}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Lucide
+                      name="layout-dashboard"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Business Category"
+                  onpress={() => {
+                    ToastAndroid.show(
+                      'Business category changes are not allowed. Kindly contact the support team for assistance',
+                      ToastAndroid.SHORT,
+                    );
+                  }}
+                  textFontSize={14}
+                  disabled={false}
+                  value={
+                    businessCategory.find(
+                      item => item.id === business?.businessCategoryId,
+                    )?.name
+                  }
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.rowContainer}>
-            <Text>Business Information</Text>
-            <View style={styles.primaryInfoContainer}>
-              <NavigationCardWithValue
-                mainIcon={
-                  <Lucide
-                    name="badge-percent"
-                    size={icon(20)}
-                    color={colors.primary}
-                  />
-                }
-                title="GST Number"
-                onpress={() => {}}
-                textFontSize={14}
-                disabled={false}
-                value={business?.gstNumber}
-              />
-              <NavigationCardWithValue
-                mainIcon={
+            <View style={styles.rowContainer}>
+              <Text>Business Information</Text>
+              <View style={styles.primaryInfoContainer}>
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Lucide
+                      name="badge-percent"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="GST Number"
+                  textFontSize={14}
+                  disabled={false}
+                  value={gstNumber}
+                  onpress={() => {
+                    if (!gstNumber) {
+                      handleOpenModal({type: 'GST Number'});
+                    } else {
+                      ToastAndroid.show(
+                        'GST number changes are not allowed. Kindly contact the support team for assistance',
+                        ToastAndroid.SHORT,
+                      );
+                    }
+                  }}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Ionicons
+                      name="location-outline"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Street"
+                  onpress={() => handleOpenModal({type: 'Street'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={street}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="location-city"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="City"
+                  onpress={() => handleOpenModal({type: 'City'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={city}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="confirmation-number"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Pincode"
+                  onpress={() => handleOpenModal({type: 'Pincode'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={pincode}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="public"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="State"
+                  onpress={() => handleOpenModal({type: 'State'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={state}
+                />
+              </View>
+            </View>
+          </ScrollView>
+          {!isModal && (
+            <Pressable
+              style={[styles.saveChangesContainer]}
+              onPress={handleSave}
+              disabled={isSaveLoading}>
+              {isSaveLoading ? (
+                <ActivityIndicator size="small" color={'#fff'} />
+              ) : (
+                <Text style={styles.saveChangesText}>SAVE CHANGES</Text>
+              )}
+            </Pressable>
+          )}
+          <CommonModal
+            visible={isModal}
+            handleClose={handleCloseModal}
+            animationType="fade">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Change {modalType}</Text>
+                <TouchableOpacity onPress={handleCloseModal}>
                   <Ionicons
-                    name="location-outline"
-                    size={icon(20)}
+                    name="close"
+                    size={icon(24)}
                     color={colors.primary}
                   />
-                }
-                title="Business Address"
-                onpress={() => {}}
-                textFontSize={14}
-                disabled={false}
-                value={`${business?.city}, ${business?.pinCode}`}
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  borderBottomColor: '#ccc',
+                  borderBottomWidth: 0.7,
+                  marginTop: 10,
+                }}
               />
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>
+                  Enter Your {modalType}
+                  <Text style={styles.required}>*</Text>
+                </Text>
+                {renderModalContent}
+              </View>
+              <TouchableOpacity
+                onPress={handleCloseModal}
+                style={styles.submitButton}>
+                <Text style={styles.submitButtonText}>SUBMIT</Text>
+              </TouchableOpacity>
             </View>
-          </View>
-        </ScrollView>
-        <CommonModal visible={isModal}>
-          <Text>Modal Open</Text>
-        </CommonModal>
-      </KeyboardAvoidingView>
-    </Layout>
+          </CommonModal>
+        </KeyboardAvoidingView>
+      </Layout>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    paddingBottom: 80,
+  },
   rowContainer: {
     backgroundColor: '#fff',
     marginVertical: margin(16),
@@ -214,6 +550,99 @@ const styles = StyleSheet.create({
   },
   primaryInfoContainer: {
     marginVertical: gap(10),
+  },
+  modalContainer: {
+    padding: padding(16),
+    backgroundColor: '#fff',
+    borderRadius: 8,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  modalTitle: {
+    fontSize: font(14),
+    fontFamily: fonts.inBold,
+    color: '#000',
+  },
+  inputContainer: {
+    marginVertical: gap(16),
+    gap: gap(16),
+  },
+  submitButton: {
+    alignSelf: 'center',
+    marginTop: gap(16),
+    paddingVertical: padding(10),
+    paddingHorizontal: padding(16),
+    backgroundColor: '#28A745',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  submitButtonText: {
+    fontSize: font(14),
+    fontFamily: fonts.inBold,
+    color: '#fff',
+    letterSpacing: 1.5,
+  },
+  saveChangesContainer: {
+    position: 'absolute',
+    bottom: padding(40),
+    paddingVertical: padding(10),
+    paddingHorizontal: padding(16),
+    alignSelf: 'center',
+    backgroundColor: '#28A745',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveChangesText: {
+    fontSize: font(14),
+    fontFamily: fonts.inSemiBold,
+    color: '#fff',
+    letterSpacing: 1,
+  },
+  bottomSheetHeader: {
+    height: icon(50),
+    backgroundColor: colors.primary + 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: padding(15),
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  bottomSheetTitle: {
+    fontSize: 16,
+    fontFamily: fonts.onSemiBold,
+    color: colors.primary,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: '#F2F2F280',
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: fonts.onRegular,
+  },
+  bottomSheetItem: {
+    paddingHorizontal: 20,
+  },
+  bottomSheetContainer: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  bottomSheetHeaderContainer: {
+    marginBottom: margin(10),
+    backgroundColor: '#fff',
   },
 });
 
