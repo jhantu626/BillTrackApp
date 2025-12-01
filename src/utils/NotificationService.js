@@ -6,7 +6,6 @@ class NotificationService {
 
   async init() {
     const fcm = await messaging().getToken();
-    console.log('fcm', fcm);
     if (this.initialized) return;
     this.initialized = true;
 

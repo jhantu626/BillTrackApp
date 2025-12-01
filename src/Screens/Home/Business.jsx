@@ -20,10 +20,7 @@ const Business = () => {
     try {
       const data = await businessCategoryService.getAllBusinessCategory();
       setBusinessCategory(data);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
