@@ -46,7 +46,7 @@ import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {requestPermission} from '../../utils/helper';
-import {validateName, validatePrice} from '../../utils/validator';
+import {validateName, validatePrice, validateProductName} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
 import {useAuthToken, useGstEnabled} from '../../Contexts/AuthContext';
@@ -196,7 +196,7 @@ const Product = () => {
     const showError = message =>
       ToastService.show({message, type: 'error', position: 'top'});
 
-    if (!productName?.trim() || !validateName(productName)) {
+    if (!productName?.trim() || !validateProductName(productName)) {
       return showError('Please enter a valid name');
     }
 

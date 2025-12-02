@@ -8,6 +8,17 @@ function validateName(name) {
   return nameRegex.test(trimmed);
 }
 
+function validateProductName(name) {
+  if (typeof name !== 'string') return false;
+
+  const trimmed = name.trim();
+
+  // Allows almost everything needed for real product names
+  const productRegex = /^[A-Za-z0-9\u00C0-\u017F\s()"'.,+\-_/&%°:;\\]{2,100}$/;
+
+  return productRegex.test(trimmed);
+}
+
 function validateIndianPhone(phoneNumber) {
   if (typeof phoneNumber !== 'string' || !phoneNumber) {
     return false;
@@ -257,4 +268,5 @@ export {
   validateAddress,
   greeting,
   validatePrice,
+  validateProductName,
 };
