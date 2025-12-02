@@ -18,6 +18,7 @@ class BusinessService {
     businessCategoryId,
     logo,
     token,
+    deviceInfo,
   }) {
     try {
       const uri = this.baseUrl;
@@ -39,6 +40,12 @@ class BusinessService {
 
       formData.append('businessCategoryId', businessCategoryId);
       formData.append('logo', logo);
+      formData.append('fcmToken', deviceInfo.fcmToken);
+      formData.append('deviceType', deviceInfo.deviceType);
+      formData.append('deviceModel', deviceInfo.deviceModel);
+      formData.append('deviceName', deviceInfo.deviceName);
+      formData.append('deviceUniqueKey', deviceInfo.deviceUniqueKey);
+
       const response = await axios.post(uri, formData, {
         headers: {
           Authorization: `Bearer ${token}`,

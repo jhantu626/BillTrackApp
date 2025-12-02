@@ -26,6 +26,7 @@ import {RotateOutDownLeft} from 'react-native-reanimated';
 import {businessService} from '../../Services/BusinessService';
 import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
 import {requestPermission} from '../../utils/helper';
+import {getDeviceDetails} from '../../utils/DeviceInfo';
 
 const BusinessSetup2 = () => {
   const navigation = useNavigation();
@@ -110,6 +111,7 @@ const BusinessSetup2 = () => {
 
     try {
       setIsLoading(true);
+      const deviceInfo = await getDeviceDetails();
       const data = await businessService.createBusiness({
         name: businessName,
         businessCategoryId: businessType,
@@ -126,6 +128,7 @@ const BusinessSetup2 = () => {
         state: state,
         street: street,
         token: token,
+        deviceInfo: deviceInfo,
       });
       if (data?.status) {
         const businessData = await businessService.getBusiness(token);
