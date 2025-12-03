@@ -2,6 +2,9 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -215,6 +218,7 @@ const CreateBill = () => {
   };
   const closePaymentModal = () => {
     setPaymentModalVisible(false);
+    Keyboard.dismiss();
   };
 
   useEffect(() => {
@@ -232,135 +236,140 @@ const CreateBill = () => {
   }, [searchQuery, Products]);
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <Layout>
-        <SecondaryHeader
-          title="Create Bill"
-          query={searchQuery}
-          onchangeText={text => setSearchQuery(text)}
-        />
-        <FlatList
-          style={{flex: 1}}
-          contentContainerStyle={styles.container}
-          data={filteredProduct.filter(p => p.price)}
-          keyExtractor={(_, index) => index + '_create_bill_item'}
-          renderItem={({item}, index) => (
-            <BillProductCard
-              width={ITEM_WIDTH}
-              item={item}
-              setQuantity={setQuantity}
-              setTotalPrice={setTotalPrice}
-              key={index + '_bill_card'}
-            />
-          )}
-          numColumns={NUM_COLUMNS}
-          columnWrapperStyle={styles.columnWrapperStyle}
-          ListEmptyComponent={() => <EmptyProductComponent />}
-        />
-        <CreateBillBottom
-          totalQuanity={quantity}
-          totalAmount={totalPrice}
-          saveButtonFunciton={handleSave}
-          cashButtonFunction={openPaymentModal}
-          paymentMode={paymentMethod}
-        />
-      </Layout>
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        index={-1}
-        handleComponent={() => null}
-        backgroundStyle={{borderRadius: 0}}
-        backdropComponent={renderBackdrop}
-        animationConfigs={{
-          duration: 250,
-        }}
-        enableHandlePanningGesture={false}>
-        <BottomSheetView style={{flex: 1, padding: padding(15)}}>
-          <View style={styles.bottomSheetContaienr}>
-            <Text style={styles.bottomSheetTitleText}>
-              Enter customer phone number
-            </Text>
-            <TouchableOpacity onPress={handleCloseBottomSheet}>
-              <Ionicons name="close" size={20} color={'#000'} />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.bottomSheetSubTitleText}>
-            For sending sms & reminders
-          </Text>
-          <View style={styles.bottomSheetPhoneContainer}>
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: fonts.popMedium,
-                color: '#000',
-              }}>
-              Phone number(Optional)
-            </Text>
-            <SimpleTextInput
-              maxLength={10}
-              hasError={
-                phoneNumber.length > 0 && !validateIndianPhone(phoneNumber)
-              }
-              value={phoneNumber}
-              setValue={setPhoneNumber}
-              keyboardType="phone-pad"
-              placeholder="Customer Phone Number"
-              borderColor="#00000090"
-              placeholderTextColor="#00000095"
-            />
-          </View>
-          <View style={styles.bottomSheetButtonContaienr}>
-            <TouchableOpacity
-              style={[
-                styles.bottomSheetButton,
-                {
-                  backgroundColor: colors.sucess,
-                },
-              ]}
-              onPress={sentData}
-              disabled={isSendLoading}>
-              {isSendLoading ? (
-                <ActivityIndicator size={'small'} color={'#fff'} />
-              ) : (
-                <Text style={styles.bottomSheetButtonText}>SEND</Text>
-              )}{' '}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.bottomSheetButton,
-                {backgroundColor: colors.error},
-              ]}
-              onPress={printData}
-              disabled={isPrintLoading}>
-              {isPrintLoading ? (
-                <ActivityIndicator size={'small'} color={'#fff'} />
-              ) : (
-                <Text style={styles.bottomSheetButtonText}>PRINT</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </BottomSheetView>
-      </BottomSheet>
-      <CommonModal
-        visible={isPaymentModalVisible}
-        handleClose={closePaymentModal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Select Payment Mode</Text>
-          <View style={styles.modalRadioContainer}>
-            {PAYMENT_OPTIONS.map((item, index) => (
-              <RadioInput
-                label={item.toUpperCase()}
-                setValue={setPaymentMethod}
-                value={item}
-                isSelected={paymentMethod === item}
-                key={index}
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Layout>
+          <SecondaryHeader
+            title="Create Bill"
+            query={searchQuery}
+            onchangeText={text => setSearchQuery(text)}
+          />
+          <FlatList
+            keyboardShouldPersistTaps="handled"
+            style={{flex: 1}}
+            contentContainerStyle={styles.container}
+            data={filteredProduct.filter(p => p.price)}
+            keyExtractor={(_, index) => index + '_create_bill_item'}
+            renderItem={({item}, index) => (
+              <BillProductCard
+                width={ITEM_WIDTH}
+                item={item}
+                setQuantity={setQuantity}
+                setTotalPrice={setTotalPrice}
+                key={index + '_bill_card'}
               />
-            ))}
+            )}
+            numColumns={NUM_COLUMNS}
+            columnWrapperStyle={styles.columnWrapperStyle}
+            ListEmptyComponent={() => <EmptyProductComponent />}
+          />
+          <CreateBillBottom
+            totalQuanity={quantity}
+            totalAmount={totalPrice}
+            saveButtonFunciton={handleSave}
+            cashButtonFunction={openPaymentModal}
+            paymentMode={paymentMethod}
+          />
+        </Layout>
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          index={-1}
+          handleComponent={() => null}
+          backgroundStyle={{borderRadius: 0}}
+          backdropComponent={renderBackdrop}
+          animationConfigs={{
+            duration: 250,
+          }}
+          enableHandlePanningGesture={false}>
+          <BottomSheetView style={{flex: 1, padding: padding(15)}}>
+            <View style={styles.bottomSheetContaienr}>
+              <Text style={styles.bottomSheetTitleText}>
+                Enter customer phone number
+              </Text>
+              <TouchableOpacity onPress={handleCloseBottomSheet}>
+                <Ionicons name="close" size={20} color={'#000'} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.bottomSheetSubTitleText}>
+              For sending sms & reminders
+            </Text>
+            <View style={styles.bottomSheetPhoneContainer}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: fonts.popMedium,
+                  color: '#000',
+                }}>
+                Phone number(Optional)
+              </Text>
+              <SimpleTextInput
+                maxLength={10}
+                hasError={
+                  phoneNumber.length > 0 && !validateIndianPhone(phoneNumber)
+                }
+                value={phoneNumber}
+                setValue={setPhoneNumber}
+                keyboardType="phone-pad"
+                placeholder="Customer Phone Number"
+                borderColor="#00000090"
+                placeholderTextColor="#00000095"
+              />
+            </View>
+            <View style={styles.bottomSheetButtonContaienr}>
+              <TouchableOpacity
+                style={[
+                  styles.bottomSheetButton,
+                  {
+                    backgroundColor: colors.sucess,
+                  },
+                ]}
+                onPress={sentData}
+                disabled={isSendLoading}>
+                {isSendLoading ? (
+                  <ActivityIndicator size={'small'} color={'#fff'} />
+                ) : (
+                  <Text style={styles.bottomSheetButtonText}>SEND</Text>
+                )}{' '}
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.bottomSheetButton,
+                  {backgroundColor: colors.error},
+                ]}
+                onPress={printData}
+                disabled={isPrintLoading}>
+                {isPrintLoading ? (
+                  <ActivityIndicator size={'small'} color={'#fff'} />
+                ) : (
+                  <Text style={styles.bottomSheetButtonText}>PRINT</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+        <CommonModal
+          visible={isPaymentModalVisible}
+          handleClose={closePaymentModal}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Select Payment Mode</Text>
+            <View style={styles.modalRadioContainer}>
+              {PAYMENT_OPTIONS.map((item, index) => (
+                <RadioInput
+                  label={item.toUpperCase()}
+                  setValue={setPaymentMethod}
+                  value={item}
+                  isSelected={paymentMethod === item}
+                  key={index}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-      </CommonModal>
-    </GestureHandlerRootView>
+        </CommonModal>
+      </GestureHandlerRootView>
+    </KeyboardAvoidingView>
   );
 };
 

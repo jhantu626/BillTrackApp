@@ -12,6 +12,7 @@ import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import {API_URL} from '../../utils/config';
+import {font} from '../../utils/responsive';
 
 const BillProductCard = memo(
   ({width = 113, item, setQuantity, setTotalPrice}) => {
@@ -21,8 +22,6 @@ const BillProductCard = memo(
     useMemo(() => {
       imageWidth = width - PADDING * 2;
       imageHeight = (imageWidth * 3) / 4;
-      titleFontSize = width * 0.106;
-      priceFontSize = width * 0.124;
       buttonSize = width * 0.177;
       iconSize = width * 0.088;
       bottomMarginTop = width * 0.177;
@@ -81,12 +80,12 @@ const BillProductCard = memo(
           />
         </TouchableOpacity>
         <Text
-          style={[styles.titleText, {fontSize: titleFontSize}]}
+          style={[styles.titleText, {fontSize: font(12)}]}
           numberOfLines={1}>
           {item?.name}
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
-          <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
+          <Text style={[styles.priceText, {fontSize: font(12)}]}>
             ₹{item.price}
           </Text>
           <TouchableOpacity
