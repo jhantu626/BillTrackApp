@@ -39,6 +39,7 @@ import {validateEmail, validateName} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {userService} from '../../Services/UserService';
 import {useProduct} from '../../Contexts/ProductContexts';
+import {usePrinter} from '../../Contexts/PrinterContext';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -48,6 +49,7 @@ const Account = memo(() => {
   const token = useAuthToken();
   const updateUserFields = useUpdateUserFields();
   const {clearAllProducts} = useProduct();
+  const {clearPrinter} = usePrinter();
 
   //STATE VARIABLES
   const [name, setName] = useState(userName);
@@ -68,6 +70,7 @@ const Account = memo(() => {
       setLogoutLoading(true);
       await logout();
       await clearAllProducts();
+      await clearPrinter();
     } catch (error) {
     } finally {
       setLogoutLoading(false);
