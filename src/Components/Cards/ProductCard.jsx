@@ -13,6 +13,7 @@ import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import {API_URL} from '../../utils/config';
 import {SlideOutDown} from 'react-native-reanimated';
+import {font} from '../../utils/responsive';
 
 const ProductCard = memo(
   ({
@@ -26,8 +27,6 @@ const ProductCard = memo(
     useMemo(() => {
       imageWidth = width - PADDING * 2;
       imageHeight = (imageWidth * 3) / 4;
-      titleFontSize = width * 0.106;
-      priceFontSize = width * 0.124;
       buttonSize = width * 0.177;
       iconSize = width * 0.088;
       bottomMarginTop = width * 0.177;
@@ -50,12 +49,12 @@ const ProductCard = memo(
           />
         </TouchableOpacity>
         <Text
-          style={[styles.titleText, {fontSize: titleFontSize}]}
+          style={[styles.titleText, {fontSize: font(12)}]}
           numberOfLines={1}>
           {item?.title}
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
-          <Text style={[styles.priceText, {fontSize: priceFontSize}]}>
+          <Text style={[styles.priceText, {fontSize: font(12)}]}>
             ₹{item.price ? item.price : 'NA'}
           </Text>
           <TouchableOpacity

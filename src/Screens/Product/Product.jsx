@@ -14,7 +14,6 @@ import {
   View,
 } from 'react-native';
 import React, {
-  Activity,
   useCallback,
   useEffect,
   useMemo,

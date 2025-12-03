@@ -33,7 +33,7 @@ const BASE_HEIGHT = 874;
 const isTablet = Math.min(width, height) >= 600;
 
 // Scale factors
-const SCALE = isTablet ? 1 : width / BASE_WIDTH; // if tab so change 1 to 1.something ok 
+const SCALE = isTablet ? 1.1 : width / BASE_WIDTH; // if tab so change 1 to 1.something ok 
 const SCALE_HEIGHT = isTablet ? 1 : height / BASE_HEIGHT;
 
 export const font = size => size * SCALE;
