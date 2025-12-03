@@ -22,12 +22,10 @@
 
 // export const ScreenWidth = width
 
-
-
 // utils/responsive.js
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const BASE_WIDTH = 402;
 const BASE_HEIGHT = 874;
 
@@ -35,7 +33,7 @@ const BASE_HEIGHT = 874;
 const isTablet = Math.min(width, height) >= 600;
 
 // Scale factors
-const SCALE = isTablet ? 1.3: width / BASE_WIDTH;
+const SCALE = isTablet ? 1 : width / BASE_WIDTH; // if tab so change 1 to 1.something ok 
 const SCALE_HEIGHT = isTablet ? 1 : height / BASE_HEIGHT;
 
 export const font = size => size * SCALE;
