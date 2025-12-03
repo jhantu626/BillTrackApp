@@ -59,7 +59,7 @@ const PrimaryHeader = memo(() => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: icon(60),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
