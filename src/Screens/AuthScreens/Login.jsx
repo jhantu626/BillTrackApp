@@ -100,6 +100,7 @@ const Login = () => {
                   placeholder="9775746484"
                   maxLength={10}
                   value={mobile}
+                  placeholderTextColor={colors.border}
                   onChangeText={text => setMobile(text)}
                   keyboardType="phone-pad"
                 />

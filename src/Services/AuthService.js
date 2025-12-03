@@ -39,6 +39,33 @@ class AuthService {
       return data;
     }
   }
+
+  async removeDeviceAndRelogin({
+    fcmToken,
+    deviceType,
+    deviceModel,
+    deviceName,
+    deviceUniqueKey,
+    phone,
+  }) {
+    try {
+      const uri = this.baseUrl + 'remove-device-login';
+      const payload = {
+        fcmToken,
+        deviceType,
+        deviceModel,
+        deviceName,
+        deviceUniqueKey,
+        phone,
+      };
+      const response = await axios.post(uri, payload);
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
 }
 
 const authService = new AuthService();

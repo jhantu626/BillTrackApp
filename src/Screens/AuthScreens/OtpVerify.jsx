@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -15,12 +16,13 @@ import {AuthLayout} from './../Layout/index';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import {useEffect, useRef, useState} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {StackActions, useNavigation, useRoute} from '@react-navigation/native';
 import {font, gap, icon, margin, widthResponsive} from '../../utils/responsive';
 import {authService} from '../../Services/AuthService';
 import {useAuth} from '../../Contexts/AuthContext';
 import {businessService} from '../../Services/BusinessService';
 import {getDeviceDetails} from '../../utils/DeviceInfo';
+import {CommonModal} from '../../Components';
 
 const OtpVerify = () => {
   const {login, setBusinessData} = useAuth();
@@ -31,6 +33,9 @@ const OtpVerify = () => {
   const otpRef = useRef([]);
   const {mobile} = route.params;
   const [isLoading, setIsLoading] = useState(false);
+  const [isSwitchLoading, setIsSwitchLoading] = useState(false);
+  const [isModal, setIsModal] = useState(false);
+  const [device, setDevice] = useState({});
 
   const formatTime = seconds => {
     const minutes = Math.floor(seconds / 60);
@@ -52,11 +57,20 @@ const OtpVerify = () => {
           setBusinessData(businessData?.data);
         }
       } else {
+        if (data?.type === 'ALREADY_LOGGED_IN') {
+          console.log('ALREADY_LOGGED_IN', JSON.stringify(data));
+          ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+          setDevice(data?.device);
+          setIsModal(true);
+          return;
+        }
         setOtp(['', '', '', '']);
         otpRef.current[0].focus();
         ToastAndroid.show(data?.message, ToastAndroid.SHORT);
+        return;
       }
     } catch (error) {
+      console.log('error', JSON.stringify(error));
       ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
     } finally {
       setIsLoading(false);
@@ -88,6 +102,28 @@ const OtpVerify = () => {
     const newOtpString = newOtp.join('');
     if (newOtpString.length === 4) {
       await validateOtp({parameterOtp: newOtpString});
+    }
+  };
+
+  const handleSwitchDevice = async () => {
+    try {
+      setIsSwitchLoading(true);
+      const deviceDetails = await getDeviceDetails();
+      const data = await authService.removeDeviceAndRelogin({
+        fcmToken: deviceDetails?.fcmToken,
+        deviceType: deviceDetails?.deviceType,
+        deviceModel: deviceDetails?.deviceModel,
+        deviceName: deviceDetails?.deviceName,
+        deviceUniqueKey: deviceDetails?.deviceUniqueKey,
+        phone: mobile,
+      });
+      if (data?.status) {
+        await login(data?.token, data?.user);
+        setBusinessData(data?.business);
+      }
+    } catch (error) {
+    } finally {
+      setIsSwitchLoading(false);
     }
   };
 
@@ -188,6 +224,45 @@ const OtpVerify = () => {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
+      <CommonModal visible={isModal}>
+        <View style={styles.modelCard}>
+          <Text style={styles.name}>Already logged in</Text>
+
+          <Text style={styles.modelText}>
+            Device: <Text style={styles.bold}>{device.deviceName}</Text>
+          </Text>
+
+          <Text style={styles.modelText}>
+            Model: <Text style={styles.bold}>{device.deviceModel}</Text>
+          </Text>
+
+          <Text style={styles.modelText}>
+            You are currently logged in on this device.
+          </Text>
+
+          <View style={styles.buttons}>
+            <TouchableOpacity
+              style={styles.logoutBtn}
+              disabled={isSwitchLoading}
+              onPress={() =>
+                navigation.dispatch(StackActions.replace('Login'))
+              }>
+              <Text style={styles.btnText}>Go Back</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.stayBtn}
+              disabled={isSwitchLoading}
+              onPress={handleSwitchDevice}>
+              {isSwitchLoading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.btnText}>Switch to This Device</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </CommonModal>
     </AuthLayout>
   );
 };
@@ -297,6 +372,56 @@ const styles = StyleSheet.create({
     fontSize: font(16),
     fontFamily: fonts.onSemiBold,
     color: '#ffffff',
+  },
+  modelCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    margin: 16,
+    elevation: 3,
+  },
+
+  modelText: {
+    fontSize: 14,
+    marginBottom: 4,
+    color: '#444',
+  },
+
+  name: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+
+  bold: {
+    fontWeight: '700',
+  },
+
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+  },
+
+  logoutBtn: {
+    backgroundColor: 'red',
+    padding: 10,
+    flex: 1,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+
+  stayBtn: {
+    backgroundColor: 'green',
+    padding: 10,
+    flex: 1,
+    borderRadius: 8,
+  },
+
+  btnText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
 
