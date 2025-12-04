@@ -84,6 +84,7 @@ const Invoice = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [paginationTotalPage, setPaginationTotalPage] = useState(0);
   const [paginationHasNextPage, setPaginationHasNextPage] = useState(false);
+  const [query, setQuery] = useState('');
 
   const bottomSheetRef = useRef(null);
 
@@ -182,12 +183,13 @@ const Invoice = () => {
     ),
     [handleOpenBottomSheet],
   );
-
   // Memoized data
   const flatListData = useMemo(
     () => (isLoading && pageNumber === 0 ? SHIMMER_DATA : invoices),
     [isLoading, pageNumber, invoices],
   );
+
+  console.log(flatListData);
 
   // Optimized render functions
   const keyExtractor = useCallback(
@@ -245,14 +247,30 @@ const Invoice = () => {
     [isRefreshing, onRefresh],
   );
 
+  const handleChangeText = useCallback(text => {
+    setQuery(text);
+  }, []);
+
+  const filteredInvoices = useMemo(() => {
+    if (!flatListData || !query) return flatListData;
+
+    return flatListData.filter(invoice =>
+      invoice?.invoiceNumber?.toLowerCase().includes(query.toLowerCase()),
+    );
+  }, [flatListData, query]);
+
   return (
     <GestureHandlerRootView style={styles.rootView}>
       <Layout>
-        <SecondaryHeader title="Invoice list" />
+        <SecondaryHeader
+          title="Invoice list"
+          query={query}
+          onchangeText={handleChangeText}
+        />
         <FlatList
           contentContainerStyle={styles.container}
           ListHeaderComponent={ListHeaderComponent}
-          data={flatListData}
+          data={filteredInvoices}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           stickyHeaderIndices={STICKY_HEADER_INDICES}
