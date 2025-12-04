@@ -85,7 +85,6 @@ const AuthProvider = ({children}) => {
 
       if (token) {
         const data = await webHook.verifyDevice();
-        console.log("data",data);
         if (!data?.status) {
             await logout();
         }

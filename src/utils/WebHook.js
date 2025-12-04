@@ -10,14 +10,11 @@ class WebHook {
   async verifyDevice() {
     try {
       const {deviceUniqueKey} = await getDeviceDetails();
-      console.log("deviceUniqueKey",deviceUniqueKey);
       const uri = `${this.baseUrl}device-check`;
       const payload = {
         uniqueKey: deviceUniqueKey,
       };
-      console.log(uri)
       const response = await axios.post(uri,payload);
-      console.log("response",response);
       return response.data;
     } catch (error) {
       return false;
