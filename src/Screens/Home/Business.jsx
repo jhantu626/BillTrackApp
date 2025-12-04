@@ -13,14 +13,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useMemo, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {
-  BottomSheetInput,
   CommonModal,
-  DottedDivider,
   NavigationCardWithValue,
-  RadioInput,
   SecondaryHeader,
   SimpleTextInput,
 } from '../../Components';
@@ -40,11 +37,6 @@ import {
   validateIndianPhone,
   validateIndianPincode,
 } from '../../utils/validator';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetFlatList,
-  BottomSheetView,
-} from '@gorhom/bottom-sheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import ToastService from '../../Components/Toasts/ToastService';
 import {businessService} from '../../Services/BusinessService';
