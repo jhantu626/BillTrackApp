@@ -13,9 +13,7 @@ import {
   HomeChartShimmer,
   InvoiceCard,
   InvoiceCardShimmer,
-  Loader,
   PrimaryHeader,
-  SalesAreaChart,
 } from '../../Components';
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
