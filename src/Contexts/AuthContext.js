@@ -1,9 +1,11 @@
 import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
-import {Text, ToastAndroid, View} from 'react-native';
+import {Text, ToastAndroid} from 'react-native';
 import {deviceService} from '../Services/DeviceService';
 import {getDeviceDetails} from '../utils/DeviceInfo';
+import webHook from '../utils/WebHook';
+
 
 const AuthContext = createContext();
 
@@ -91,7 +93,14 @@ const AuthProvider = ({children}) => {
   };
 
   useEffect(() => {
-    check();
+    const init = async () => {
+      await check();
+      const data = await webHook.verifyDevice();
+      if (!data) {
+        await logout();
+      }
+    };
+    init();
   }, []);
 
   const value = useMemo(() => {
