@@ -13,12 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   BottomSheetInput,
@@ -45,7 +40,11 @@ import {fonts} from '../../utils/fonts';
 import Octicons from '@react-native-vector-icons/octicons';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {requestPermission} from '../../utils/helper';
-import {validateName, validatePrice, validateProductName} from '../../utils/validator';
+import {
+  validateName,
+  validatePrice,
+  validateProductName,
+} from '../../utils/validator';
 import ToastService from '../../Components/Toasts/ToastService';
 import {productService} from '../../Services/ProductService';
 import {useAuthToken, useGstEnabled} from '../../Contexts/AuthContext';
@@ -80,6 +79,8 @@ const Product = () => {
   const [productUnit, setProductUnit] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [hsnCode, setHsnCode] = useState('');
+
+  console.log('products', Products);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -251,12 +252,14 @@ const Product = () => {
     }
 
     try {
+      console.log('hsn', hsnCode);
       setIsSaveLoading(true);
       const data = await productService.updateproduct(token, {
         name: productName,
         id: productId,
         price: productPrice,
         unit: productUnit,
+        hsnId: hsnCode?.id,
         productImage: isImageInserted
           ? {
               uri: productImage.path,
