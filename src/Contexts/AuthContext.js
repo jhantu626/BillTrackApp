@@ -1,11 +1,10 @@
 import {createContext, useContext, useEffect, useMemo, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SplashScreen from 'react-native-splash-screen';
-import {Text, ToastAndroid} from 'react-native';
+import {ToastAndroid} from 'react-native';
 import {deviceService} from '../Services/DeviceService';
 import {getDeviceDetails} from '../utils/DeviceInfo';
 import webHook from '../utils/WebHook';
-
 
 const AuthContext = createContext();
 
@@ -54,8 +53,7 @@ const AuthProvider = ({children}) => {
       } else {
         setBusiness(null);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const logout = async () => {
@@ -84,6 +82,14 @@ const AuthProvider = ({children}) => {
       setAuthToken(token);
       setUser(JSON.parse(userStr));
       setBusiness(JSON.parse(businessStr));
+
+      if (token) {
+        const data = await webHook.verifyDevice();
+        console.log("data",data);
+        if (!data?.status) {
+            await logout();
+        }
+      }
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -92,14 +98,7 @@ const AuthProvider = ({children}) => {
   };
 
   useEffect(() => {
-    const init = async () => {
-      await check();
-      const data = await webHook.verifyDevice();
-      if (!data) {
-        await logout();
-      }
-    };
-    init();
+    check();
   }, []);
 
   const value = useMemo(() => {

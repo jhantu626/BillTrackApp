@@ -1,15 +1,23 @@
-import axios from "axios";
-import { API_URL } from "./config";
-import { getDeviceDetails } from "./DeviceInfo";
+import axios from 'axios';
+import {API_URL} from './config';
+import {getDeviceDetails} from './DeviceInfo';
 
 class WebHook {
-  static baseURL = API_URL + 'webhook/';
+  constructor() {
+    this.baseUrl = API_URL + 'webhook/';
+  }
 
   async verifyDevice() {
     try {
-      const { deviceUniqueKey } = await getDeviceDetails();
-      const uri = `${WebHook.baseURL}device-check/${deviceUniqueKey}`;
-      const response = await axios.post(uri);
+      const {deviceUniqueKey} = await getDeviceDetails();
+      console.log("deviceUniqueKey",deviceUniqueKey);
+      const uri = `${this.baseUrl}device-check`;
+      const payload = {
+        uniqueKey: deviceUniqueKey,
+      };
+      console.log(uri)
+      const response = await axios.post(uri,payload);
+      console.log("response",response);
       return response.data;
     } catch (error) {
       return false;
@@ -17,8 +25,6 @@ class WebHook {
   }
 }
 
-const webHook=new WebHook;
+const webHook = new WebHook();
 
 export default webHook;
-
-
