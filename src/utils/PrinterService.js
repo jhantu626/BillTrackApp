@@ -58,7 +58,6 @@ class PrinterService {
         Alert.alert('Permission Denied');
         return null;
       }
-      console.log('Printer', JSON.stringify(printer));
       const address = printer?.address;
       const printerSize = printer?.printerSize || '80'; // Default to 80mm
 
@@ -71,7 +70,6 @@ class PrinterService {
         return null;
       }
       await connection.connect();
-      console.log(business);
 
       const ESC = '\x1B';
       const GS = '\x1D';
@@ -216,7 +214,6 @@ class PrinterService {
       await connection.write(printData);
       await connection.disconnect();
     } catch (error) {
-      console.log(error);
       Alert.alert(
         'Printer Error',
         'Failed to print invoice. Please check if the printer is connected and try again.',

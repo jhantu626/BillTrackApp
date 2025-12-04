@@ -111,7 +111,6 @@ const Product = () => {
   };
 
   const handleEdit = item => {
-    console.log(item);
     setProductId(item.id);
     setProductName(item.name);
     setProductPrice(item.price || '');
@@ -243,7 +242,6 @@ const Product = () => {
             handleCloseModal();
           }, 500);
         } else {
-          console.log(data);
         }
       } catch (error) {
       } finally {

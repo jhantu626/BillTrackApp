@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -131,30 +132,62 @@ const Business = () => {
       return;
     }
 
-    try {
-      setIsSaveLoading(true);
-      const data = await businessService.updateBusiness({
-        token: token,
-        gstNumber: gstNumber,
-        street: street,
-        city: city,
-        state: state,
-        pinCode: pincode,
-        email: email,
-        phone: mobileNumber,
-      });
-      console.log(JSON.stringify(data));
-      if (data.status) {
-        ToastService.show({
-          message: 'Business updated successfully',
-          type: 'success',
+    const saveBusiness = async () => {
+      try {
+        setIsSaveLoading(true);
+        const data = await businessService.updateBusiness({
+          token: token,
+          gstNumber: gstNumber,
+          street: street,
+          city: city,
+          state: state,
+          pinCode: pincode,
+          email: email,
+          phone: mobileNumber,
         });
-        const updatedBusiness = data?.business;
-        await resetBusiness(updatedBusiness);
+        if (data.status) {
+          ToastService.show({
+            message: 'Business updated successfully',
+            type: 'success',
+          });
+          const updatedBusiness = data?.business;
+          await resetBusiness(updatedBusiness);
+        }
+      } catch (error) {
+      } finally {
+        setIsSaveLoading(false);
       }
-    } catch (error) {
-    } finally {
-      setIsSaveLoading(false);
+    };
+
+    if (gstNumber) {
+      Alert.alert(
+        'GST Number Update',
+        `Updating the GST Number will affect:
+    
+1. Products: GST must be applied/updated on all products.
+2. Pricing: Prices may change based on GST calculation.
+3. Invoices: New GST number will show on all future invoices.
+4. Accounting: Update records and reports accordingly.
+5. Legal: Ensure GST number is valid and compliant.
+6. Data: Backup data before making changes.
+7. Testing: Verify checkout, invoices and tax calculations.
+
+Proceed only if you have completed the required steps and approvals.`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {
+              return;
+            },
+          },
+          {
+            text: 'OK',
+            onPress: saveBusiness,
+          },
+        ],
+        {cancelable: false},
+      );
     }
   };
 

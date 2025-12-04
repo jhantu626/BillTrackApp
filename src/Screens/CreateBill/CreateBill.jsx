@@ -150,7 +150,6 @@ const CreateBill = () => {
         resetProductCount();
         handleCloseBottomSheet();
       }
-      console.log(data);
     } catch (error) {
     } finally {
       setIsPrintLoading(false);
@@ -206,7 +205,6 @@ const CreateBill = () => {
         resetProductCount();
         handleCloseBottomSheet();
       }
-      console.log(data);
     } catch (error) {
     } finally {
       setIsSendLoading(false);

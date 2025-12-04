@@ -58,7 +58,6 @@ const OtpVerify = () => {
         }
       } else {
         if (data?.type === 'ALREADY_LOGGED_IN') {
-          console.log('ALREADY_LOGGED_IN', JSON.stringify(data));
           ToastAndroid.show(data?.message, ToastAndroid.SHORT);
           setDevice(data?.device);
           setIsModal(true);
@@ -70,7 +69,6 @@ const OtpVerify = () => {
         return;
       }
     } catch (error) {
-      console.log('error', JSON.stringify(error));
       ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
     } finally {
       setIsLoading(false);

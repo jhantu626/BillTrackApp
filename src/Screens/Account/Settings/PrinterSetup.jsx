@@ -76,7 +76,6 @@ const PrinterSetup = () => {
         ...selectedDevice,
         printerSize: printerSize,
       };
-      console.log(savablePrinter);
       await setAsDefaultPrinter(savablePrinter);
       ToastService.show({
         message: 'Default printer set successfully',

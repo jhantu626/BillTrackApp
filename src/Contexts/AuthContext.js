@@ -55,7 +55,6 @@ const AuthProvider = ({children}) => {
         setBusiness(null);
       }
     } catch (error) {
-      console.log('Error resetting business:', error);
     }
   };
 

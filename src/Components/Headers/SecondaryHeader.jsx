@@ -56,7 +56,6 @@ const SecondaryHeader = ({
             />
             <Pressable
               onPress={() => {
-                console.log('cancel');
                 onchangeText('');
                 setSearchActive(false);
               }}>
