@@ -4,7 +4,7 @@ import {createContext, useContext, useEffect, useState} from 'react';
 const AppSettingContexts = createContext();
 
 const defautlSettings = {
-  PRINT_ON_CREATE_BILL: true,
+  PRINT_ON_CREATE_BILL: true, //Automatically print bill when 'Print' button is pressed in create bill screen
 };
 
 const AppSettingProvider = ({children}) => {
@@ -30,6 +30,10 @@ const AppSettingProvider = ({children}) => {
     }
   };
 
+  const getByKey = async key => {
+    return appSettings[key];
+  };
+
   useEffect(() => {
     const loadSettings = async () => {
       try {
@@ -46,7 +50,7 @@ const AppSettingProvider = ({children}) => {
 
   return (
     <AppSettingContexts.Provider
-      value={{appSettings, updateAppSettings, resetSettings}}>
+      value={{appSettings, updateAppSettings, resetSettings, getByKey}}>
       {children}
     </AppSettingContexts.Provider>
   );
