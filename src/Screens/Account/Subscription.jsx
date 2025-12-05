@@ -19,11 +19,57 @@ import {
 import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
+import Octicons from '@react-native-vector-icons/octicons';
+
+const plans = [
+  {
+    id: 'free',
+    name: 'Free Plan',
+    price: 0,
+    unit: '/ Year',
+    features: [
+      {label: 'Unlimited Billing (Up to 14 Days)', value: true},
+      {label: 'WhatsApp Invoice Sharing', value: true},
+      {label: 'Sales Analytics', value: true},
+      {label: 'SMS Sending', value: false},
+      {label: 'Printer Included & Support', value: false},
+    ],
+  },
+  {
+    id: 'basic',
+    name: 'Basic Plan',
+    price: 999,
+    unit: '/ Year',
+    features: [
+      {label: 'Unlimited Billing', value: true},
+      {label: 'WhatsApp Invoice Sharing', value: true},
+      {label: 'Sales Analytics', value: true},
+      {label: 'SMS Sending', value: true},
+      {label: 'Printer Included & Support', value: false},
+    ],
+  },
+  {
+    id: 'pro',
+    name: 'Pro Plan (Includes Setup & Printer Charges)',
+    price: 1499,
+    unit: '/ Year',
+    features: [
+      {label: 'Unlimited Billing', value: true},
+      {label: 'WhatsApp Invoice Sharing', value: true},
+      {label: 'Sales Analytics', value: true},
+      {label: 'SMS Sending', value: true},
+      {label: 'Printer Included & Support', value: true},
+    ],
+  },
+];
 
 const Subscription = memo(() => {
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const buttonWidth = (ScreenWidth - padding(16) * 2 - gap(10) * 2) / plans.length;
+
+  // Scroll when clicking bottom buttons
   const handleScrollTo = useCallback(pageIndex => {
     if (!scrollRef.current) return;
     setActiveIndex(pageIndex);
@@ -34,8 +80,9 @@ const Subscription = memo(() => {
     });
   }, []);
 
+  // Update active index when scrolling horizontally
   const handleMomentumScrollEnd = useCallback(
-    (e) => {
+    e => {
       const offsetX = e.nativeEvent.contentOffset.x;
       const newIndex = Math.round(offsetX / ScreenWidth);
       if (newIndex !== activeIndex) setActiveIndex(newIndex);
@@ -46,129 +93,102 @@ const Subscription = memo(() => {
   return (
     <Layout>
       <SecondaryHeader title="Subscription" isSearch={false} />
+
       <ScrollView
         style={{flex: 1}}
-        nestedScrollEnabled={true}
+        nestedScrollEnabled
         contentContainerStyle={styles.container}>
+        {/* ===================================
+            HORIZONTAL PLANS CARDS (DYNAMIC)
+        ===================================*/}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
           ref={scrollRef}
-          bounces={true}
+          bounces
           snapToInterval={ScreenWidth}
           snapToAlignment="center"
           decelerationRate="fast"
           onMomentumScrollEnd={handleMomentumScrollEnd}
           style={styles.horizontainerContainer}
           scrollEventThrottle={16}>
-          <View style={styles.cardContainer}>
-            <View style={styles.btnContainer}>
-              <Text style={styles.btnText}>Monthly</Text>
-            </View>
-            <View style={styles.subscriptonContainer}>
-              <View style={{padding: padding(16), justifyContent: 'center'}}>
-                <Text style={styles.featuresTitleText}>Premium Features</Text>
+          {plans.map(plan => (
+            <View key={plan.id} style={styles.cardContainer}>
+              <View style={styles.btnContainer}>
+                <Text style={styles.btnText}>{plan.name}</Text>
               </View>
-              <DottedDivider marginVertical={0} />
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Billing limit</Text>
-                <Text style={styles.featuresText}>Unlimited</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Whatsapp SMS</Text>
-                <Text style={styles.featuresText}>100/day</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Transaction SMS</Text>
-                <Text style={styles.featuresText}>500/day</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Report generation</Text>
-                <Text style={styles.featuresText}>Upto 90 days</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>User management</Text>
-                <Text style={styles.featuresText}>Limit access</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Call & chat support</Text>
-                <Text style={styles.featuresText}>24/7</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.cardContainer}>
-            <View style={styles.btnContainer}>
-              <Text style={styles.btnText}>Annual Plan</Text>
-            </View>
-            <View style={styles.subscriptonContainer}>
-              <View style={{padding: padding(16), justifyContent: 'center'}}>
-                <Text style={styles.featuresTitleText}>Premium Features</Text>
-              </View>
-              <DottedDivider marginVertical={0} />
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Billing limit</Text>
-                <Text style={styles.featuresText}>Unlimited</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Whatsapp SMS</Text>
-                <Text style={styles.featuresText}>1000/day</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Transaction SMS</Text>
-                <Text style={styles.featuresText}>10000/day</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Report generation</Text>
-                <Text style={styles.featuresText}>Upto 365 days</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>User management</Text>
-                <Text style={styles.featuresText}>Full access</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                <Text style={styles.featuresText}>Call & chat support</Text>
-                <Text style={styles.featuresText}>24/7</Text>
+
+              <View style={styles.subscriptonContainer}>
+                <View style={{padding: padding(16), justifyContent: 'center'}}>
+                  <Text style={styles.featuresTitleText}>Premium Features</Text>
+                </View>
+
+                <DottedDivider marginVertical={0} />
+
+                {plan.features.map((item, i) => (
+                  <View key={i} style={styles.featuresContainer}>
+                    <Text style={styles.featuresText}>{item.label}</Text>
+                    <View style={styles.featuresTextContainer}>
+                      {item.value ? (
+                        <Octicons
+                          name="check"
+                          size={icon(20)}
+                          color={colors.sucess}
+                        />
+                      ) : (
+                        <Octicons
+                          name="x"
+                          size={icon(20)}
+                          color={colors.error}
+                        />
+                      )}
+                    </View>
+                  </View>
+                ))}
               </View>
             </View>
-          </View>
+          ))}
         </ScrollView>
         <View style={styles.bottomContainer}>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.payBtn,
-                activeIndex === 0 && {borderColor: '#000'},
-              ]}
-              onPress={() => handleScrollTo(0)}>
-              <Text style={styles.payBtnTitleText}>Monthly</Text>
-              <View style={styles.textCOntainer}>
-                <Text style={styles.moneyText}>₹99</Text>
-                <Text style={styles.moneyText}>/ month</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.payBtn,
-                activeIndex === 1 && {borderColor: '#000'},
-              ]}
-              onPress={() => handleScrollTo(1)}>
-              <Text style={styles.payBtnTitleText}>Annual</Text>
-              <View style={styles.textCOntainer}>
-                <Text style={styles.moneyText}>₹83.25</Text>
-                <Text style={styles.moneyText}>/ month</Text>
-              </View>
-              <Text
-                style={[styles.monthText, {fontSize: font(14), marginTop: -5}]}>
-                ₹999 / month
-              </Text>
-              <Text style={styles.saveText}>Save 18%</Text>
-            </TouchableOpacity>
+            {plans.map((plan, index) => (
+              <TouchableOpacity
+                key={plan.id}
+                style={[
+                  styles.payBtn,
+                  activeIndex === index && {borderColor: '#000'},
+                ]}
+                onPress={() => handleScrollTo(index)}>
+                <Text style={styles.payBtnTitleText}>{plan.name}</Text>
+
+                <View style={styles.textCOntainer}>
+                  <Text style={styles.moneyText}>₹{plan.price}</Text>
+                  <Text style={styles.moneyText}>{plan.unit}</Text>
+                </View>
+
+                {plan.compareAt && (
+                  <Text
+                    style={[
+                      styles.monthText,
+                      {fontSize: font(14), marginTop: -5},
+                    ]}>
+                    {plan.compareAt}
+                  </Text>
+                )}
+
+                {plan.save && (
+                  <Text style={styles.saveText}>Save {plan.save}</Text>
+                )}
+              </TouchableOpacity>
+            ))}
           </View>
+
           <TouchableOpacity style={styles.subscribeBtn}>
             <Text style={styles.subscribeBtnText}>Subscribe & Pay</Text>
             <Lucide name="wallet" color={'#fff'} size={icon(20)} />
           </TouchableOpacity>
+
           <View style={styles.noteContainer}>
             <Text style={[styles.noteText, {color: 'red'}]}>*</Text>
             <Text style={styles.noteText}>
@@ -183,6 +203,9 @@ const Subscription = memo(() => {
   );
 });
 
+// =============================
+//     STYLES (UNCHANGED)
+// =============================
 const styles = StyleSheet.create({
   container: {
     paddingVertical: padding(16),
@@ -244,7 +267,7 @@ const styles = StyleSheet.create({
   },
   payBtn: {
     height: icon(90),
-    width: '48%',
+    width: `${100 / plans.length - gap(1) || 100}%`,
     backgroundColor: '#F7F7F7',
     paddingHorizontal: padding(16),
     paddingTop: padding(10),
@@ -254,7 +277,7 @@ const styles = StyleSheet.create({
     gap: gap(6),
   },
   payBtnTitleText: {
-    fontSize: font(14),
+    fontSize: font(12),
     fontFamily: fonts.inRegular,
   },
   textCOntainer: {
@@ -300,6 +323,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 20,
     fontFamily: fonts.inRegular,
+  },
+  featuresTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: gap(5),
   },
 });
 

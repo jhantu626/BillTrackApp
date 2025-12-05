@@ -4,7 +4,7 @@ import {createContext, useContext, useEffect, useState} from 'react';
 const AppSettingContexts = createContext();
 
 const defautlSettings = {
-  PRINT_ON_CREATE_BILL: true, //Automatically print bill when 'Print' button is pressed in create bill screen
+  PRINT_ON_CREATE_BILL: false, //Automatically print bill when 'Print' button is pressed in create bill screen
 };
 
 const AppSettingProvider = ({children}) => {

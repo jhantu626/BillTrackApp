@@ -8,15 +8,44 @@ function validateName(name) {
   return nameRegex.test(trimmed);
 }
 
-function validateProductName(name) {
-  if (typeof name !== 'string') return false;
+function validateProductName(productName) {
+  // Check if it's a string and not empty after trimming
+  if (typeof productName !== 'string' || productName.trim().length === 0) {
+    return false;
+  }
 
-  const trimmed = name.trim();
+  const name = productName.trim();
 
-  // Allows almost everything needed for real product names
-  const productRegex = /^[A-Za-z0-9\u00C0-\u017F\s()"'.,+\-_/&%°:;\\]{2,100}$/;
+  // Minimum 2, maximum 100 characters (standard in most platforms)
+  if (name.length < 2 || name.length > 100) {
+    return false;
+  }
 
-  return productRegex.test(trimmed);
+  // Allow letters, numbers, spaces, and common product name characters
+  // Allowed: - & ' ( ) . , / + @ # %
+  const validPattern = /^[a-zA-Z0-9\s'&().,\/+@#%\-]+$/;
+
+  if (!validPattern.test(name)) {
+    return false;
+  }
+
+  // Prevent too many special characters in a row or bad patterns
+  if (/[&'"(){}\[\]<>\\]/.test(name)) {
+    return false; // Block risky characters like < > { } [ ] \
+  }
+
+  // Prevent multiple spaces in a row
+  if (/\s{3,}/.test(name)) {
+    return false;
+  }
+
+  // Optional: Don't allow name to start or end with space or special chars (except & maybe)
+  if (/^[\s\-.]/.test(name) || /[\s\-.]$/.test(name)) {
+    return false;
+  }
+
+  // All checks passed
+  return true;
 }
 
 function validateIndianPhone(phoneNumber) {
