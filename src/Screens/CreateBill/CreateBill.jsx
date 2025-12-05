@@ -79,9 +79,11 @@ const CreateBill = () => {
 
   const handleCloseBottomSheet = useCallback(() => {
     bottomSheetRef.current?.close();
+    Keyboard.dismiss();
   }, []);
   const handleOpenBottomSheet = useCallback(() => {
     bottomSheetRef.current?.expand();
+    Keyboard.dismiss();
   });
 
   const renderBackdrop = useMemo(
@@ -92,6 +94,10 @@ const CreateBill = () => {
           disappearsOnIndex={-1}
           appearsOnIndex={0}
           opacity={0.8}
+          pressBehavior={'none'}
+          onPress={()=>{
+            Keyboard.dismiss();
+          }}
         />
       ),
     [],
@@ -110,6 +116,14 @@ const CreateBill = () => {
   };
 
   const printData = async () => {
+    if (phoneNumber && !validateIndianPhone(phoneNumber)) {
+      ToastService.show({
+        message: 'Please enter a valid phone number',
+        type: 'error',
+        position: 'top',
+      });
+      return;
+    }
     try {
       setIsPrintLoading(true);
       const selectedItems = product
@@ -132,12 +146,13 @@ const CreateBill = () => {
               : null,
           };
         });
-      const data = await invoiceService.createInvoice({
+      const payload = {
         token,
-        customerNumber: phoneNumber,
         items: selectedItems,
         paymentMode: paymentMethod,
-      });
+        customerNumber: phoneNumber,
+      };
+      const data = await invoiceService.createInvoice(payload);
       if (data?.status) {
         ToastService.show({
           message: 'Bill Created Successfully',
