@@ -40,7 +40,11 @@ import {
 import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
 import {invoiceService} from '../../Services/InvoiceService';
-import {useAuthToken} from '../../Contexts/AuthContext';
+import {useAuthToken, useBusiness} from '../../Contexts/AuthContext';
+import {useAppSettings} from '../../Contexts/AppSettingContexts';
+import {usePrinter} from '../../Contexts/PrinterContext';
+import {calculateInvoiceData} from '../../utils/helper';
+import printerService from '../../utils/PrinterService';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -56,6 +60,9 @@ const ITEM_WIDTH =
 const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
 
 const CreateBill = () => {
+  const {printer} = usePrinter();
+  const business = useBusiness();
+  const {getByKey} = useAppSettings();
   const token = useAuthToken();
   const {Products, resetProductCount} = useProduct();
   const [quantity, setQuantity] = useState(0);
@@ -95,7 +102,7 @@ const CreateBill = () => {
           appearsOnIndex={0}
           opacity={0.8}
           pressBehavior={'none'}
-          onPress={()=>{
+          onPress={() => {
             Keyboard.dismiss();
           }}
         />
@@ -164,6 +171,25 @@ const CreateBill = () => {
         setTotalPrice(0);
         resetProductCount();
         handleCloseBottomSheet();
+        const printOnCreateBill = getByKey('PRINT_ON_CREATE_BILL');
+        if (printOnCreateBill) {
+          console.log(JSON.stringify(data?.invoice));
+          const invoice = data?.invoice;
+          const invoiceItems = await invoiceService.getInvoiceItems(
+            invoice?.id,
+          );
+          const {gstListCalculate, items, subTotalAmount, totalQuantity} =
+            calculateInvoiceData(invoiceItems?.items);
+          await printerService.printInvoice(
+            printer,
+            invoice,
+            items,
+            gstListCalculate,
+            totalQuantity,
+            subTotalAmount,
+            business,
+          );
+        }
       }
     } catch (error) {
     } finally {

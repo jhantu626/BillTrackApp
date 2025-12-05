@@ -15,9 +15,7 @@ const AppSettingProvider = ({children}) => {
     setAppSettings(newSettings);
     try {
       await AsyncStorage.setItem('appSettings', JSON.stringify(newSettings));
-      console.log(appSettings);
     } catch (err) {
-      console.err(err);
     }
   };
 
@@ -26,12 +24,12 @@ const AppSettingProvider = ({children}) => {
       await AsyncStorage.removeItem('appSettings');
       setAppSettings(defautlSettings);
     } catch (error) {
-      console.err(error);
     }
   };
 
-  const getByKey = async key => {
-    return appSettings[key];
+  const getByKey = key => {
+    const value = appSettings[key];
+    return value;
   };
 
   useEffect(() => {
@@ -42,7 +40,6 @@ const AppSettingProvider = ({children}) => {
           setAppSettings(JSON.parse(savedSetting));
         }
       } catch (error) {
-        console.err(error);
       }
     };
     loadSettings();
