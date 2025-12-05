@@ -8,6 +8,7 @@ import {
   About,
   Account,
   ActiveProducts,
+  AppSettings,
   AuthHome,
   BrowserScreen,
   Business,
@@ -39,6 +40,7 @@ import { ToastContainer } from './Components';
 import PrinterProvider from './Contexts/PrinterContext';
 import { requestNotificationPermission } from './utils/permissionHelper';
 import { notificationService } from './utils/NotificationService';
+import { AppSettingProvider } from './Contexts/AppSettingContexts';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -130,6 +132,7 @@ const SettingStack = memo(() => (
     }}>
     <Stack.Screen name="Settings" component={Settings} />
     <Stack.Screen name="PrinterSetup" component={PrinterSetup} />
+    <Stack.Screen name="AppSettings" component={AppSettings} />
   </Stack.Navigator>
 ));
 
@@ -288,15 +291,17 @@ const AppNav = () => {
 const App = () => {
   return (
     <AuthProvider>
-      <ProductProvider>
-        <PrinterProvider>
-          <NavigationContainer>
-            <AppNav />
-            <ToastContainer />
-          </NavigationContainer>
-        </PrinterProvider>
-      </ProductProvider>
-    </AuthProvider>
+      <AppSettingProvider>
+        <ProductProvider>
+          <PrinterProvider>
+            <NavigationContainer>
+              <AppNav />
+              <ToastContainer />
+            </NavigationContainer>
+          </PrinterProvider>
+        </ProductProvider>
+      </AppSettingProvider>
+    </AuthProvider >
   );
 };
 

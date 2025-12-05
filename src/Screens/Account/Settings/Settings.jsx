@@ -23,7 +23,18 @@ const Settings = () => {
         isQuestion={false}
         isNotification={false}
       />
-      <ScrollView style={{flex: 1}}>
+      <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
+        <View style={styles.cardItems}>
+          <SettingItemsCard
+            mainIcon={<Lucide name="settings" size={icon(24)} color={'#000'} />}
+            title={'App Settings'}
+            textFontSize={16}
+            tag
+            tagText={'New'}
+            onpress={() => handleNavigation({screen: 'AppSettings'})}
+          />
+        </View>
+        <DottedDivider marginVertical={0} />
         <View style={styles.cardItems}>
           <SettingItemsCard
             mainIcon={<Lucide name="printer" size={icon(24)} color={'#000'} />}
@@ -34,7 +45,6 @@ const Settings = () => {
             onpress={() => handleNavigation({screen: 'PrinterSetup'})}
           />
         </View>
-        <DottedDivider marginVertical={0} />
       </ScrollView>
     </Layout>
   );

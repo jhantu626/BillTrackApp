@@ -21,6 +21,7 @@ import ProductCardRow from './Cards/ProductCardRow';
 import NavigationCard from './Cards/NavigationCard';
 import NavigationCardWithValue from './Cards/NavigationCardWithValue';
 import ProductActiveCard from './Cards/ProductActiveCard';
+import SettingSwitchCard from './Cards/SettingSwitchCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -42,7 +43,6 @@ import InvoiceCardShimmer from './Shimmers/InvoiceCardShimmer';
 
 // Loaders
 import Loader from './Loaders/Loader';
-import ScanLoader from './Loaders/ScanLoader';
 
 // Empty Components
 import EmptyProductComponent from './EmtyComponents/EmptyProductComponent';
@@ -77,4 +77,5 @@ export {
   CommonModal,
   NavigationCardWithValue,
   ProductActiveCard,
+  SettingSwitchCard
 };
