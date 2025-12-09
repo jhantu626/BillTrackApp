@@ -5,6 +5,7 @@ import {ToastAndroid} from 'react-native';
 import {deviceService} from '../Services/DeviceService';
 import {getDeviceDetails} from '../utils/DeviceInfo';
 import webHook from '../utils/WebHook';
+import {subscriptionService} from '../Services/SubscriptionService';
 
 const AuthContext = createContext();
 
@@ -13,6 +14,7 @@ const AuthProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [business, setBusiness] = useState(null);
+  const [subscription, setSubscription] = useState(null);
 
   const login = async (token, user = {}) => {
     try {
@@ -83,12 +85,12 @@ const AuthProvider = ({children}) => {
       setUser(JSON.parse(userStr));
       setBusiness(JSON.parse(businessStr));
 
-      if (token) {
-        const data = await webHook.verifyDevice();
-        if (!data?.status) {
-            await logout();
-        }
-      }
+      // if (token) {
+      //   const data = await webHook.verifyDevice();
+      //   if (!data?.status) {
+      //     await logout();
+      //   }
+      // }
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -96,8 +98,52 @@ const AuthProvider = ({children}) => {
     }
   };
 
+  const deviceVerification = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const data = await webHook.verifyDevice();
+        if (!data?.status) {
+          await logout();
+        }
+      }
+    } catch (error) {}
+  };
+
+  const subscriptionCheck = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        const subscriptionData = await AsyncStorage.getItem('subscription');
+        if (subscriptionData) {
+          const parsedSubscription = JSON.parse(subscriptionData);
+          const endDate = new Date(parsedSubscription?.endDate);
+          const currentDate = new Date();
+          if (endDate > currentDate) {
+            setSubscription(parsedSubscription);
+          } else {
+            await AsyncStorage.removeItem('subscription');
+            setSubscription(null);
+          }
+        } else {
+          const currentSubscription =
+            await subscriptionService.currentSubscription(token);
+          if (currentSubscription?.status) {
+            setSubscription(currentSubscription?.data);
+            await AsyncStorage.setItem(
+              'subscription',
+              JSON.stringify(currentSubscription?.data),
+            );
+          }
+        }
+      }
+    } catch (error) {}
+  };
+
   useEffect(() => {
     check();
+    deviceVerification();
+    subscriptionCheck();
   }, []);
 
   const value = useMemo(() => {
@@ -110,6 +156,7 @@ const AuthProvider = ({children}) => {
       setBusinessData,
       business,
       resetBusiness,
+      subscription,
     };
   }, [authToken, user, business]);
 
@@ -125,6 +172,11 @@ export const useAuth = () => useContext(AuthContext);
 export const useAuthToken = () => {
   const {authToken} = useAuth();
   return authToken;
+};
+
+export const useSubscription = () => {
+  const {subscription} = useAuth();
+  return subscription;
 };
 
 export const useUser = attribute => {
