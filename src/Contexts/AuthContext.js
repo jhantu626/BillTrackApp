@@ -69,6 +69,7 @@ const AuthProvider = ({children}) => {
         await AsyncStorage.clear();
         setAuthToken(null);
         setUser(null);
+        setSubscription(null);
         setBusiness(null);
       } else {
         ToastAndroid.show(data?.message, ToastAndroid.LONG);
@@ -155,6 +156,7 @@ const AuthProvider = ({children}) => {
     deviceVerification();
     subscriptionCheck();
   }, []);
+
 
   const value = useMemo(() => {
     return {

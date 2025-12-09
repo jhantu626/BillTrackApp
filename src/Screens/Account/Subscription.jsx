@@ -7,7 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback, useEffect, useRef, useState, useTransition} from 'react';
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
 import {
@@ -87,7 +94,13 @@ const Subscription = memo(() => {
 
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(
-    subscription?.plan === 'free' ? 0 : subscription?.plan === 'basic' ? 1 : 2,
+    subscription
+      ? subscription?.plan === 'free'
+        ? 0
+        : subscription?.plan === 'basic'
+        ? 1
+        : 2
+      : 0,
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -204,14 +217,13 @@ const Subscription = memo(() => {
   };
 
   useEffect(() => {
-  if (!scrollRef.current) return;
+    if (!scrollRef.current) return;
 
-  scrollRef.current.scrollTo({
-    x: activeIndex * ScreenWidth,
-    animated: false,
-  });
-}, [activeIndex]);
-
+    scrollRef.current.scrollTo({
+      x: activeIndex * ScreenWidth,
+      animated: false,
+    });
+  }, [activeIndex]);
 
   return (
     <Layout>
