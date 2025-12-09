@@ -24,7 +24,7 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Octicons from '@react-native-vector-icons/octicons';
 import {RazorpayKey} from '../../utils/config';
 import RazorpayCheckout from 'react-native-razorpay';
-import {useBusiness, useUser} from '../../Contexts/AuthContext';
+import {useBusiness, useSubscription, useUser} from '../../Contexts/AuthContext';
 import {paymentService} from '../../Services/PaymentService';
 
 const plans = [
@@ -110,30 +110,26 @@ const Subscription = memo(() => {
 
   const handleSubscribe = async () => {
     const plan = plans[activeIndex];
-      if (plan.id === 'free') {
-        ToastAndroid.show(
-          'The free plan cannot be purchased',
-          ToastAndroid.LONG,
-        );
-        return;
-      }
+    if (plan.id === 'free') {
+      ToastAndroid.show('The free plan cannot be purchased', ToastAndroid.LONG);
+      return;
+    }
     try {
       setIsLoading(true);
       const order = await paymentService.createOrder(plan.price);
-      console.log(order);
       if (order?.status) {
         const options = {
           description: `Payment for Billtrack ${plan.name}`,
           amount: order?.order?.amount,
           currency: 'INR',
           image: 'https://billtrack.co.in/public/assets/images/logo.png',
-          key: RazorpayKey,
+          // key: 'rzp_live_RpQhHpWDUvOOad',
+          key: 'rzp_test_RpQkpzsXTA2VO6',
           order_id: order?.order?.id,
           name: 'BillTrack',
           theme: colors.primary,
           prefill: {},
         };
-        console.log(options);
         if (businessEmail) {
           options.prefill.email = businessEmail;
         } else {
@@ -145,11 +141,11 @@ const Subscription = memo(() => {
         } else {
           options.prefill.contact = userPhone;
         }
-        console.info(options);
         RazorpayCheckout.open(options)
           .then(async data => {
-            console.log(data);
-            ToastAndroid.show(`Payment Success ${data}`, ToastAndroid.LONG);
+            console.log('payment done', data);
+
+            ToastAndroid.show(`Payment Success`, ToastAndroid.LONG);
           })
           .catch(error => {
             console.log(error);
