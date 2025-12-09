@@ -140,6 +140,16 @@ const AuthProvider = ({children}) => {
     } catch (error) {}
   };
 
+  const resetSubscription = async (subscriptionData = null) => {
+    try {
+      await AsyncStorage.setItem(
+        'subscription',
+        JSON.stringify(subscriptionData),
+      );
+      setSubscription(subscriptionData);
+    } catch (error) {}
+  };
+
   useEffect(() => {
     check();
     deviceVerification();
@@ -157,8 +167,9 @@ const AuthProvider = ({children}) => {
       business,
       resetBusiness,
       subscription,
+      resetSubscription,
     };
-  }, [authToken, user, business]);
+  }, [authToken, user, business, subscription]);
 
   if (isLoading) {
     return null;
@@ -174,9 +185,11 @@ export const useAuthToken = () => {
   return authToken;
 };
 
-export const useSubscription = () => {
+export const useSubscription = attribute => {
   const {subscription} = useAuth();
-  return subscription;
+  if (!subscription) return null;
+  if (!attribute) return subscription;
+  return subscription?.[attribute];
 };
 
 export const useUser = attribute => {

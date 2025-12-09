@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback, useRef, useState, useTransition} from 'react';
+import React, {memo, useCallback, useEffect, useRef, useState, useTransition} from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
 import {
@@ -24,8 +24,15 @@ import Lucide from '@react-native-vector-icons/lucide';
 import Octicons from '@react-native-vector-icons/octicons';
 import {RazorpayKey} from '../../utils/config';
 import RazorpayCheckout from 'react-native-razorpay';
-import {useBusiness, useSubscription, useUser} from '../../Contexts/AuthContext';
+import {
+  useAuth,
+  useAuthToken,
+  useBusiness,
+  useSubscription,
+  useUser,
+} from '../../Contexts/AuthContext';
 import {paymentService} from '../../Services/PaymentService';
+import {subscriptionService} from '../../Services/SubscriptionService';
 
 const plans = [
   {
@@ -74,8 +81,14 @@ const plans = [
 ];
 
 const Subscription = memo(() => {
+  const subscription = useSubscription();
+  const {resetSubscription} = useAuth();
+  const token = useAuthToken();
+
   const scrollRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(
+    subscription?.plan === 'free' ? 0 : subscription?.plan === 'basic' ? 1 : 2,
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const buttonWidth =
@@ -114,6 +127,25 @@ const Subscription = memo(() => {
       ToastAndroid.show('The free plan cannot be purchased', ToastAndroid.LONG);
       return;
     }
+
+    const planExpired = subscription?.endDate < Date.now();
+
+    if (subscription?.plan === plan.id && !planExpired) {
+      ToastAndroid.show(
+        'You are already subscribed to this plan',
+        ToastAndroid.LONG,
+      );
+      return;
+    }
+
+    if (subscription?.plan === 'pro' && !planExpired) {
+      ToastAndroid.show(
+        'You are already subscribed to Pro plan',
+        ToastAndroid.LONG,
+      );
+      return;
+    }
+
     try {
       setIsLoading(true);
       const order = await paymentService.createOrder(plan.price);
@@ -143,13 +175,25 @@ const Subscription = memo(() => {
         }
         RazorpayCheckout.open(options)
           .then(async data => {
-            console.log('payment done', data);
-
+            const plan = plans[activeIndex];
+            const subscriptionPurchase =
+              await subscriptionService.purchaseSubscription({
+                token: token,
+                plan: plan.id,
+                orderId: data?.razorpay_order_id,
+                paymentId: data?.razorpay_payment_id,
+                paymentSignature: data?.razorpay_signature,
+              });
+            const currentSubscriptionAfterSubscribe =
+              subscriptionPurchase?.data;
+            await resetSubscription({
+              plan: currentSubscriptionAfterSubscribe?.plan,
+              startDate: currentSubscriptionAfterSubscribe?.startDate,
+              endDate: currentSubscriptionAfterSubscribe?.endDate,
+            });
             ToastAndroid.show(`Payment Success`, ToastAndroid.LONG);
           })
           .catch(error => {
-            console.log(error);
-
             ToastAndroid.show('Payment Cancelled', ToastAndroid.LONG);
           });
       }
@@ -158,6 +202,16 @@ const Subscription = memo(() => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+  if (!scrollRef.current) return;
+
+  scrollRef.current.scrollTo({
+    x: activeIndex * ScreenWidth,
+    animated: false,
+  });
+}, [activeIndex]);
+
 
   return (
     <Layout>
@@ -250,6 +304,10 @@ const Subscription = memo(() => {
 
                 {plan.save && (
                   <Text style={styles.saveText}>Save {plan.save}</Text>
+                )}
+
+                {plan?.id === subscription?.plan && (
+                  <Text style={styles.saveText}>current</Text>
                 )}
               </TouchableOpacity>
             ))}
