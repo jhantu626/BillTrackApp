@@ -1,11 +1,13 @@
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {memo, useCallback, useRef, useState} from 'react';
+import React, {memo, useCallback, useRef, useState, useTransition} from 'react';
 import {Layout} from '../Layout';
 import {DottedDivider, SecondaryHeader} from '../../Components';
 import {
@@ -20,6 +22,10 @@ import {colors} from '../../utils/colors';
 import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import Octicons from '@react-native-vector-icons/octicons';
+import {RazorpayKey} from '../../utils/config';
+import RazorpayCheckout from 'react-native-razorpay';
+import {useBusiness, useUser} from '../../Contexts/AuthContext';
+import {paymentService} from '../../Services/PaymentService';
 
 const plans = [
   {
@@ -31,6 +37,7 @@ const plans = [
       {label: 'Unlimited Billing (Up to 14 Days)', value: true},
       {label: 'WhatsApp Invoice Sharing', value: true},
       {label: 'Sales Analytics', value: true},
+      {label: 'Print to Printer', value: false},
       {label: 'SMS Sending', value: false},
       {label: 'Printer Included & Support', value: false},
     ],
@@ -44,19 +51,22 @@ const plans = [
       {label: 'Unlimited Billing', value: true},
       {label: 'WhatsApp Invoice Sharing', value: true},
       {label: 'Sales Analytics', value: true},
+      {label: 'Print to Printer', value: true},
       {label: 'SMS Sending', value: true},
       {label: 'Printer Included & Support', value: false},
     ],
   },
   {
     id: 'pro',
-    name: 'Pro Plan (Includes Setup & Printer Charges)',
+    name: 'Pro Plan ',
+    nameSlogan: '(Setup Charges) + Printer Charge',
     price: 1499,
     unit: '/ Year',
     features: [
       {label: 'Unlimited Billing', value: true},
       {label: 'WhatsApp Invoice Sharing', value: true},
       {label: 'Sales Analytics', value: true},
+      {label: 'Print to Printer', value: true},
       {label: 'SMS Sending', value: true},
       {label: 'Printer Included & Support', value: true},
     ],
@@ -66,8 +76,10 @@ const plans = [
 const Subscription = memo(() => {
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const buttonWidth = (ScreenWidth - padding(16) * 2 - gap(10) * 2) / plans.length;
+  const buttonWidth =
+    (ScreenWidth - padding(16) * 2 - gap(10) * 2) / plans.length;
 
   // Scroll when clicking bottom buttons
   const handleScrollTo = useCallback(pageIndex => {
@@ -90,6 +102,67 @@ const Subscription = memo(() => {
     [activeIndex],
   );
 
+  const businessPhone = useBusiness('phone');
+  const businessEmail = useBusiness('email');
+
+  const userPhone = useUser('phone');
+  const userEmail = useUser('email');
+
+  const handleSubscribe = async () => {
+    const plan = plans[activeIndex];
+      if (plan.id === 'free') {
+        ToastAndroid.show(
+          'The free plan cannot be purchased',
+          ToastAndroid.LONG,
+        );
+        return;
+      }
+    try {
+      setIsLoading(true);
+      const order = await paymentService.createOrder(plan.price);
+      console.log(order);
+      if (order?.status) {
+        const options = {
+          description: `Payment for Billtrack ${plan.name}`,
+          amount: order?.order?.amount,
+          currency: 'INR',
+          image: 'https://billtrack.co.in/public/assets/images/logo.png',
+          key: RazorpayKey,
+          order_id: order?.order?.id,
+          name: 'BillTrack',
+          theme: colors.primary,
+          prefill: {},
+        };
+        console.log(options);
+        if (businessEmail) {
+          options.prefill.email = businessEmail;
+        } else {
+          options.prefill.email = userEmail;
+        }
+
+        if (businessPhone) {
+          options.prefill.contact = businessPhone;
+        } else {
+          options.prefill.contact = userPhone;
+        }
+        console.info(options);
+        RazorpayCheckout.open(options)
+          .then(async data => {
+            console.log(data);
+            ToastAndroid.show(`Payment Success ${data}`, ToastAndroid.LONG);
+          })
+          .catch(error => {
+            console.log(error);
+
+            ToastAndroid.show('Payment Cancelled', ToastAndroid.LONG);
+          });
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Layout>
       <SecondaryHeader title="Subscription" isSearch={false} />
@@ -98,9 +171,6 @@ const Subscription = memo(() => {
         style={{flex: 1}}
         nestedScrollEnabled
         contentContainerStyle={styles.container}>
-        {/* ===================================
-            HORIZONTAL PLANS CARDS (DYNAMIC)
-        ===================================*/}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -116,12 +186,17 @@ const Subscription = memo(() => {
           {plans.map(plan => (
             <View key={plan.id} style={styles.cardContainer}>
               <View style={styles.btnContainer}>
-                <Text style={styles.btnText}>{plan.name}</Text>
+                <Text style={styles.btnText}>
+                  {plan.name}
+                  {plan?.nameSlogan ? `${plan.nameSlogan}` : ''}
+                </Text>
               </View>
 
               <View style={styles.subscriptonContainer}>
                 <View style={{padding: padding(16), justifyContent: 'center'}}>
-                  <Text style={styles.featuresTitleText}>Premium Features</Text>
+                  <Text style={styles.featuresTitleText}>
+                    {plan.name} Features
+                  </Text>
                 </View>
 
                 <DottedDivider marginVertical={0} />
@@ -184,9 +259,18 @@ const Subscription = memo(() => {
             ))}
           </View>
 
-          <TouchableOpacity style={styles.subscribeBtn}>
-            <Text style={styles.subscribeBtnText}>Subscribe & Pay</Text>
-            <Lucide name="wallet" color={'#fff'} size={icon(20)} />
+          <TouchableOpacity
+            style={styles.subscribeBtn}
+            onPress={handleSubscribe}
+            disabled={isLoading}>
+            {isLoading ? (
+              <ActivityIndicator color={'#fff'} />
+            ) : (
+              <>
+                <Text style={styles.subscribeBtnText}>Subscribe & Pay</Text>
+                <Lucide name="wallet" color={'#fff'} size={icon(20)} />
+              </>
+            )}
           </TouchableOpacity>
 
           <View style={styles.noteContainer}>

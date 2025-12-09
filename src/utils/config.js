@@ -2,5 +2,8 @@
 // const API_URL = 'http://192.168.1.109:3000/api/v1/';
 const API_URL = 'https://danglingly-cushier-jetta.ngrok-free.dev/api/v1/';
 // const API_URL = 'https://testapi.billtrack.co.in/api/v1/';
+// const RazorpayKey = 'rzp_test_S7hkZjIJiSVaAd';
+const RazorpayKey = 'rzp_live_Ht8A7Nan24xxad';
 
-export {API_URL};
+
+export {API_URL, RazorpayKey};
