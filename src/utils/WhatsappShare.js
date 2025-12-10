@@ -43,7 +43,7 @@ Paid via:          ${paymentMode || 'Cash'}
 Thank you for your payment!
 
 Download Invoice:
-https://billtrack.co.in/${invoiceNumber}
+https://parlour.billtrack.co.in/bill_admin/bill_print1/OTA%3D
 
 Need help? Just reply here.
 
