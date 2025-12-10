@@ -25,7 +25,11 @@ import {
   useBusiness,
   useSubscription,
 } from '../../Contexts/AuthContext';
-import { sendToWhatsApp } from '../../utils/WhatsappShare';
+import {sendToWhatsApp} from '../../utils/WhatsappShare';
+import {
+  useAppSettings,
+  useAppSettingsValue,
+} from '../../Contexts/AppSettingContexts';
 
 // const {width} = Dimensions.get('screen');
 
@@ -36,13 +40,18 @@ const InvoiceCard = ({invoice}) => {
   const plan = useSubscription('plan');
   const isActivePlan = useSubscription('isActive');
 
-  const 
-
+  const sentWhatAppEnabled = useAppSettingsValue('SEND_TO_WHATSAPP');
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
 
   const navigation = useNavigation();
   const sentToWhatsApp = async () => {
-
+    if (!sentWhatAppEnabled) {
+      Alert.alert(
+        'Send WhatsApp Bill Not Enabled',
+        'To continue, please enable Send WhatsApp Bill in the appsettings.',
+      );
+      return;
+    }
     await sendToWhatsApp({
       businessName: business?.name,
       invoiceNumber: invoice?.invoiceNumber,
@@ -50,7 +59,7 @@ const InvoiceCard = ({invoice}) => {
       totalAmount: invoice?.totalAmount,
       paymentMode: invoice?.paymentMode,
       customerNumber: invoice?.customerNumber,
-    })
+    });
   };
 
   const printBill = async () => {

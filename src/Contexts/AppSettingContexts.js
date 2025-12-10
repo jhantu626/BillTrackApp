@@ -17,16 +17,14 @@ const AppSettingProvider = ({children}) => {
     setAppSettings(newSettings);
     try {
       await AsyncStorage.setItem('appSettings', JSON.stringify(newSettings));
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   const resetSettings = async () => {
     try {
       await AsyncStorage.removeItem('appSettings');
       setAppSettings(defautlSettings);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const getByKey = key => {
@@ -41,8 +39,7 @@ const AppSettingProvider = ({children}) => {
         if (savedSetting) {
           setAppSettings(JSON.parse(savedSetting));
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     loadSettings();
   }, []);
@@ -59,4 +56,11 @@ const useAppSettings = () => {
   return useContext(AppSettingContexts);
 };
 
-export {useAppSettings, AppSettingProvider};
+const useAppSettingsValue = attribute => {
+  const {appSettings} = useAppSettings();
+  if (!appSettings) return null;
+  if (!attribute) return appSettings;
+  return appSettings[attribute];
+};
+
+export {useAppSettings, AppSettingProvider, useAppSettingsValue};
