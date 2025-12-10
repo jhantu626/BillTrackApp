@@ -25,6 +25,7 @@ import {
   useBusiness,
   useSubscription,
 } from '../../Contexts/AuthContext';
+import { sendToWhatsApp } from '../../utils/WhatsappShare';
 
 // const {width} = Dimensions.get('screen');
 
@@ -38,71 +39,81 @@ const InvoiceCard = ({invoice}) => {
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
 
   const navigation = useNavigation();
-  const sendToWhatsApp = async () => {
-    // Safety check
-    if (!invoice?.customerNumber) {
-      ToastAndroid.show('Customer mobile number not found', ToastAndroid.SHORT);
-      return;
-    }
+  const sentToWhatsApp = async () => {
 
-    // Make sure phone number is in international format
-    let phoneNumber = invoice.customerNumber.trim();
+    await sendToWhatsApp({
+      businessName: business?.name,
+      invoiceNumber: invoice?.invoiceNumber,
+      createdAt: invoice?.createdAt,
+      totalAmount: invoice?.totalAmount,
+      paymentMode: invoice?.paymentMode,
+      customerNumber: invoice?.customerNumber,
+    })
 
-    // If number doesn't start with +, and it's 10 digits (Indian), add +91
-    if (!phoneNumber.startsWith('+')) {
-      if (phoneNumber.length === 10) {
-        phoneNumber = '+91' + phoneNumber;
-      } else {
-        phoneNumber = '+' + phoneNumber; // fallback
-      }
-    }
+    // // Safety check
+    // if (!invoice?.customerNumber) {
+    //   ToastAndroid.show('Customer mobile number not found', ToastAndroid.SHORT);
+    //   return;
+    // }
 
-    // Your beautiful WhatsApp message
-    const message = `Invoice Paid – Thank You!
+//     // Make sure phone number is in international format
+//     let phoneNumber = invoice.customerNumber.trim();
 
-*${business?.name}*
+//     // If number doesn't start with +, and it's 10 digits (Indian), add +91
+//     if (!phoneNumber.startsWith('+')) {
+//       if (phoneNumber.length === 10) {
+//         phoneNumber = '+91' + phoneNumber;
+//       } else {
+//         phoneNumber = '+' + phoneNumber; // fallback
+//       }
+//     }
 
-━━━━━━━━━━━━━━━━━
-Invoice No.:   ${invoice?.invoiceNumber}
-Date:              ${formatDate(invoice?.createdAt)}
-Customer:      ${invoice?.customerNumber}
-Amount Paid:  ₹${invoice?.totalAmount}
-Paid via:          ${invoice?.paymentMode || 'Cash'}
-━━━━━━━━━━━━━━━━━
+//     // Your beautiful WhatsApp message
+//     const message = `Invoice Paid – Thank You!
 
-Thank you for your payment!
+// *${business?.name}*
 
-Download Invoice:
-https://billtrack.co.in/${invoice?.invoiceNumber}
+// ━━━━━━━━━━━━━━━━━
+// Invoice No.:   ${invoice?.invoiceNumber}
+// Date:              ${formatDate(invoice?.createdAt)}
+// Customer:      ${invoice?.customerNumber}
+// Amount Paid:  ₹${invoice?.totalAmount}
+// Paid via:          ${invoice?.paymentMode || 'Cash'}
+// ━━━━━━━━━━━━━━━━━
 
-Need help? Just reply here.
+// Thank you for your payment!
 
-Warm regards,
-Team ${business?.name}`;
+// Download Invoice:
+// https://billtrack.co.in/${invoice?.invoiceNumber}
 
-    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-      message,
-    )}`;
+// Need help? Just reply here.
 
-    try {
-      const canOpen = await Linking.canOpenURL(whatsappUrl);
+// Warm regards,
+// Team ${business?.name}`;
 
-      if (canOpen) {
-        await Linking.openURL(whatsappUrl);
-      } else {
-        // Fallback to web if WhatsApp app not installed
-        const webUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-          message,
-        )}`;
-        await Linking.openURL(webUrl);
-      }
-    } catch (error) {
-      console.log('WhatsApp Error:', error);
-      Alert.alert(
-        'WhatsApp Not Found',
-        'Please install WhatsApp to share invoice.',
-      );
-    }
+//     const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+//       message,
+//     )}`;
+
+//     try {
+//       const canOpen = await Linking.canOpenURL(whatsappUrl);
+
+//       if (canOpen) {
+//         await Linking.openURL(whatsappUrl);
+//       } else {
+//         // Fallback to web if WhatsApp app not installed
+//         const webUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+//           message,
+//         )}`;
+//         await Linking.openURL(webUrl);
+//       }
+//     } catch (error) {
+//       console.log('WhatsApp Error:', error);
+//       Alert.alert(
+//         'WhatsApp Not Found',
+//         'Please install WhatsApp to share invoice.',
+//       );
+//     }
   };
 
   const printBill = async () => {
@@ -168,7 +179,7 @@ Team ${business?.name}`;
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.subBottomContainer}
-          onPress={sendToWhatsApp}>
+          onPress={sentToWhatsApp}>
           <Ionicons name="logo-whatsapp" size={icon(18)} color={'#04bd01'} />
           <Text style={[{color: '#04bd01'}, styles.subBottomContainerText]}>
             Whatsapp
