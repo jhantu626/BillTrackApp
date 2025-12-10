@@ -116,14 +116,23 @@ const AuthProvider = ({children}) => {
           const endDate = new Date(parsedSubscription?.endDate);
           const currentDate = new Date();
           if (endDate > currentDate) {
+            const isPremiumPlanAndActive =
+              (parsedSubscription?.plan === 'pro' ||
+                parsedSubscription?.plan === 'basic') &&
+              endDate > currentDate;
             const settableSubscription = {
               ...parsedSubscription,
               isActive: endDate > currentDate,
+              isPremiumPlanAndActive,
             };
             setSubscription(settableSubscription);
           } else {
             await AsyncStorage.removeItem('subscription');
-            setSubscription({plan: 'na', isActive: false});
+            setSubscription({
+              plan: 'na',
+              isActive: false,
+              isPremiumPlanAndActive: false,
+            });
           }
         } else {
           const currentSubscription =
@@ -131,9 +140,14 @@ const AuthProvider = ({children}) => {
           if (currentSubscription?.status) {
             const endDate = new Date(currentSubscription?.data?.endDate);
             const currentDate = new Date();
+            const isPremiumPlanAndActive =
+              (currentSubscription?.data?.plan === 'pro' ||
+                currentSubscription?.data?.plan === 'basic') &&
+              endDate > currentDate;
             const settableSubscription = {
               ...currentSubscription?.data,
               isActive: endDate > currentDate,
+              isPremiumPlanAndActive,
             };
             setSubscription(settableSubscription);
             await AsyncStorage.setItem(
@@ -142,7 +156,11 @@ const AuthProvider = ({children}) => {
             );
           } else {
             await AsyncStorage.removeItem('subscription');
-            setSubscription({plan: 'na', isActive: false});
+            setSubscription({
+              plan: 'na',
+              isActive: false,
+              isPremiumPlanAndActive: false,
+            });
           }
         }
       }
@@ -157,9 +175,14 @@ const AuthProvider = ({children}) => {
       );
       const endDate = new Date(subscriptionData?.endDate);
       const currentDate = new Date();
+      const isPremiumPlanAndActive =
+        (subscriptionData?.plan === 'pro' ||
+          subscriptionData?.plan === 'basic') &&
+        endDate > currentDate;
       const settableSubscription = {
         ...subscriptionData,
         isActive: endDate > currentDate,
+        isPremiumPlanAndActive,
       };
       setSubscription(settableSubscription);
     } catch (error) {}
