@@ -40,7 +40,11 @@ import {
 import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
 import {invoiceService} from '../../Services/InvoiceService';
-import {useAuthToken, useBusiness} from '../../Contexts/AuthContext';
+import {
+  useAuthToken,
+  useBusiness,
+  useSubscription,
+} from '../../Contexts/AuthContext';
 import {
   useAppSettings,
   useAppSettingsValue,
@@ -48,7 +52,7 @@ import {
 import {usePrinter} from '../../Contexts/PrinterContext';
 import {calculateInvoiceData} from '../../utils/helper';
 import printerService from '../../utils/PrinterService';
-import { sendToWhatsApp } from '../../utils/WhatsappShare';
+import {sendToWhatsApp} from '../../utils/WhatsappShare';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -78,6 +82,8 @@ const CreateBill = () => {
   const sentWhatAppEnabled = useAppSettingsValue(
     'SEND_WHATSAPP_BILL_ON_CREATE_BILL',
   );
+  const isPremiumPlanAndActive = useSubscription('isPremiumPlanAndActive');
+
   const product = Products;
 
   // STATE VARIABLES
@@ -179,7 +185,7 @@ const CreateBill = () => {
         resetProductCount();
         handleCloseBottomSheet();
         const printOnCreateBill = getByKey('PRINT_ON_CREATE_BILL');
-        if (printOnCreateBill) {
+        if (printOnCreateBill && isPremiumPlanAndActive) {
           console.log(JSON.stringify(data?.invoice));
           const invoice = data?.invoice;
           const invoiceItems = await invoiceService.getInvoiceItems(
@@ -259,8 +265,8 @@ const CreateBill = () => {
             createdAt: data?.invoice?.createdAt,
             customerNumber: data?.invoice?.customerNumber,
             totalAmount: data?.invoice?.totalAmount,
-            paymentMode: data?.invoice?.paymentMode,            
-          })
+            paymentMode: data?.invoice?.paymentMode,
+          });
           console.log(JSON.stringify(data));
         }
       }
