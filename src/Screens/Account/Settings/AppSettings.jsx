@@ -7,10 +7,12 @@ import {
   SettingSwitchCard,
 } from '../../../Components';
 import {useAppSettings} from '../../../Contexts/AppSettingContexts';
+import {useSubscription} from '../../../Contexts/AuthContext';
 
 const AppSettings = () => {
   const {appSettings, updateAppSettings} = useAppSettings();
-  console.log(appSettings);
+  const isPremiumPlanAndActive = useSubscription('isPremiumPlanAndActive');
+
   return (
     <Layout>
       <SecondaryHeader
@@ -21,12 +23,13 @@ const AppSettings = () => {
       />
       <ScrollView style={{flex: 1, backgroundColor: '#fff'}}>
         <SettingSwitchCard
-          titile="Print on Create Bill"
+          titile="Print on Create Bill(Premium)"
           subtitle="Automatically print bill when 'Print' button is pressed in create bill"
           isSwitch={appSettings.PRINT_ON_CREATE_BILL}
           onValueChange={async value => {
             await updateAppSettings('PRINT_ON_CREATE_BILL', value);
           }}
+          disabled={!isPremiumPlanAndActive}
         />
         <DottedDivider marginVertical={0} />{' '}
         <SettingSwitchCard

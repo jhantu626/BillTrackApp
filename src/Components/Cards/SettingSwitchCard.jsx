@@ -10,6 +10,7 @@ const SettingSwitchCard = ({
   paddingVertical = 10,
   isSwitch = false,
   onValueChange = () => {},
+  disabled = false,
 }) => {
   return (
     <View
@@ -30,6 +31,7 @@ const SettingSwitchCard = ({
           thumbColor={'#fff'}
           value={isSwitch}
           onValueChange={onValueChange}
+          disabled={disabled}
         />
       </View>
     </View>
