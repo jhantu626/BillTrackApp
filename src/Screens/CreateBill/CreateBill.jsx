@@ -41,10 +41,14 @@ import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
 import {invoiceService} from '../../Services/InvoiceService';
 import {useAuthToken, useBusiness} from '../../Contexts/AuthContext';
-import {useAppSettings} from '../../Contexts/AppSettingContexts';
+import {
+  useAppSettings,
+  useAppSettingsValue,
+} from '../../Contexts/AppSettingContexts';
 import {usePrinter} from '../../Contexts/PrinterContext';
 import {calculateInvoiceData} from '../../utils/helper';
 import printerService from '../../utils/PrinterService';
+import { sendToWhatsApp } from '../../utils/WhatsappShare';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -71,6 +75,9 @@ const CreateBill = () => {
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  const sentWhatAppEnabled = useAppSettingsValue(
+    'SEND_WHATSAPP_BILL_ON_CREATE_BILL',
+  );
   const product = Products;
 
   // STATE VARIABLES
@@ -245,6 +252,17 @@ const CreateBill = () => {
         setTotalPrice(0);
         resetProductCount();
         handleCloseBottomSheet();
+        if (sentWhatAppEnabled) {
+          await sendToWhatsApp({
+            businessName: business?.name,
+            invoiceNumber: data?.invoice?.invoiceNumber,
+            createdAt: data?.invoice?.createdAt,
+            customerNumber: data?.invoice?.customerNumber,
+            totalAmount: data?.invoice?.totalAmount,
+            paymentMode: data?.invoice?.paymentMode,            
+          })
+          console.log(JSON.stringify(data));
+        }
       }
     } catch (error) {
     } finally {
