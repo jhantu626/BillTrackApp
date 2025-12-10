@@ -123,7 +123,7 @@ const AuthProvider = ({children}) => {
             setSubscription(settableSubscription);
           } else {
             await AsyncStorage.removeItem('subscription');
-            setSubscription(null);
+            setSubscription({plan: 'na', isActive: false});
           }
         } else {
           const currentSubscription =
@@ -140,6 +140,9 @@ const AuthProvider = ({children}) => {
               'subscription',
               JSON.stringify(settableSubscription),
             );
+          } else {
+            await AsyncStorage.removeItem('subscription');
+            setSubscription({plan: 'na', isActive: false});
           }
         }
       }
