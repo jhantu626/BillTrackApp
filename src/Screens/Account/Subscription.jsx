@@ -91,6 +91,7 @@ const Subscription = memo(() => {
   const subscription = useSubscription();
   const {resetSubscription} = useAuth();
   const token = useAuthToken();
+  console.log('subscription', subscription);
 
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(
@@ -197,14 +198,19 @@ const Subscription = memo(() => {
                 paymentId: data?.razorpay_payment_id,
                 paymentSignature: data?.razorpay_signature,
               });
-            const currentSubscriptionAfterSubscribe =
-              subscriptionPurchase?.data;
-            await resetSubscription({
-              plan: currentSubscriptionAfterSubscribe?.plan,
-              startDate: currentSubscriptionAfterSubscribe?.startDate,
-              endDate: currentSubscriptionAfterSubscribe?.endDate,
-            });
-            ToastAndroid.show(`Payment Success`, ToastAndroid.LONG);
+            if (subscriptionPurchase?.status) {
+              const currentSubscriptionAfterSubscribe =
+                subscriptionPurchase?.data;
+              console.log('current subscription', subscriptionPurchase);
+              await resetSubscription({
+                plan: currentSubscriptionAfterSubscribe?.plan,
+                startDate: currentSubscriptionAfterSubscribe?.startDate,
+                endDate: currentSubscriptionAfterSubscribe?.endDate,
+              });
+              ToastAndroid.show(`Payment Success`, ToastAndroid.LONG);
+              return;
+            }
+            ToastAndroid.show(subscriptionPurchase?.message, ToastAndroid.LONG);
           })
           .catch(error => {
             ToastAndroid.show('Payment Cancelled', ToastAndroid.LONG);
