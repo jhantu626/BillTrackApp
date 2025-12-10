@@ -17,6 +17,7 @@ import React, {
 import {Layout} from '../Layout';
 import {
   DottedDivider,
+  EmptyListCard,
   InvoiceCard,
   InvoiceCardShimmer,
   Loader,
@@ -189,7 +190,6 @@ const Invoice = () => {
     [isLoading, pageNumber, invoices],
   );
 
-  console.log(flatListData);
 
   // Optimized render functions
   const keyExtractor = useCallback(
@@ -282,6 +282,7 @@ const Invoice = () => {
           onEndReached={onEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={<EmptyListCard title="No Invoice Found" />}
         />
       </Layout>
       <BottomSheet

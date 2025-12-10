@@ -22,6 +22,7 @@ import NavigationCard from './Cards/NavigationCard';
 import NavigationCardWithValue from './Cards/NavigationCardWithValue';
 import ProductActiveCard from './Cards/ProductActiveCard';
 import SettingSwitchCard from './Cards/SettingSwitchCard';
+import EmptyListCard from './Cards/EmptyListCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -77,5 +78,6 @@ export {
   CommonModal,
   NavigationCardWithValue,
   ProductActiveCard,
-  SettingSwitchCard
+  SettingSwitchCard,
+  EmptyListCard
 };
