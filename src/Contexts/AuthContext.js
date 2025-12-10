@@ -85,17 +85,12 @@ const AuthProvider = ({children}) => {
       setAuthToken(token);
       setUser(JSON.parse(userStr));
       setBusiness(JSON.parse(businessStr));
-
-      // if (token) {
-      //   const data = await webHook.verifyDevice();
-      //   if (!data?.status) {
-      //     await logout();
-      //   }
-      // }
     } catch (error) {
     } finally {
       setIsLoading(false);
-      SplashScreen.hide();
+      setTimeout(() => {
+        SplashScreen.hide();
+      }, 100);
     }
   };
 
