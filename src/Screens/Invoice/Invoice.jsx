@@ -35,7 +35,7 @@ import BottomSheet, {
 import Ionicons from '@react-native-vector-icons/ionicons';
 import {font, margin, padding} from '../../utils/responsive';
 import {invoiceService} from '../../Services/InvoiceService';
-import {useAuthToken} from '../../Contexts/AuthContext';
+import {useAuthToken, useSubscription} from '../../Contexts/AuthContext';
 
 // Constants moved outside component to prevent recreation
 const SNAP_POINTS = ['50%'];
@@ -76,6 +76,7 @@ const SortOption = memo(({label, value, isSelected, onSelect, isLast}) => (
 
 const Invoice = () => {
   const token = useAuthToken();
+  const subscription=useSubscription()
 
   // STATE VARIABLES
   const [sortBy, setSortBy] = useState('');

@@ -2,16 +2,13 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
-  PermissionsAndroid,
-  Platform,
   StyleSheet,
   Text,
   ToastAndroid,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from 'react-native';
-import React, {memo, useEffect, useMemo, useState} from 'react';
+import React, {memo, useState} from 'react';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import DottedDivider from '../Dividers/DottedDivider';
@@ -23,7 +20,11 @@ import {calculateInvoiceData, formatDate} from '../../utils/helper';
 import {usePrinter} from '../../Contexts/PrinterContext';
 import printerService from '../../utils/PrinterService';
 import {invoiceService} from '../../Services/InvoiceService';
-import {useAuth, useBusiness} from '../../Contexts/AuthContext';
+import {
+  useAuth,
+  useBusiness,
+  useSubscription,
+} from '../../Contexts/AuthContext';
 
 // const {width} = Dimensions.get('screen');
 
@@ -31,17 +32,76 @@ const InvoiceCard = ({invoice}) => {
   const {setIsLoading} = useAuth();
   const {printer} = usePrinter();
   const business = useBusiness();
+  const plan = useSubscription('plan');
+  const isActivePlan = useSubscription('isActive');
 
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
 
   const navigation = useNavigation();
-  const sentWhatapp = async () => {
-    const link = 'whatsapp://send?text=test&phone=919775746484';
-    const supported = await Linking.canOpenURL(link);
-    if (supported) {
-      await Linking.openURL(link);
-    } else {
-      ToastAndroid.show('Please install whatsapp', ToastAndroid.SHORT);
+  const sendToWhatsApp = async () => {
+    // Safety check
+    if (!invoice?.customerNumber) {
+      ToastAndroid.show('Customer mobile number not found', ToastAndroid.SHORT);
+      return;
+    }
+
+    // Make sure phone number is in international format
+    let phoneNumber = invoice.customerNumber.trim();
+
+    // If number doesn't start with +, and it's 10 digits (Indian), add +91
+    if (!phoneNumber.startsWith('+')) {
+      if (phoneNumber.length === 10) {
+        phoneNumber = '+91' + phoneNumber;
+      } else {
+        phoneNumber = '+' + phoneNumber; // fallback
+      }
+    }
+
+    // Your beautiful WhatsApp message
+    const message = `Invoice Paid – Thank You!
+
+*${business?.name}*
+
+━━━━━━━━━━━━━━━━━
+Invoice No.:   ${invoice?.invoiceNumber}
+Date:              ${formatDate(invoice?.createdAt)}
+Customer:      ${invoice?.customerNumber}
+Amount Paid:  ₹${invoice?.totalAmount}
+Paid via:          ${invoice?.paymentMode || 'Cash'}
+━━━━━━━━━━━━━━━━━
+
+Thank you for your payment!
+
+Download Invoice:
+https://billtrack.co.in/${invoice?.invoiceNumber}
+
+Need help? Just reply here.
+
+Warm regards,
+Team ${business?.name}`;
+
+    const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
+      message,
+    )}`;
+
+    try {
+      const canOpen = await Linking.canOpenURL(whatsappUrl);
+
+      if (canOpen) {
+        await Linking.openURL(whatsappUrl);
+      } else {
+        // Fallback to web if WhatsApp app not installed
+        const webUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+          message,
+        )}`;
+        await Linking.openURL(webUrl);
+      }
+    } catch (error) {
+      console.log('WhatsApp Error:', error);
+      Alert.alert(
+        'WhatsApp Not Found',
+        'Please install WhatsApp to share invoice.',
+      );
     }
   };
 
@@ -108,7 +168,7 @@ const InvoiceCard = ({invoice}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.subBottomContainer}
-          onPress={sentWhatapp}>
+          onPress={sendToWhatsApp}>
           <Ionicons name="logo-whatsapp" size={icon(18)} color={'#04bd01'} />
           <Text style={[{color: '#04bd01'}, styles.subBottomContainerText]}>
             Whatsapp

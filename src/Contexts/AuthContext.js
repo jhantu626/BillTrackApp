@@ -116,7 +116,11 @@ const AuthProvider = ({children}) => {
           const endDate = new Date(parsedSubscription?.endDate);
           const currentDate = new Date();
           if (endDate > currentDate) {
-            setSubscription(parsedSubscription);
+            const settableSubscription = {
+              ...parsedSubscription,
+              isActive: endDate > currentDate,
+            };
+            setSubscription(settableSubscription);
           } else {
             await AsyncStorage.removeItem('subscription');
             setSubscription(null);
@@ -125,10 +129,16 @@ const AuthProvider = ({children}) => {
           const currentSubscription =
             await subscriptionService.currentSubscription(token);
           if (currentSubscription?.status) {
-            setSubscription(currentSubscription?.data);
+            const endDate = new Date(currentSubscription?.data?.endDate);
+            const currentDate = new Date();
+            const settableSubscription = {
+              ...currentSubscription?.data,
+              isActive: endDate > currentDate,
+            };
+            setSubscription(settableSubscription);
             await AsyncStorage.setItem(
               'subscription',
-              JSON.stringify(currentSubscription?.data),
+              JSON.stringify(settableSubscription),
             );
           }
         }
@@ -142,7 +152,13 @@ const AuthProvider = ({children}) => {
         'subscription',
         JSON.stringify(subscriptionData),
       );
-      setSubscription(subscriptionData);
+      const endDate = new Date(subscriptionData?.endDate);
+      const currentDate = new Date();
+      const settableSubscription = {
+        ...subscriptionData,
+        isActive: endDate > currentDate,
+      };
+      setSubscription(settableSubscription);
     } catch (error) {}
   };
 
@@ -151,7 +167,6 @@ const AuthProvider = ({children}) => {
     deviceVerification();
     subscriptionCheck();
   }, []);
-
 
   const value = useMemo(() => {
     return {
