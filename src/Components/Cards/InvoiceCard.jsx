@@ -37,8 +37,7 @@ const InvoiceCard = ({invoice}) => {
   const {setIsLoading} = useAuth();
   const {printer} = usePrinter();
   const business = useBusiness();
-  const plan = useSubscription('plan');
-  const isActivePlan = useSubscription('isActive');
+  const isPremiumPlanAndActive = useSubscription('isPremiumPlanAndActive');
 
   const sentWhatAppEnabled = useAppSettingsValue('SEND_TO_WHATSAPP');
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
@@ -131,19 +130,21 @@ const InvoiceCard = ({invoice}) => {
             Whatsapp
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.subBottomContainer}
-          onPress={printBill}
-          disabled={isPrintingLoading}>
-          <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
-          {isPrintingLoading ? (
-            <ActivityIndicator color={'#ff393c'} size={'small'} />
-          ) : (
-            <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
-              Print
-            </Text>
-          )}
-        </TouchableOpacity>
+        {isPremiumPlanAndActive && (
+          <TouchableOpacity
+            style={styles.subBottomContainer}
+            onPress={printBill}
+            disabled={isPrintingLoading}>
+            <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
+            {isPrintingLoading ? (
+              <ActivityIndicator color={'#ff393c'} size={'small'} />
+            ) : (
+              <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
+                Print
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={styles.subBottomContainer}
           onPress={() => {
