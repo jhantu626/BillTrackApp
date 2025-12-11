@@ -51,7 +51,7 @@ const AppSettings = () => {
         />
         <DottedDivider marginVertical={0} />
         <SettingSwitchCard
-          titile="Send SMS"
+          titile="Send SMS(Premium)"
           subtitle="Send Bill to SMS"
           isSwitch={appSettings.SEND_TO_SMS}
           onValueChange={async value => {
