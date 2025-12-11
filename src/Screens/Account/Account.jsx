@@ -40,6 +40,7 @@ import ToastService from '../../Components/Toasts/ToastService';
 import {userService} from '../../Services/UserService';
 import {useProduct} from '../../Contexts/ProductContexts';
 import {usePrinter} from '../../Contexts/PrinterContext';
+import { useAppSettings } from '../../Contexts/AppSettingContexts';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -50,6 +51,7 @@ const Account = memo(() => {
   const updateUserFields = useUpdateUserFields();
   const {clearAllProducts} = useProduct();
   const {clearPrinter} = usePrinter();
+  const {resetSettings} = useAppSettings();
 
   //STATE VARIABLES
   const [name, setName] = useState(userName);
@@ -71,6 +73,8 @@ const Account = memo(() => {
       await logout();
       await clearAllProducts();
       await clearPrinter();
+      await resetSettings();
+
     } catch (error) {
     } finally {
       setLogoutLoading(false);

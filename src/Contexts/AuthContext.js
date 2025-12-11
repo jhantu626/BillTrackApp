@@ -111,7 +111,7 @@ const AuthProvider = ({children}) => {
       const token = await AsyncStorage.getItem('token');
       if (token) {
         const subscriptionData = await AsyncStorage.getItem('subscription');
-        if (subscriptionData) {
+        if (subscriptionData && subscription !== null) {
           const parsedSubscription = JSON.parse(subscriptionData);
           const endDate = new Date(parsedSubscription?.endDate);
           const currentDate = new Date();
@@ -193,6 +193,12 @@ const AuthProvider = ({children}) => {
     deviceVerification();
     subscriptionCheck();
   }, []);
+
+  useEffect(() => {
+    if (authToken) {
+      subscriptionCheck();
+    }
+  }, [authToken]);
 
   const value = useMemo(() => {
     return {

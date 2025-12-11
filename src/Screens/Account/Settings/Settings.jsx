@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, ToastAndroid, View} from 'react-native';
 import React from 'react';
 import {Layout} from '../../Layout';
 import {
@@ -9,12 +9,16 @@ import {
 import {icon, margin, padding} from '../../../utils/responsive';
 import Lucide from '@react-native-vector-icons/lucide';
 import {useNavigation} from '@react-navigation/native';
+import {useSubscription} from '../../../Contexts/AuthContext';
 
 const Settings = () => {
   const navigation = useNavigation();
   const handleNavigation = ({screen, data = {}}) => {
     navigation.navigate(screen, {data});
   };
+
+  const isPremiumPlanAndActive = useSubscription('isPremiumPlanAndActive');
+
   return (
     <Layout>
       <SecondaryHeader
@@ -41,8 +45,17 @@ const Settings = () => {
             title={'Printer Setup'}
             textFontSize={16}
             tag
-            tagText={'New'}
-            onpress={() => handleNavigation({screen: 'PrinterSetup'})}
+            tagText={'Premium'}
+            onpress={() => {
+              if (!isPremiumPlanAndActive) {
+                ToastAndroid.show(
+                  'Please upgrade to premium plan to use this feature',
+                  ToastAndroid.LONG,
+                );
+                return;
+              }
+              handleNavigation({screen: 'PrinterSetup'});
+            }}
           />
         </View>
       </ScrollView>
