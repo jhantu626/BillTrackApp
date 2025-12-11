@@ -1,14 +1,21 @@
+import axios from 'axios';
 import {API_URL} from './../utils/config';
 class SmsService {
   constructor() {
     this.baseUrl = API_URL + 'sms';
   }
 
-  async sendInvoiceSms({phone, invoiceNumber, totalAmount, businessName}) {
+  async sendInvoiceSms({
+    token,
+    phone,
+    invoiceNumber,
+    totalAmount,
+    businessName,
+  }) {
     try {
       const uri = `${this.baseUrl}/sent-invoice`;
+      console.log('uri', uri);
       const payload = {
-        token,
         phone,
         invoiceNumber,
         totalAmount,

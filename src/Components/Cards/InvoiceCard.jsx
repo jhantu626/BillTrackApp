@@ -22,6 +22,7 @@ import printerService from '../../utils/PrinterService';
 import {invoiceService} from '../../Services/InvoiceService';
 import {
   useAuth,
+  useAuthToken,
   useBusiness,
   useSubscription,
 } from '../../Contexts/AuthContext';
@@ -30,6 +31,7 @@ import {
   useAppSettings,
   useAppSettingsValue,
 } from '../../Contexts/AppSettingContexts';
+import {smsService} from '../../Services/SmsService';
 
 // const {width} = Dimensions.get('screen');
 
@@ -38,6 +40,7 @@ const InvoiceCard = ({invoice}) => {
   const {printer} = usePrinter();
   const business = useBusiness();
   const isPremiumPlanAndActive = useSubscription('isPremiumPlanAndActive');
+  const token = useAuthToken();
 
   const sentWhatAppEnabled = useAppSettingsValue('SEND_TO_WHATSAPP');
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
@@ -59,6 +62,44 @@ const InvoiceCard = ({invoice}) => {
       paymentMode: invoice?.paymentMode,
       customerNumber: invoice?.customerNumber,
     });
+  };
+
+  const sentSms = async () => {
+    if (!invoice?.customerNumber) {
+      ToastAndroid.show('Customer Number Not Found', ToastAndroid.SHORT);
+      return;
+    }
+    Alert.alert('Send SMS', 'Do you want to send this SMS?', [
+      {
+        text: 'Cancel',
+        onPress: () =>
+          ToastAndroid.show('SMS sending cancelled', ToastAndroid.SHORT),
+        style: 'cancel',
+      },
+      {
+        text: 'Send',
+        onPress: async () => {
+          try {
+            const {invoiceNumber, totalAmount, customerNumber} = invoice;
+
+            const data = await smsService.sendInvoiceSms({
+              token: token,
+              businessName: business?.name,
+              phone: customerNumber,
+              invoiceNumber: invoiceNumber,
+              totalAmount: totalAmount,
+            });
+            if (data?.status) {
+              ToastAndroid.show('SMS sent successfully', ToastAndroid.SHORT);
+            } else {
+              throw new Error(data?.message);
+            }
+          } catch (error) {
+            ToastAndroid.show('Failed to send SMS', ToastAndroid.SHORT);
+          }
+        },
+      },
+    ]);
   };
 
   const printBill = async () => {
@@ -112,7 +153,7 @@ const InvoiceCard = ({invoice}) => {
       </View>
       <DottedDivider />
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.subBottomContainer}>
+        <TouchableOpacity style={styles.subBottomContainer} onPress={sentSms}>
           <Lucide
             name="message-square-text"
             size={icon(18)}
