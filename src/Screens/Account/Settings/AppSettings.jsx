@@ -50,6 +50,20 @@ const AppSettings = () => {
           }}
         />
         <DottedDivider marginVertical={0} />
+        <SettingSwitchCard
+          titile="Send SMS"
+          subtitle="Send Bill to SMS"
+          isSwitch={appSettings.SEND_TO_SMS}
+          onValueChange={async value => {
+            if (!isPremiumPlanAndActive) {
+              ToastAndroid.show('Premium Plan Required', ToastAndroid.SHORT);
+              return;
+            }
+            await updateAppSettings('SEND_TO_SMS', value);
+          }}
+          disabled={!isPremiumPlanAndActive}
+        />
+        <DottedDivider marginVertical={0} />
       </ScrollView>
     </Layout>
   );
