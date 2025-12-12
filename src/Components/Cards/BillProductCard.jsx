@@ -34,23 +34,25 @@ const BillProductCard = memo(
         if (isIncrease) {
           item.count = (item.count || 0) + 1;
           setCount(prev => {
-            if (prev === 0) {
-              setQuantity(q => q + 1);
-            }
+            // if (prev === 0) {
+            //   setQuantity(q => q + 1);
+            // }
             return prev + 1;
           });
+          setQuantity(q => q + 1);
           setTotalPrice(prev => prev + new Number(item.price));
         } else {
           if (item.count > 0) {
             item.count -= 1;
             setCount(prev => {
               const newCount = prev - 1;
-              if (newCount === 0) {
-                setQuantity(q => q - 1);
-              }
+              // if (newCount === 0) {
+              //   setQuantity(q => q - 1);
+              // }
               setTotalPrice(p => p - new Number(item.price));
               return newCount;
             });
+            setQuantity(q => q - 1);
           }
         }
       },
