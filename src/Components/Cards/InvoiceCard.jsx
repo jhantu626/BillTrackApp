@@ -43,7 +43,9 @@ const InvoiceCard = ({invoice}) => {
   const token = useAuthToken();
 
   const sentWhatAppEnabled = useAppSettingsValue('SEND_TO_WHATSAPP');
+  const sentSmsEnabled = useAppSettingsValue('SEND_TO_SMS');
   const [isPrintingLoading, setIsPrintingLoading] = useState(false);
+  const [isSmsLoading, setIsSmsLoading] = useState(false);
 
   const navigation = useNavigation();
   const sentToWhatsApp = async () => {
@@ -65,6 +67,13 @@ const InvoiceCard = ({invoice}) => {
   };
 
   const sentSms = async () => {
+    if (!sentSmsEnabled || !isPremiumPlanAndActive) {
+      Alert.alert(
+        'Send SMS Not Enabled',
+        'To continue, please enable Send SMS in the appsettings.',
+      );
+      return;
+    }
     if (!invoice?.customerNumber) {
       ToastAndroid.show('Customer Number Not Found', ToastAndroid.SHORT);
       return;
@@ -80,6 +89,7 @@ const InvoiceCard = ({invoice}) => {
         text: 'Send',
         onPress: async () => {
           try {
+            setIsSmsLoading(true);
             const {invoiceNumber, totalAmount, customerNumber} = invoice;
 
             const data = await smsService.sendInvoiceSms({
@@ -96,6 +106,8 @@ const InvoiceCard = ({invoice}) => {
             }
           } catch (error) {
             ToastAndroid.show('Failed to send SMS', ToastAndroid.SHORT);
+          } finally {
+            setIsSmsLoading(false);
           }
         },
       },
@@ -153,12 +165,19 @@ const InvoiceCard = ({invoice}) => {
       </View>
       <DottedDivider />
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.subBottomContainer} onPress={sentSms}>
-          <Lucide
-            name="message-square-text"
-            size={icon(18)}
-            color={'#007aff'}
-          />
+        <TouchableOpacity
+          style={styles.subBottomContainer}
+          onPress={sentSms}
+          disabled={isSmsLoading}>
+          {isSmsLoading ? (
+            <ActivityIndicator size={'small'} color={'#007aff'} />
+          ) : (
+            <Lucide
+              name="message-square-text"
+              size={icon(18)}
+              color={'#007aff'}
+            />
+          )}
           <Text style={[{color: '#007aff'}, styles.subBottomContainerText]}>
             SMS
           </Text>
@@ -176,14 +195,14 @@ const InvoiceCard = ({invoice}) => {
             style={styles.subBottomContainer}
             onPress={printBill}
             disabled={isPrintingLoading}>
-            <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
             {isPrintingLoading ? (
-              <ActivityIndicator color={'#ff393c'} size={'small'} />
+              <ActivityIndicator size={'small'} color={'#ff393c'} />
             ) : (
-              <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
-                Print
-              </Text>
+              <Lucide name="printer" size={icon(18)} color={'#ff393c'} />
             )}
+            <Text style={[{color: '#ff393c'}, styles.subBottomContainerText]}>
+              Print
+            </Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
