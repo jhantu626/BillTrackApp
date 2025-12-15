@@ -12,6 +12,7 @@ class InvoiceService {
     customerNumber,
     items = [],
     paymentMode = 'cash',
+    discount,
   }) {
     try {
       const uri = this.baseUrl;
@@ -20,7 +21,9 @@ class InvoiceService {
         customerNumber: customerNumber,
         items: items,
         paymentMode: paymentMode,
+        discount,
       };
+      console.log('final paylod', payload);
       const response = await axios.post(uri, payload, {
         headers: {
           Authorization: `Bearer ${token}`,

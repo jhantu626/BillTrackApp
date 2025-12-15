@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  ToastAndroid,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -94,6 +95,7 @@ const CreateBill = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [discount, setDiscount] = useState('0');
 
   const [isDiscountOpen, setIsDiscountOpen] = useState(false);
 
@@ -214,6 +216,7 @@ const CreateBill = () => {
         items: selectedItems,
         paymentMode: paymentMethod,
         customerNumber: phoneNumber,
+        discount,
       };
       const data = await invoiceService.createInvoice(payload);
       if (data?.status) {
@@ -223,8 +226,10 @@ const CreateBill = () => {
           position: 'top',
         });
         setPhoneNumber('');
+        setDiscount(0);
         setQuantity(0);
         setTotalPrice(0);
+        setIsDiscountOpen(false);
         resetProductCount();
         handleCloseBottomSheet();
         const printOnCreateBill = getByKey('PRINT_ON_CREATE_BILL');
@@ -298,7 +303,9 @@ const CreateBill = () => {
         });
         setPhoneNumber('');
         setQuantity(0);
+        setDiscount(0);
         setTotalPrice(0);
+        setIsDiscountOpen(false);
         resetProductCount();
         handleCloseBottomSheet();
         if (sentWhatAppEnabled) {
@@ -373,7 +380,7 @@ const CreateBill = () => {
           />
           <CreateBillBottom
             totalQuanity={quantity}
-            totalAmount={totalPrice}
+            totalAmount={totalPrice - discount}
             saveButtonFunciton={handleSave}
             cashButtonFunction={openPaymentModal}
             paymentMode={paymentMethod}
@@ -398,8 +405,24 @@ const CreateBill = () => {
                   <TextInput
                     style={styles.floatingButtonTextInput}
                     autoFocus={true}
+                    value={discount}
+                    onChangeText={text => {
+                      if (text <= totalPrice) {
+                        setDiscount(text);
+                      } else {
+                        ToastAndroid.show(
+                          'Discount cannot be greater than total amount',
+                          ToastAndroid.LONG,
+                        );
+                      }
+                    }}
+                    keyboardType="decimal-pad"
                   />
-                  <TouchableOpacity onPress={() => setIsDiscountOpen(false)}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDiscount(0);
+                      setIsDiscountOpen(false);
+                    }}>
                     <MaterialDesignIcons
                       name="close-circle"
                       size={24}
