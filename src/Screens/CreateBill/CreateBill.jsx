@@ -60,6 +60,15 @@ import {sendToWhatsApp} from '../../utils/WhatsappShare';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import Lucide from '@react-native-vector-icons/lucide';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  interpolateColor,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -86,7 +95,32 @@ const CreateBill = () => {
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [isDiscountOpen, setIsDiscountOpen] = useState(true);
+  const [isDiscountOpen, setIsDiscountOpen] = useState(false);
+
+  const discountAnim = useSharedValue(0);
+
+  // Sync shared value for color/border animation
+  useEffect(() => {
+    discountAnim.value = withSpring(isDiscountOpen ? 1 : 0, {
+      damping: 15,
+      stiffness: 100,
+    });
+  }, [isDiscountOpen]);
+
+  const floatingButtonAnimStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: interpolateColor(
+        discountAnim.value,
+        [0, 1],
+        [colors.sucess, '#ffffff'],
+      ),
+      // Animate border width smoothly
+      borderWidth: withSpring(isDiscountOpen ? 2 : 0), // Reduced thickness for cleaner look
+      borderColor: colors.border,
+      // Removed 'transform: scale' to prevent text distortion
+      // Removed 'width' to let Layout Animation handle it automatically
+    };
+  });
 
   const sentWhatAppEnabled = useAppSettingsValue(
     'SEND_WHATSAPP_BILL_ON_CREATE_BILL',
@@ -344,32 +378,50 @@ const CreateBill = () => {
             cashButtonFunction={openPaymentModal}
             paymentMode={paymentMethod}
           />
-          <View
-            style={[
-              styles.floatingButton,
-              isDiscountOpen && styles.opendDiscountFloatingBtn,
-            ]}>
-            {isDiscountOpen ? (
-              <View style={styles.opendDiscountContainer}>
-                <Lucide name='indian-rupee' size={20} color={colors.primary} />
-                <TextInput style={styles.floatingButtonTextInput} />
-                <TouchableOpacity onPress={() => setIsDiscountOpen(false)}>
-                  <MaterialDesignIcons
-                    name="close-circle"
-                    size={20}
-                    color={colors.error}
+          {quantity > 0 && (
+            <Animated.View
+              // This automatically animates width/height changes smoothly
+              layout={LinearTransition.springify().damping(15).stiffness(120)}
+              style={[styles.floatingButton, floatingButtonAnimStyle]}>
+              {isDiscountOpen ? (
+                <Animated.View
+                  key="discount-open" // Key is required for entering/exiting to work reliably
+                  entering={FadeIn.duration(300)}
+                  exiting={FadeOut.duration(200)}
+                  style={styles.opendDiscountContainer}>
+                  <Lucide
+                    name="indian-rupee"
+                    size={16}
+                    color={colors.primary}
                   />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <Pressable
-                style={styles.floatingButtonContainer}
-                onPress={() => setIsDiscountOpen(true)}>
-                <Text style={styles.floatingButtonText}>Add Discount</Text>
-                <AntDesign name="plus" size={20} color={'#fff'} />
-              </Pressable>
-            )}
-          </View>
+                  {/* Added autoFocus to improve UX */}
+                  <TextInput
+                    style={styles.floatingButtonTextInput}
+                    autoFocus={true}
+                  />
+                  <TouchableOpacity onPress={() => setIsDiscountOpen(false)}>
+                    <MaterialDesignIcons
+                      name="close-circle"
+                      size={24}
+                      color={colors.error}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+              ) : (
+                <Animated.View
+                  key="discount-closed"
+                  entering={FadeIn.duration(300)}
+                  exiting={FadeOut.duration(200)}>
+                  <Pressable
+                    style={styles.floatingButtonContainer}
+                    onPress={() => setIsDiscountOpen(true)}>
+                    <Text style={styles.floatingButtonText}>Add Discount</Text>
+                    <AntDesign name="plus" size={20} color="#fff" />
+                  </Pressable>
+                </Animated.View>
+              )}
+            </Animated.View>
+          )}
         </Layout>
         <BottomSheet
           ref={bottomSheetRef}
