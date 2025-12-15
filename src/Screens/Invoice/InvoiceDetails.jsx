@@ -346,7 +346,7 @@ const InvoiceDetails = () => {
               </Text>
             </View>
           </View>
-          {invoice?.discountAmount && (
+          {invoice?.discountAmount>0 && (
             <View
               style={[
                 [
