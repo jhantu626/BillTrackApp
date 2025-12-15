@@ -5,8 +5,10 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -33,9 +35,11 @@ import {colors} from '../../utils/colors';
 import {
   font,
   gap,
+  icon,
   isTabletDevice,
   margin,
   padding,
+  widthResponsive,
 } from '../../utils/responsive';
 import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
@@ -53,6 +57,9 @@ import {usePrinter} from '../../Contexts/PrinterContext';
 import {calculateInvoiceData} from '../../utils/helper';
 import printerService from '../../utils/PrinterService';
 import {sendToWhatsApp} from '../../utils/WhatsappShare';
+import AntDesign from '@react-native-vector-icons/ant-design';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import Lucide from '@react-native-vector-icons/lucide';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -78,6 +85,8 @@ const CreateBill = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [isDiscountOpen, setIsDiscountOpen] = useState(true);
 
   const sentWhatAppEnabled = useAppSettingsValue(
     'SEND_WHATSAPP_BILL_ON_CREATE_BILL',
@@ -335,6 +344,32 @@ const CreateBill = () => {
             cashButtonFunction={openPaymentModal}
             paymentMode={paymentMethod}
           />
+          <View
+            style={[
+              styles.floatingButton,
+              isDiscountOpen && styles.opendDiscountFloatingBtn,
+            ]}>
+            {isDiscountOpen ? (
+              <View style={styles.opendDiscountContainer}>
+                <Lucide name='indian-rupee' size={20} color={colors.primary} />
+                <TextInput style={styles.floatingButtonTextInput} />
+                <TouchableOpacity onPress={() => setIsDiscountOpen(false)}>
+                  <MaterialDesignIcons
+                    name="close-circle"
+                    size={20}
+                    color={colors.error}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <Pressable
+                style={styles.floatingButtonContainer}
+                onPress={() => setIsDiscountOpen(true)}>
+                <Text style={styles.floatingButtonText}>Add Discount</Text>
+                <AntDesign name="plus" size={20} color={'#fff'} />
+              </Pressable>
+            )}
+          </View>
         </Layout>
         <BottomSheet
           ref={bottomSheetRef}
@@ -498,6 +533,41 @@ const styles = StyleSheet.create({
   modalRadioContainer: {
     marginTop: margin(20),
     gap: gap(10),
+  },
+  floatingButton: {
+    position: 'absolute',
+    zIndex: 1000,
+    bottom: padding(100),
+    alignSelf: 'center',
+    backgroundColor: colors.sucess,
+    paddingVertical: padding(8),
+    paddingHorizontal: padding(16),
+    borderRadius: 50,
+  },
+  floatingButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: gap(5),
+  },
+  floatingButtonText: {
+    fontSize: font(14),
+    fontFamily: fonts.popSemiBold,
+    color: '#fff',
+  },
+  floatingButtonTextInput: {
+    width: widthResponsive(220),
+    fontFamily: fonts.inMedium,
+    fontSize: font(16),
+    color: '#000',
+  },
+  opendDiscountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  opendDiscountFloatingBtn: {
+    backgroundColor: '#fff',
+    borderWidth: 5,
+    borderColor: colors.border,
   },
 });
 
