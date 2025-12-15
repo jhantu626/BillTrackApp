@@ -14,7 +14,7 @@ import {useBusiness} from '../../Contexts/AuthContext';
 import {useRoute} from '@react-navigation/native';
 import {invoiceService} from '../../Services/InvoiceService';
 import {API_URL} from '../../utils/config';
-import {icon,font} from '../../utils/responsive';
+import {icon, font} from '../../utils/responsive';
 import {
   calculateInvoiceData,
   formatDate,
@@ -55,6 +55,8 @@ const InvoiceDetails = () => {
       {name: 'Chicken Kebab', quantity: 1, price: 180},
     ],
   };
+
+  console.log(invoice);
 
   // STATE VARIABLES
   const [invoiceItems, setInvoiceItems] = useState([]);
@@ -107,16 +109,14 @@ const InvoiceDetails = () => {
     };
   }, [width]);
 
-
   const fetchInvoices = async () => {
     try {
       setIsLoading(true);
       const data = await invoiceService.getInvoiceItems(invoice.id);
-
+      console.log('invoice data', data);
       if (data?.status) {
         // Call the calculation function
         const result = calculateInvoiceData(data?.items);
-
         // Update all states with the returned values
         setTotalQuantity(result.totalQuantity);
         setSubTotalAmount(result.subTotalAmount);
@@ -164,24 +164,15 @@ const InvoiceDetails = () => {
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text
-              style={[
-                styles.businessText,
-                {fontSize: font(20)},
-              ]}>
+            <Text style={[styles.businessText, {fontSize: font(20)}]}>
               {business?.name}
             </Text>
             {business?.phone && (
               <View style={styles.topKeyValueStyle}>
-                <Text
-                  style={[styles.keyText, {fontSize: font(14)}]}>
+                <Text style={[styles.keyText, {fontSize: font(14)}]}>
                   Phone Numer:{' '}
                 </Text>
-                <Text
-                  style={[
-                    styles.valueText,
-                    {fontSize: font(14)},
-                  ]}>
+                <Text style={[styles.valueText, {fontSize: font(14)}]}>
                   {invoiceData.businessPhone}
                 </Text>
               </View>
@@ -191,25 +182,17 @@ const InvoiceDetails = () => {
                 Address:{' '}
               </Text>
               <Text
-                style={[
-                  styles.valueText,
-                  {width: '50%', fontSize: font(14)},
-                ]}>
+                style={[styles.valueText, {width: '50%', fontSize: font(14)}]}>
                 {business?.street}, {business?.city}, {business?.state},{' '}
                 {business?.pinCode}
               </Text>
             </View>
             {business?.gstNumber && (
               <View style={styles.topKeyValueStyle}>
-                <Text
-                  style={[styles.keyText, {fontSize: font(14)}]}>
+                <Text style={[styles.keyText, {fontSize: font(14)}]}>
                   GST NO :{' '}
                 </Text>
-                <Text
-                  style={[
-                    styles.valueText,
-                    {fontSize: font(14)},
-                  ]}>
+                <Text style={[styles.valueText, {fontSize: font(14)}]}>
                   {business?.gstNumber}
                 </Text>
               </View>
@@ -226,34 +209,18 @@ const InvoiceDetails = () => {
                 styles.subSecondContainer,
                 {gap: sizes.subSecondContainerGap},
               ]}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Invoice No : {invoice.invoiceNumber}{' '}
               </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Date : {formatDate(invoice?.createdAt)}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 {/* Billed By : {invoiceData.billedBy} */}
               </Text>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Time : {formatTime12Hour(invoice?.createdAt)}
               </Text>
             </View>
@@ -266,11 +233,7 @@ const InvoiceDetails = () => {
             ]}>
             {invoice.customerNumber && (
               <View style={styles.subSecondContainer}>
-                <Text
-                  style={[
-                    styles.invoiceText,
-                    {fontSize: font(14)},
-                  ]}>
+                <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                   Customer : +91 {invoice?.customerNumber}
                 </Text>
               </View>
@@ -303,7 +266,6 @@ const InvoiceDetails = () => {
                   width: '20%',
                   textAlign: 'right',
                   fontSize: sizes.invoiceTitleFontSize,
-                  
                 },
               ]}>
               Price
@@ -374,24 +336,36 @@ const InvoiceDetails = () => {
               ],
             ]}>
             <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Total Quantity : {totalQuantity}
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Sub Total : ₹{subTotalAmount.toFixed(2)}
               </Text>
             </View>
           </View>
+          {invoice?.discountAmount && (
+            <View
+              style={[
+                [
+                  styles.secondContainer,
+                  {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+                ],
+              ]}>
+              <View style={styles.subSecondContainer}>
+                <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                  Total Discount:
+                </Text>
+              </View>
+              <View style={styles.subSecondContainer}>
+                <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                  ₹{invoice?.discountAmount}
+                </Text>
+              </View>
+            </View>
+          )}
           <DottedDivider borderWidth={0.8} />
           {gstList.map((item, index) => (
             <View
@@ -401,21 +375,13 @@ const InvoiceDetails = () => {
                 {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
               ]}>
               <View style={styles.subSecondContainer}>
-                <Text
-                  style={[
-                    styles.invoiceText,
-                    {fontSize: font(14)},
-                  ]}>
+                <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                   ₹{item?.rate.toFixed(2)} @ {item?.gstType} -{' '}
                   {item?.gstPercentage}%
                 </Text>
               </View>
               <View style={styles.subSecondContainer}>
-                <Text
-                  style={[
-                    styles.invoiceText,
-                    {fontSize: font(14)},
-                  ]}>
+                <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                   ₹{item?.gstAmount.toFixed(2)}
                 </Text>
               </View>
@@ -433,11 +399,7 @@ const InvoiceDetails = () => {
               </Text>
             </View>
             <View style={styles.subSecondContainer}>
-              <Text
-                style={[
-                  styles.invoiceText,
-                  {fontSize: font(14)},
-                ]}>
+              <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
                 Total Amount : ₹{invoice.totalAmount}
               </Text>
             </View>

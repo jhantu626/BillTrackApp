@@ -294,6 +294,7 @@ const CreateBill = () => {
         customerNumber: phoneNumber,
         items: selectedItems,
         paymentMode: paymentMethod,
+        discount,
       });
       if (data?.status) {
         ToastService.show({
