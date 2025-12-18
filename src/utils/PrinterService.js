@@ -175,6 +175,16 @@ class PrinterService {
         config,
       );
 
+      const discountAmount=parseFloat(invoice
+        ?.discountAmount);
+      if(discountAmount>0){
+        printData += this.formatTotalLine(
+          'Discount:',
+          `RS -${discountAmount.toFixed(2)}`,
+          config,
+        );
+      }
+
       printData += DOTTED_LINE + LINE_FEED;
 
       // GST Details
