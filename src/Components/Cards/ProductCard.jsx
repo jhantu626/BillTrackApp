@@ -50,7 +50,7 @@ const ProductCard = memo(
         </TouchableOpacity>
         <Text
           style={[styles.titleText, {fontSize: font(12)}]}
-          numberOfLines={1}>
+          numberOfLines={2}>
           {item?.title}
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
