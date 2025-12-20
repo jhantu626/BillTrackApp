@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View, StyleSheet} from 'react-native';
 import ShimmerLine from './ShimmerLine';
-import { gap, HOME_CHART_HEIGHT, margin, padding } from '../../utils/responsive';
-import { colors } from '../../utils/colors';
+import {gap, HOME_CHART_HEIGHT, margin, padding} from '../../utils/responsive';
+import {colors} from '../../utils/colors';
 
 const HomeChartShimmer = () => {
   return (
@@ -17,7 +17,7 @@ const HomeChartShimmer = () => {
       {/* Sales title shimmer */}
       <View style={styles.salesContainer}>
         <ShimmerLine width="40%" height={20} radius={4} />
-        
+
         {/* Sales amount and percentage shimmer */}
         <View style={styles.sales}>
           <ShimmerLine width="35%" height={30} radius={6} />
@@ -31,16 +31,16 @@ const HomeChartShimmer = () => {
           {[40, 70, 55, 80, 60, 45, 85].map((height, index) => (
             <View key={index} style={styles.barWrapper}>
               <ShimmerLine
-                width={22} 
-                // height={`${height}%`} 
+                width={22}
+                // height={`${height}%`}
                 height={(HOME_CHART_HEIGHT * height) / 100}
                 radius={4}
                 baseColor="#e5e5e5"
                 highlightColor="#f2f2f2"
               />
-              <ShimmerLine 
-                width={24} 
-                height={16} 
+              <ShimmerLine
+                width={24}
+                height={16}
                 radius={3}
                 baseColor="#f0f0f0"
                 highlightColor="#f5f5f5"
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
-    height: HOME_CHART_HEIGHT+16,
+    height: HOME_CHART_HEIGHT + 16,
     paddingHorizontal: padding(10),
   },
   barWrapper: {
@@ -97,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeChartShimmer;
+export default memo(HomeChartShimmer);

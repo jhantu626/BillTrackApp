@@ -1,10 +1,10 @@
-import React, {useMemo} from 'react';
+import React, {memo, useMemo} from 'react';
 import {View, Dimensions} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
 import {colors} from '../../utils/colors';
 import {font, HOME_CHART_HEIGHT} from '../../utils/responsive';
 
-const SalesAreaChart = React.memo(({barData = []}) => {
+const SalesAreaChart = memo(({barData = []}) => {
   // Memoize chart calculations to prevent unnecessary recalculations
   const chartConfig = useMemo(() => {
     const maxValue = Math.max(...barData.map(item => item.value));
