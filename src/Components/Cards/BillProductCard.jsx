@@ -12,7 +12,7 @@ import {fonts} from '../../utils/fonts';
 import Lucide from '@react-native-vector-icons/lucide';
 import {colors} from '../../utils/colors';
 import {API_URL} from '../../utils/config';
-import {font} from '../../utils/responsive';
+import {font, gap} from '../../utils/responsive';
 
 const BillProductCard = memo(
   ({width = 113, item, setQuantity, setTotalPrice}) => {
@@ -133,10 +133,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: gap(15),
   },
   priceText: {
-    fontSize: 14,
+    fontSize: font(12),
     fontFamily: fonts.inBold,
     color: '#000',
   },

@@ -13,7 +13,7 @@ import {colors} from '../../utils/colors';
 import AntDesign from '@react-native-vector-icons/ant-design';
 import {API_URL} from '../../utils/config';
 import {SlideOutDown} from 'react-native-reanimated';
-import {font} from '../../utils/responsive';
+import {font, gap} from '../../utils/responsive';
 
 const ProductCard = memo(
   ({
@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 8,
+    justifyContent: 'space-between'
   },
   image: {
     width: '100%',
@@ -94,10 +95,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: gap(15),
   },
   priceText: {
-    fontSize: 14,
+    fontSize: font(12),
     fontFamily: fonts.inBold,
     color: '#000',
   },
