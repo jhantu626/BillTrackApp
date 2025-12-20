@@ -83,7 +83,7 @@ const BillProductCard = memo(
         </TouchableOpacity>
         <Text
           style={[styles.titleText, {fontSize: font(12)}]}
-          numberOfLines={1}>
+          numberOfLines={2}>
           {item?.name}
         </Text>
         <View style={[styles.bottomContainer, {marginTop: bottomMarginTop}]}>
@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 8,
+    justifyContent: 'space-between'
   },
   image: {
     width: '100%',
