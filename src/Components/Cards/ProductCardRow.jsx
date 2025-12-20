@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   leftCOntainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: gap(16),
@@ -69,11 +70,15 @@ const styles = StyleSheet.create({
   },
   leftRightContainer: {
     gap: gap(6),
+    flex: 1
   },
   nameText: {
     fontSize: font(14),
-    fontFamily: fonts.inBold,
+    fontFamily: fonts.inSemiBold,
     color: '#000',
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    letterSpacing: 0.5,
   },
   subNameText: {
     fontSize: font(12),
