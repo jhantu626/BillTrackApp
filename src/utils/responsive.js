@@ -53,5 +53,8 @@ export const height70 = heightResponsive(BASE_HEIGHT * 0.7);
 export const ScreenWidth = width;
 export const ScreenHeight = height;
 
+// for chart bar height
+export const HOME_CHART_HEIGHT = 225;
+
 // Export flag in case you need it
 export const isTabletDevice = isTablet;

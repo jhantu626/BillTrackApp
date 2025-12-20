@@ -60,7 +60,9 @@ const HomeChartComponent = memo(
         }
       } catch (error) {
       } finally {
-        setIsLaoding(false);
+        setTimeout(()=>{
+          setIsLaoding(false);
+        },2000)
       }
     }, [selectedPriod]);
 

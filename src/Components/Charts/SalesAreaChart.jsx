@@ -2,7 +2,7 @@ import React, {useMemo} from 'react';
 import {View, Dimensions} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
 import {colors} from '../../utils/colors';
-import {font} from '../../utils/responsive';
+import {font, HOME_CHART_HEIGHT} from '../../utils/responsive';
 
 const SalesAreaChart = React.memo(({barData = []}) => {
   // Memoize chart calculations to prevent unnecessary recalculations
@@ -44,6 +44,7 @@ const SalesAreaChart = React.memo(({barData = []}) => {
       <BarChart
         barWidth={chartConfig.calculatedBarWidth}
         spacing={chartConfig.calculatedSpacing}
+        height={HOME_CHART_HEIGHT}
         noOfSections={3}
         barBorderRadius={4}
         frontColor={colors.primary}
