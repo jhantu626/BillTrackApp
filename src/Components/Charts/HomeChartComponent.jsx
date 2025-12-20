@@ -31,7 +31,7 @@ const HomeChartComponent = memo(
     const [salesPercentage, setSalesPercentage] = useState(0);
 
     // Loading State
-    const [isLoading, setIsLaoding] = useState(false);
+    const [isLoading, setIsLaoding] = useState(true);
 
     const fetchSales = useCallback(async () => {
       try {
