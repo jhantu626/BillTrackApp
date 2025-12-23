@@ -15,7 +15,7 @@ const AuthLayout = ({ children }) => {
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.primary} />
       <ImageBackground
         resizeMode="cover"
         source={require('./../../../asset/images/authBack.png')}
