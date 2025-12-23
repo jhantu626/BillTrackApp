@@ -76,7 +76,7 @@ const SortOption = memo(({label, value, isSelected, onSelect, isLast}) => (
 
 const Invoice = () => {
   const token = useAuthToken();
-  const subscription=useSubscription()
+  const subscription = useSubscription();
 
   // STATE VARIABLES
   const [sortBy, setSortBy] = useState('');
@@ -111,21 +111,27 @@ const Invoice = () => {
     [],
   );
 
-  const fetchInvoices = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const data = await invoiceService.getInvoices(token, pageNumber, 8);
-      if (data?.status) {
-        setInvoices(data?.data);
-        const pagination = data?.pagination;
-        setPaginationTotalPage(pagination?.totalPage);
-        setPaginationHasNextPage(pagination?.hasNext);
+  /* FETCH INVOICES OPTIMIZATION */
+  const fetchInvoices = useCallback(
+    async (page = 0) => {
+      try {
+        setIsLoading(true);
+        const data = await invoiceService.getInvoices(token, page, 8);
+        if (data?.status) {
+          setInvoices(data?.data);
+          const pagination = data?.pagination;
+          setPaginationTotalPage(pagination?.totalPage);
+          setPaginationHasNextPage(pagination?.hasNext);
+        }
+        console.log(JSON.stringify(data))
+      } catch (error) {
+        console.error('Fetch invoices error:', error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token, pageNumber]);
+    },
+    [token],
+  );
 
   const fetchMore = useCallback(
     async nextPage => {
@@ -141,6 +147,7 @@ const Invoice = () => {
           setPaginationHasNextPage(pagination?.hasNext);
         }
       } catch (error) {
+        console.error('Fetch more error:', error);
       } finally {
         setIsLoading(false);
       }
@@ -150,17 +157,18 @@ const Invoice = () => {
 
   useEffect(() => {
     if (pageNumber === 0) {
-      fetchInvoices();
+      fetchInvoices(0);
     } else {
       fetchMore(pageNumber);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNumber]);
 
+  /* ON REFRESH OPTIMIZATION */
   const onRefresh = useCallback(async () => {
     setPageNumber(0);
     setIsRefreshing(true);
-    fetchInvoices();
+    await fetchInvoices(0);
     setIsRefreshing(false);
   }, [fetchInvoices]);
 
@@ -185,12 +193,6 @@ const Invoice = () => {
     ),
     [handleOpenBottomSheet],
   );
-  // Memoized data
-  const flatListData = useMemo(
-    () => (isLoading && pageNumber === 0 ? SHIMMER_DATA : invoices),
-    [isLoading, pageNumber, invoices],
-  );
-
 
   // Optimized render functions
   const keyExtractor = useCallback(
@@ -198,14 +200,15 @@ const Invoice = () => {
     [],
   );
 
+  /* RENDER ITEM OPTIMIZATION */
   const renderItem = useCallback(
     ({item}) =>
-      isLoading && pageNumber === 0 ? (
+      typeof item === 'number' ? (
         <InvoiceCardShimmer />
       ) : (
         <InvoiceCard invoice={item} />
       ),
-    [isLoading, pageNumber],
+    [],
   );
 
   const renderSortOption = useCallback(
@@ -252,13 +255,18 @@ const Invoice = () => {
     setQuery(text);
   }, []);
 
+  /* FILTERED INVOICES OPTIMIZATION */
   const filteredInvoices = useMemo(() => {
-    if (!flatListData || !query) return flatListData;
+    const data = isLoading && pageNumber === 0 ? SHIMMER_DATA : invoices;
 
-    return flatListData.filter(invoice =>
-      invoice?.invoiceNumber?.toLowerCase().includes(query.toLowerCase()),
+    // Safety check: specific handling for SHIMMER_DATA to avoid property access on numbers
+    if (data === SHIMMER_DATA) return SHIMMER_DATA;
+    if (!query) return data;
+
+    return data.filter(invoice =>
+      invoice?.invoiceNumber?.toLowerCase().includes(query.toLowerCase()) || invoice?.customerNumber?.toLowerCase().includes(query.toLowerCase()),
     );
-  }, [flatListData, query]);
+  }, [isLoading, pageNumber, invoices, query]);
 
   return (
     <GestureHandlerRootView style={styles.rootView}>
