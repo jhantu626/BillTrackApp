@@ -302,7 +302,7 @@ const SalesReport = memo(() => {
                       },
                     ]}>
                     {currentSalesPercentage >= 0 ? '+' : ''}
-                    {currentSalesPercentage}%
+                    {currentSalesPercentage.toFixed(2)}%
                   </Text>
                   <Ionicons
                     name={currentSalesPercentage >= 0 ? 'arrow-up' : 'arrow-up'}
@@ -334,7 +334,7 @@ const SalesReport = memo(() => {
                       },
                     ]}>
                     {previousSalesPercentage >= 0 ? '+' : ''}
-                    {previousSalesPercentage}%
+                    {previousSalesPercentage.toFixed(2)}%
                   </Text>
                   <Ionicons
                     name={
@@ -351,9 +351,7 @@ const SalesReport = memo(() => {
                   ₹ {chartData?.previousTotalSales}
                 </Text>
                 <Text style={styles.salesBottomText} numberOfLines={2}>
-                  Compared to (₹{' '}
-                  {chartData?.previousTotalSales - chartData?.totalSales}{' '}
-                  current period)
+                  Compared to (₹ {chartData?.totalSales} current period)
                 </Text>
               </View>
             </View>
