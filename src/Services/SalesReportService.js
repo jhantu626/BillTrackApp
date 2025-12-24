@@ -22,6 +22,27 @@ class SalesReportService {
       return data;
     }
   }
+
+  // Get Sales Report By Date Range
+  async getSalesReportByDateRange({token, startDate, endDate, type}) {
+    try {
+      const payload = {
+        fromDate: startDate,
+        toDate: endDate,
+        format: type,
+      };
+      const response = await axios.post('https://test.api.smscannon.in/api/v1/invoice/generate', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
 }
 
 const salesReportService = new SalesReportService();
