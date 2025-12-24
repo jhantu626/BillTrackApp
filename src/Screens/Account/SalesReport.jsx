@@ -38,6 +38,7 @@ import {useAuthToken} from '../../Contexts/AuthContext';
 import {salesReportService} from '../../Services/SalesReportService';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import RNFS from 'react-native-fs';
+import ToastService from '../../Components/Toasts/ToastService';
 
 const SalesReport = memo(() => {
   const token = useAuthToken();
@@ -166,6 +167,7 @@ const SalesReport = memo(() => {
       startDate.setHours(0, 0, 0, 0);
     } else {
       setIsModalOpen(true);
+      return;
     }
 
     if (startDate && endDate) {
@@ -208,6 +210,25 @@ const SalesReport = memo(() => {
       console.log('filePath', filePath);
     } catch (error) {
       console.log('error', error);
+    } finally {
+      setIsDownloadLoading(false);
+      ToastService.show({
+        message: 'Report downloaded successfully',
+        type: 'success',
+        duration: 2000,
+      });
+      setTimeout(() => {
+        handleCloseModal();
+        handleCloseBottomSheet();
+      }, 500);
+    }
+  };
+
+  const handleApplyDownload = async () => {
+    try {
+      setIsDownloadLoading(true);
+      handleDownloadReport(reportEndDate, reportStartDate);
+    } catch (error) {
     } finally {
       setIsDownloadLoading(false);
     }
@@ -448,7 +469,7 @@ const SalesReport = memo(() => {
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
-      <CommonModal visible={isModalOpen}>
+      <CommonModal visible={isModalOpen} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
             <Text style={{fontSize: font(18), fontFamily: fonts.inMedium}}>
@@ -499,8 +520,15 @@ const SalesReport = memo(() => {
               <Text>{formatDate(reportEndDate)}</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.modalApplyButton}>
-            <Text style={styles.modalApplyButtonText}>Apply</Text>
+          <TouchableOpacity
+            style={styles.modalApplyButton}
+            disabled={isDownloadLoading}
+            onPress={handleApplyDownload}>
+            {isDownloadLoading ? (
+              <ActivityIndicator size="small" color={'#fff'} />
+            ) : (
+              <Text style={styles.modalApplyButtonText}>Apply</Text>
+            )}
           </TouchableOpacity>
         </View>
       </CommonModal>
