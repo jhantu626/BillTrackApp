@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet, ToastAndroid} from 'react-native';
 import React from 'react';
 import {Layout} from '../../Layout';
 import {
@@ -27,9 +27,13 @@ const AppSettings = () => {
           subtitle="Automatically print bill when 'Print' button is pressed in create bill"
           isSwitch={appSettings.PRINT_ON_CREATE_BILL}
           onValueChange={async value => {
+            if (!isPremiumPlanAndActive) {
+              ToastAndroid.show('Premium Plan Required', ToastAndroid.SHORT);
+              return;
+            }
             await updateAppSettings('PRINT_ON_CREATE_BILL', value);
           }}
-          disabled={!isPremiumPlanAndActive}
+          // disabled={!isPremiumPlanAndActive}
         />
         <DottedDivider marginVertical={0} />{' '}
         <SettingSwitchCard
@@ -61,7 +65,7 @@ const AppSettings = () => {
             }
             await updateAppSettings('SEND_TO_SMS', value);
           }}
-          disabled={!isPremiumPlanAndActive}
+          // disabled={!isPremiumPlanAndActive}
         />
         <DottedDivider marginVertical={0} />
       </ScrollView>
