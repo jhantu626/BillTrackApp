@@ -35,6 +35,9 @@ import Product from './Product/Product';
 // BORWSER SCREEN
 import BrowserScreen from './BrowserScreen/BrowserScreen';
 
+// OFFLINE SCREEN
+import OfflineScreen from './OfflineScreen/OfflineScreen';
+
 export {
   Onboarding,
   AuthHome,
@@ -59,4 +62,5 @@ export {
   ActiveProducts,
   Business,
   AppSettings,
+  OfflineScreen
 };

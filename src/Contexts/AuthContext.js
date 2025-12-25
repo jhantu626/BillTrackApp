@@ -6,6 +6,7 @@ import {deviceService} from '../Services/DeviceService';
 import {getDeviceDetails} from '../utils/DeviceInfo';
 import webHook from '../utils/WebHook';
 import {subscriptionService} from '../Services/SubscriptionService';
+import {useNetworkContext} from './NetworkContext';
 
 const AuthContext = createContext();
 
@@ -15,6 +16,8 @@ const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [business, setBusiness] = useState(null);
   const [subscription, setSubscription] = useState(null);
+
+  const isOnline = useNetworkContext('isOnline');
 
   const login = async (token, user = {}) => {
     try {
@@ -164,7 +167,10 @@ const AuthProvider = ({children}) => {
           }
         }
       }
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      console.log('subscription call');
+    }
   };
 
   const resetSubscription = async (subscriptionData = null) => {
@@ -189,10 +195,12 @@ const AuthProvider = ({children}) => {
   };
 
   useEffect(() => {
-    check();
-    deviceVerification();
-    subscriptionCheck();
-  }, []);
+    if (isOnline) {
+      check();
+      deviceVerification();
+      subscriptionCheck();
+    }
+  }, [isOnline]);
 
   useEffect(() => {
     if (authToken) {

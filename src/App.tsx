@@ -21,6 +21,7 @@ import {
   InvoiceDetails,
   ItemMaster,
   Login,
+  OfflineScreen,
   Onboarding,
   OtpVerify,
   PrinterSetup,
@@ -41,6 +42,8 @@ import PrinterProvider from './Contexts/PrinterContext';
 import { requestNotificationPermission } from './utils/permissionHelper';
 import { notificationService } from './utils/NotificationService';
 import { AppSettingProvider } from './Contexts/AppSettingContexts';
+import NetworkProvider, { useNetworkContext } from './Contexts/NetworkContext';
+import { isPinOrFingerprintSet } from 'react-native-device-info';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -170,6 +173,13 @@ const AppStack = memo(() => {
       ),
     [],
   );
+
+  const isOnline = useNetworkContext("isOnline")
+  if (!isOnline) {
+    return <OfflineScreen />
+  }
+
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -290,18 +300,20 @@ const AppNav = () => {
 };
 const App = () => {
   return (
-    <AuthProvider>
-      <AppSettingProvider>
-        <ProductProvider>
-          <PrinterProvider>
-            <NavigationContainer>
-              <AppNav />
-              <ToastContainer />
-            </NavigationContainer>
-          </PrinterProvider>
-        </ProductProvider>
-      </AppSettingProvider>
-    </AuthProvider >
+    <NetworkProvider>
+      <AuthProvider>
+        <AppSettingProvider>
+          <ProductProvider>
+            <PrinterProvider>
+              <NavigationContainer>
+                <AppNav />
+                <ToastContainer />
+              </NavigationContainer>
+            </PrinterProvider>
+          </ProductProvider>
+        </AppSettingProvider>
+      </AuthProvider >
+    </NetworkProvider>
   );
 };
 
