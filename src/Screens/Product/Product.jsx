@@ -436,6 +436,7 @@ const Product = () => {
                   value={productName}
                   setValue={setProductName}
                   hasError={productName && !validateName(productName)}
+                  multiline={true}
                 />
               </View>
               <View style={[styles.inputDoubleContianer]}>

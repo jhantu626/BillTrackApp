@@ -24,6 +24,7 @@ const SimpleTextInput = ({
   placeholderTextColor = colors.border,
   fontSize = font(14),
   disabled = false,
+  multiline=false
 }) => {
   return (
     <View
@@ -51,6 +52,7 @@ const SimpleTextInput = ({
         style={[styles.inputBox, {fontSize: fontSize}]}
         placeholderTextColor={placeholderTextColor}
         editable={!disabled}
+        multiline={multiline}
       />
       {value.length > 0 && (
         <Octicons
