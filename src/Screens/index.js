@@ -28,6 +28,7 @@ import Settings from './Account/Settings/Settings';
 import PrinterSetup from './Account/Settings/PrinterSetup';
 import AppSettings from './Account/Settings/AppSettings';
 import ActiveProducts from './Account/ActiveProducts';
+import Transaction from './Account/Transaction';
 
 // PRODUCT
 import Product from './Product/Product';
@@ -51,6 +52,7 @@ export {
   InvoiceDetails,
   Account,
   Product,
+  Transaction,
   Subscription,
   HelpAndSupport,
   About,

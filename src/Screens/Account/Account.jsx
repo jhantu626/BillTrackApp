@@ -40,7 +40,7 @@ import ToastService from '../../Components/Toasts/ToastService';
 import {userService} from '../../Services/UserService';
 import {useProduct} from '../../Contexts/ProductContexts';
 import {usePrinter} from '../../Contexts/PrinterContext';
-import { useAppSettings } from '../../Contexts/AppSettingContexts';
+import {useAppSettings} from '../../Contexts/AppSettingContexts';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -74,7 +74,6 @@ const Account = memo(() => {
       await clearAllProducts();
       await clearPrinter();
       await resetSettings();
-
     } catch (error) {
     } finally {
       setLogoutLoading(false);
@@ -208,6 +207,11 @@ const Account = memo(() => {
               <Lucide name="crown" size={icon(22)} color={colors.primary} />
             }
             title="Subscriptions"
+          />
+          <SettingItemsCard
+            onpress={() => handleNavigation({screen: 'Transaction'})}
+            mainIcon={<Lucide name="arrow-right-left" size={icon(22)} color={colors.primary} />}
+            title="Transaction"
           />
           <SettingItemsCard
             mainIcon={

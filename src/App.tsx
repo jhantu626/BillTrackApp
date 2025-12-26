@@ -29,6 +29,7 @@ import {
   SalesReport,
   Settings,
   Subscription,
+  Transaction,
 } from './Screens';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { fonts } from './utils/fonts';
@@ -156,6 +157,7 @@ const AccountStack = memo(() => {
       <Stack.Screen name="Browser" component={BrowserScreen} />
       <Stack.Screen name="Settings" component={SettingStack} />
       <Stack.Screen name="ActiveProducts" component={ActiveProducts} />
+      <Stack.Screen name="Transaction" component={Transaction} />
     </Stack.Navigator>
   );
 });
