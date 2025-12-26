@@ -62,11 +62,13 @@ const ActiveProducts = () => {
   );
 
   useEffect(() => {
-    Alert.alert(
-      '*Notice',
-      '• This page contains editable settings.\n• Changes are NOT saved automatically.\n• Tap "SAVE CHANGES" after editing.',
-      [{text: 'Got it'}],
-    );
+    setTimeout(()=>{
+      Alert.alert(
+        '*Notice',
+        '• This page contains editable settings.\n• Changes are NOT saved automatically.\n• Tap "SAVE CHANGES" after editing.',
+        [{text: 'Got it'}],
+      );
+    },1000);
   }, []);
 
   useFocusEffect(
