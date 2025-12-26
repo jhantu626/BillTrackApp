@@ -25,6 +25,7 @@ class SubscriptionService {
     orderId,
     paymentId,
     paymentSignature,
+    amount
   }) {
     try {
       const uri = this.baseUrl;
@@ -33,6 +34,7 @@ class SubscriptionService {
         orderId: orderId,
         paymentId: paymentId,
         paymentSignature: paymentSignature,
+        amount: amount
       };
       const response = await axios.post(uri, payload, {
         headers: {Authorization: `Bearer ${token}`},

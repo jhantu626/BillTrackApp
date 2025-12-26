@@ -197,6 +197,7 @@ const Subscription = memo(() => {
                 orderId: data?.razorpay_order_id,
                 paymentId: data?.razorpay_payment_id,
                 paymentSignature: data?.razorpay_signature,
+                amount: plan.price,
               });
             if (subscriptionPurchase?.status) {
               const currentSubscriptionAfterSubscribe =
