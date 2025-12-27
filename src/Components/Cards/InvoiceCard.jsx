@@ -158,7 +158,7 @@ const InvoiceCard = ({invoice}) => {
         <Text style={[styles.dateText]}>{formatDate(invoice?.createdAt)}</Text>
         <View style={styles.right}>
           <View style={styles.paidContainer}>
-            <Text style={[styles.paidText]}>{invoice?.status}</Text>
+            <Text style={[styles.paidText]}>{invoice?.status.toUpperCase()}</Text>
           </View>
           <Text style={[styles.priceText]}>₹ {invoice?.totalAmount}</Text>
         </View>

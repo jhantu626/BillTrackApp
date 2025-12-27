@@ -70,7 +70,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { useInvoice } from '../../Contexts/InvoiceContext';
+import {useInvoice} from '../../Contexts/InvoiceContext';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -86,7 +86,7 @@ const ITEM_WIDTH =
 const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
 
 const CreateBill = () => {
-  const addInvoices=useInvoice('addInvoice')
+  const addInvoices = useInvoice('addInvoice');
   const {printer} = usePrinter();
   const business = useBusiness();
   const {getByKey} = useAppSettings();
@@ -97,7 +97,7 @@ const CreateBill = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [discount, setDiscount] = useState('0');
+  const [discount, setDiscount] = useState('');
 
   const [isDiscountOpen, setIsDiscountOpen] = useState(false);
 
@@ -222,13 +222,13 @@ const CreateBill = () => {
       };
       const data = await invoiceService.createInvoice(payload);
       if (data?.status) {
-        addInvoices(data?.invoice)
+        addInvoices(data?.invoice);
         ToastService.show({
           message: 'Bill Created Successfully',
           type: 'success',
           position: 'top',
         });
-        console.log("invoice",JSON.stringify(data));
+        console.log('invoice', JSON.stringify(data));
         setPhoneNumber('');
         setDiscount(0);
         setQuantity(0);
@@ -301,8 +301,8 @@ const CreateBill = () => {
         discount,
       });
       if (data?.status) {
-        console.log("data",JSON.stringify(data));
-        addInvoices(data?.invoice)
+        console.log('data', JSON.stringify(data));
+        addInvoices(data?.invoice);
         ToastService.show({
           message: 'Bill Created Successfully',
           type: 'success',
@@ -424,6 +424,9 @@ const CreateBill = () => {
                       }
                     }}
                     keyboardType="decimal-pad"
+                    placeholder="Discount"
+                    placeholderTextColor={'#00000030'}
+                    selectionColor={'#000'}
                   />
                   <TouchableOpacity
                     onPress={() => {
