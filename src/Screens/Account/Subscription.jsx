@@ -202,7 +202,6 @@ const Subscription = memo(() => {
             if (subscriptionPurchase?.status) {
               const currentSubscriptionAfterSubscribe =
                 subscriptionPurchase?.data;
-              console.log('current subscription', subscriptionPurchase);
               await resetSubscription({
                 plan: currentSubscriptionAfterSubscribe?.plan,
                 startDate: currentSubscriptionAfterSubscribe?.startDate,
@@ -266,6 +265,9 @@ const Subscription = memo(() => {
                   <Text style={styles.featuresTitleText}>
                     {plan.name} Features
                   </Text>
+                  {plan?.id === subscription?.plan && (
+                    <Text style={styles.saveText}>Active Plan</Text>
+                  )}
                 </View>
 
                 <DottedDivider marginVertical={0} />
@@ -323,10 +325,6 @@ const Subscription = memo(() => {
 
                 {plan.save && (
                   <Text style={styles.saveText}>Save {plan.save}</Text>
-                )}
-
-                {plan?.id === subscription?.plan && (
-                  <Text style={styles.saveText}>current</Text>
                 )}
               </TouchableOpacity>
             ))}
@@ -451,11 +449,14 @@ const styles = StyleSheet.create({
     top: padding(10),
     right: padding(10),
     backgroundColor: colors.sucess + 20,
-    paddingTop: padding(3),
+    paddingVertical: padding(3),
     paddingHorizontal: padding(10),
     borderRadius: 3,
     borderWidth: 0.25,
     borderBottomColor: colors.sucess,
+    fontFamily: fonts.inBold,
+    textAlign: 'center',
+    color: colors.sucess,
   },
   subscribeBtn: {
     width: '100%',
