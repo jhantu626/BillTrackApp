@@ -70,6 +70,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import { useInvoice } from '../../Contexts/InvoiceContext';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -85,6 +86,7 @@ const ITEM_WIDTH =
 const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
 
 const CreateBill = () => {
+  const addInvoices=useInvoice('addInvoice')
   const {printer} = usePrinter();
   const business = useBusiness();
   const {getByKey} = useAppSettings();
@@ -220,11 +222,13 @@ const CreateBill = () => {
       };
       const data = await invoiceService.createInvoice(payload);
       if (data?.status) {
+        addInvoices(data?.invoice)
         ToastService.show({
           message: 'Bill Created Successfully',
           type: 'success',
           position: 'top',
         });
+        console.log("invoice",JSON.stringify(data));
         setPhoneNumber('');
         setDiscount(0);
         setQuantity(0);
@@ -297,6 +301,8 @@ const CreateBill = () => {
         discount,
       });
       if (data?.status) {
+        console.log("data",JSON.stringify(data));
+        addInvoices(data?.invoice)
         ToastService.show({
           message: 'Bill Created Successfully',
           type: 'success',

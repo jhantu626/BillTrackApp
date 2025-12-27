@@ -45,6 +45,7 @@ import { notificationService } from './utils/NotificationService';
 import { AppSettingProvider } from './Contexts/AppSettingContexts';
 import NetworkProvider, { useNetworkContext } from './Contexts/NetworkContext';
 import { isPinOrFingerprintSet } from 'react-native-device-info';
+import InvoiceProvider from './Contexts/InvoiceContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -306,12 +307,14 @@ const App = () => {
       <AuthProvider>
         <AppSettingProvider>
           <ProductProvider>
+            <InvoiceProvider>
             <PrinterProvider>
               <NavigationContainer>
                 <AppNav />
                 <ToastContainer />
               </NavigationContainer>
             </PrinterProvider>
+            </InvoiceProvider>
           </ProductProvider>
         </AppSettingProvider>
       </AuthProvider >

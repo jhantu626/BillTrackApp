@@ -5,8 +5,8 @@ const AppSettingContexts = createContext();
 
 const defautlSettings = {
   PRINT_ON_CREATE_BILL: false, //Automatically print bill when 'Print' button is pressed in create bill screen
-  SEND_WHATSAPP_BILL_ON_CREATE_BILL: false, //Automatically send bill to whatsapp when 'Print' button is pressed in create bill screen
-  SEND_TO_WHATSAPP: false, //Automatically send bill to whatsapp when 'Print' button is pressed in create bill screen
+  SEND_WHATSAPP_BILL_ON_CREATE_BILL: true, //Automatically send bill to whatsapp when 'Print' button is pressed in create bill screen
+  SEND_TO_WHATSAPP: true, //Automatically send bill to whatsapp when 'Print' button is pressed in create bill screen
   SEND_TO_SMS: false, //Automatically send bill to sms when 'Print' button is pressed in create bill screen
 };
 

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Layout} from '../Layout';
 import {
   HomeChartComponent,
@@ -28,8 +28,10 @@ import {
 } from '../../utils/responsive';
 import {invoiceService} from '../../Services/InvoiceService';
 import {useAuthToken} from '../../Contexts/AuthContext';
+import {useInvoice} from '../../Contexts/InvoiceContext';
 
 const Home = () => {
+  const {invoices, resetInvoices} = useInvoice();
   const navigation = useNavigation();
   const token = useAuthToken();
 
@@ -40,14 +42,15 @@ const Home = () => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // state variables
-  const [invoices, setInvoices] = useState([]);
+  // const [invoices, setInvoices] = useState(contextInvoices);
 
   const fetchInvoice = async () => {
     try {
       setIsLoading(true);
       const data = await invoiceService.getInvoices(token, 0, 10);
       if (data?.status) {
-        setInvoices(data?.data || []);
+        // setInvoices(data?.data || []);
+        resetInvoices(data?.data || []);
       }
     } catch (error) {
     } finally {
