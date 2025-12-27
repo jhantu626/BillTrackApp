@@ -12,8 +12,12 @@ const InvoiceProvider = ({children}) => {
     setInvoices(invoices);
   };
 
+  const clearInvoice = () => {
+    setInvoices([]);
+  };
+
   const value = useMemo(
-    () => ({invoices, addInvoice, resetInvoices}),
+    () => ({invoices, addInvoice, resetInvoices, clearInvoice}),
     [invoices],
   );
 

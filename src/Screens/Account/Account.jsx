@@ -41,6 +41,7 @@ import {userService} from '../../Services/UserService';
 import {useProduct} from '../../Contexts/ProductContexts';
 import {usePrinter} from '../../Contexts/PrinterContext';
 import {useAppSettings} from '../../Contexts/AppSettingContexts';
+import {useInvoice} from '../../Contexts/InvoiceContext';
 
 const Account = memo(() => {
   const userName = useUser('name');
@@ -52,6 +53,7 @@ const Account = memo(() => {
   const {clearAllProducts} = useProduct();
   const {clearPrinter} = usePrinter();
   const {resetSettings} = useAppSettings();
+  const clearInvoice = useInvoice('clearInvoice');
 
   //STATE VARIABLES
   const [name, setName] = useState(userName);
@@ -74,6 +76,7 @@ const Account = memo(() => {
       await clearAllProducts();
       await clearPrinter();
       await resetSettings();
+      clearInvoice();
     } catch (error) {
     } finally {
       setLogoutLoading(false);
@@ -210,7 +213,13 @@ const Account = memo(() => {
           />
           <SettingItemsCard
             onpress={() => handleNavigation({screen: 'Transaction'})}
-            mainIcon={<Lucide name="arrow-right-left" size={icon(22)} color={colors.primary} />}
+            mainIcon={
+              <Lucide
+                name="arrow-right-left"
+                size={icon(22)}
+                color={colors.primary}
+              />
+            }
             title="Transaction"
           />
           <SettingItemsCard

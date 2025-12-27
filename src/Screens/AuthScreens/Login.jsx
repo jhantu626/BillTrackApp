@@ -103,6 +103,7 @@ const Login = () => {
                   placeholderTextColor={colors.border}
                   onChangeText={text => setMobile(text)}
                   keyboardType="phone-pad"
+                  onSubmitEditing={sendOtp}
                 />
                 <FontAwesome
                   name="check-circle"
