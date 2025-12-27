@@ -9,43 +9,17 @@ function validateName(name) {
 }
 
 function validateProductName(productName) {
-  // Check if it's a string and not empty after trimming
-  if (typeof productName !== 'string' || productName.trim().length === 0) {
+  if (typeof productName !== 'string' || productName.trim().length < 3 || productName.length > 100) {
     return false;
   }
-
-  const name = productName.trim();
-
-  // Minimum 2, maximum 100 characters (standard in most platforms)
-  if (name.length < 2 || name.length > 100) {
-    return false;
-  }
-
-  // Allow letters, numbers, spaces, and common product name characters
-  // Allowed: - & ' ( ) . , / + @ # %
-  const validPattern = /^[a-zA-Z0-9\s'&().,\/+@#%\-]+$/;
-
-  if (!validPattern.test(name)) {
-    return false;
-  }
-
-  // Prevent too many special characters in a row or bad patterns
-  if (/[&'"(){}\[\]<>\\]/.test(name)) {
-    return false; // Block risky characters like < > { } [ ] \
-  }
-
-  // Prevent multiple spaces in a row
-  if (/\s{3,}/.test(name)) {
-    return false;
-  }
-
-  // Optional: Don't allow name to start or end with space or special chars (except & maybe)
-  if (/^[\s\-.]/.test(name) || /[\s\-.]$/.test(name)) {
-    return false;
-  }
-
-  // All checks passed
-  return true;
+  
+  // Regex pattern based on examples:
+  // - Words: [A-Za-z0-9'-]+ (alphanumeric, hyphen, apostrophe)
+  // - Optional parens: \s*\([^)]*\)? (allows specs like "(Size 10, Black)")
+  // - Overall: ^(word+( optional_parens word*))$
+  const pattern = /^[A-Za-z0-9'-]+(?:\s+[A-Za-z0-9'-]+)*(?:\s*\([^)]*\))?(?:\s+[A-Za-z0-9'-]+)*$/;
+  
+  return pattern.test(productName.trim());
 }
 
 function validateIndianPhone(phoneNumber) {

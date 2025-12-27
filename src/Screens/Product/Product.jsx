@@ -435,7 +435,7 @@ const Product = () => {
                   placeholder={''}
                   value={productName}
                   setValue={setProductName}
-                  hasError={productName && !validateName(productName)}
+                  hasError={productName && !validateProductName(productName)}
                   multiline={true}
                 />
               </View>
