@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Linking, ScrollView, StyleSheet, Text, View} from 'react-native';
 import React, {memo} from 'react';
 import {Layout} from '../Layout';
 import {
@@ -12,9 +12,44 @@ import {font, icon, margin, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import {helpAndSupportNavigations} from '../../utils/data';
 import {useNavigation} from '@react-navigation/native';
+import { useBusiness } from '../../Contexts/AuthContext';
 
 const HelpAndSupport = memo(() => {
+
+  const business=useBusiness('name');
+
   const navigation = useNavigation();
+  const handleCallClick=()=>{
+    const tellUrl=`tel:+918436751388`
+    Linking.openURL(tellUrl)
+  }
+
+  const handleWhatsappChat=async()=>{
+    const encodedMessage=`Hello, this is ${business}. We would like assistance regarding BillTrack. Kindly guide us on the next steps. Thank you.`
+    const whatsappUrl = `whatsapp://send?phone=${+918240105899}&text=${encodeURIComponent(
+        encodedMessage,
+      )}`;
+    
+      try {
+        const canOpen = await Linking.canOpenURL(whatsappUrl);
+    
+        if (canOpen) {
+          await Linking.openURL(whatsappUrl);
+        } else {
+          // Fallback to web if WhatsApp app not installed
+          const webUrl = `https://wa.me/${918240105899}?text=${encodeURIComponent(
+            encodedMessage,
+          )}`;
+          await Linking.openURL(webUrl);
+        }
+      } catch (error) {
+        Alert.alert(
+          'WhatsApp Not Found',
+          'Please install WhatsApp to share invoice.',
+        );
+      }
+  }
+
   return (
     <Layout>
       <SecondaryHeader title="Help & support" isSearch={false} />
@@ -31,6 +66,7 @@ const HelpAndSupport = memo(() => {
                 size={icon(20)}
               />
             }
+            onpress={handleCallClick}
           />
           <SettingItemsCard
             title={'Chat Support'}
@@ -41,6 +77,7 @@ const HelpAndSupport = memo(() => {
                 size={icon(20)}
               />
             }
+            onpress={handleWhatsappChat}
           />
         </View>
         <View style={styles.bottomContainer}>
