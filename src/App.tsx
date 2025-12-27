@@ -44,7 +44,6 @@ import { requestNotificationPermission } from './utils/permissionHelper';
 import { notificationService } from './utils/NotificationService';
 import { AppSettingProvider } from './Contexts/AppSettingContexts';
 import NetworkProvider, { useNetworkContext } from './Contexts/NetworkContext';
-import { isPinOrFingerprintSet } from 'react-native-device-info';
 import InvoiceProvider from './Contexts/InvoiceContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -144,7 +143,7 @@ const SettingStack = memo(() => (
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="HelpAndSupport"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -185,7 +184,7 @@ const AppStack = memo(() => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Account"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

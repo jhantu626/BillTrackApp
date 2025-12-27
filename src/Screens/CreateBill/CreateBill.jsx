@@ -97,7 +97,7 @@ const CreateBill = () => {
   const [paymentMethod, setPaymentMethod] = useState('cash');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [discount, setDiscount] = useState('');
+  const [discount, setDiscount] = useState(0);
 
   const [isDiscountOpen, setIsDiscountOpen] = useState(false);
 
@@ -293,6 +293,14 @@ const CreateBill = () => {
               : null,
           };
         });
+        const payload={
+          token,
+          customerNumber: phoneNumber,
+          items: selectedItems,
+          paymentMode: paymentMethod,
+          discount,
+        }
+
       const data = await invoiceService.createInvoice({
         token,
         customerNumber: phoneNumber,
