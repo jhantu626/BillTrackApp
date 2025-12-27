@@ -293,13 +293,13 @@ const CreateBill = () => {
               : null,
           };
         });
-        const payload={
-          token,
-          customerNumber: phoneNumber,
-          items: selectedItems,
-          paymentMode: paymentMethod,
-          discount,
-        }
+      const payload = {
+        token,
+        customerNumber: phoneNumber,
+        items: selectedItems,
+        paymentMode: paymentMethod,
+        discount,
+      };
 
       const data = await invoiceService.createInvoice({
         token,
@@ -363,6 +363,16 @@ const CreateBill = () => {
     );
   }, [searchQuery, Products]);
 
+  const restartClickOfHeader = () => {
+    setPhoneNumber('');
+    setQuantity(0);
+    setDiscount(0);
+    setTotalPrice(0);
+    setIsDiscountOpen(false);
+    resetProductCount();
+    handleCloseBottomSheet();
+  };
+
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
@@ -372,7 +382,10 @@ const CreateBill = () => {
           <SecondaryHeader
             title="Create Bill"
             query={searchQuery}
+            isRestart={true}
+            isQuestion={false}
             onchangeText={text => setSearchQuery(text)}
+            handleRestartClick={restartClickOfHeader}
           />
           <FlatList
             keyboardShouldPersistTaps="handled"

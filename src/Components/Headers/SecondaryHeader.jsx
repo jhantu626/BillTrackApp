@@ -19,6 +19,13 @@ import {
   icon,
   padding,
 } from '../../utils/responsive';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 
 const SecondaryHeader = ({
   title = 'Title',
@@ -26,6 +33,8 @@ const SecondaryHeader = ({
   isQuestion = true,
   isNotification = true,
   isApps = false,
+  isRestart = false,
+  handleRestartClick = () => {},
   handleAppClick = () => {},
   query = '',
   onchangeText = text => {},
@@ -38,6 +47,21 @@ const SecondaryHeader = ({
   const handleBack = useCallback(() => {
     navigation.goBack();
   }, [navigation]);
+
+  const rotation = useSharedValue(0);
+
+  const rotateStyle = useAnimatedStyle(() => ({
+    transform: [{rotate: `${rotation.value}deg`}],
+  }));
+
+  const onRestartPress = () => {
+    rotation.value = withTiming(rotation.value + 360, {
+      duration: 1500,
+      easing: Easing.out(Easing.cubic), // 👈 very smooth
+    });
+
+    handleRestartClick();
+  };
 
   return (
     <View style={styles.container}>
@@ -78,6 +102,8 @@ const SecondaryHeader = ({
               <Ionicons name="search" size={icon(22)} />
             </Pressable>
           )}
+          {isRestart && <RestartButton onPress={handleRestartClick} />}
+
           {isQuestion && (
             <Pressable>
               <Octicons name="question" size={icon(22)} />
@@ -93,6 +119,31 @@ const SecondaryHeader = ({
     </View>
   );
 };
+
+const RestartButton = memo(({onPress}) => {
+  const rotation = useSharedValue(0);
+
+  const rotateStyle = useAnimatedStyle(() => ({
+    transform: [{rotate: `${rotation.value}deg`}],
+  }));
+
+  const handlePress = () => {
+    rotation.value = withTiming(rotation.value + 360, {
+      duration: 1500,
+      easing: Easing.out(Easing.cubic),
+    });
+
+    onPress();
+  };
+
+  return (
+    <Pressable onPress={handlePress}>
+      <Animated.View style={rotateStyle}>
+        <MaterialDesignIcons name="restart" size={icon(24)} />
+      </Animated.View>
+    </Pressable>
+  );
+});
 
 const styles = StyleSheet.create({
   container: {
