@@ -143,7 +143,7 @@ const SettingStack = memo(() => (
 const AccountStack = memo(() => {
   return (
     <Stack.Navigator
-      initialRouteName="Account"
+      initialRouteName="ItemMaster"
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -184,7 +184,7 @@ const AppStack = memo(() => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Product"
+      initialRouteName="Account"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,

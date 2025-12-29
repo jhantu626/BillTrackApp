@@ -9,10 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {Layout} from '../Layout';
-import {
-  ItemCardShimmer,
-  SecondaryHeader,
-} from '../../Components';
+import {ItemCardShimmer, SecondaryHeader} from '../../Components';
 import {font, gap, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import ItemCard from '../../Components/Cards/ItemCard';
@@ -26,11 +23,11 @@ const ItemMaster = () => {
   const navigation = useNavigation();
   const token = useAuthToken();
 
-
   const [products, setProducts] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaveLoading, setIsSaveLoading] = useState(false);
+  const [query, setQuery] = useState('');
 
   /** Fetch Items */
   const fetchItems = useCallback(async () => {
@@ -38,6 +35,7 @@ const ItemMaster = () => {
       setIsLoading(true);
       const data = await productService.getProductsSuggestions(token);
       setProducts(data?.data || []);
+      console.log('products', JSON.stringify(data?.data));
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -113,6 +111,37 @@ const ItemMaster = () => {
     }
   }, [navigation, selectedItems, token]);
 
+  const filterProducts = useMemo(() => {
+    if (!query) return products;
+
+    const q = query.toLowerCase();
+
+    return products
+      .map(category => {
+        const categoryMatch = category.name.toLowerCase().includes(q);
+
+        const filteredProducts = category.products.filter(p =>
+          p.name.toLowerCase().includes(q),
+        );
+
+        // if category name matches → keep all products
+        if (categoryMatch) {
+          return category;
+        }
+
+        // if any product matches → keep only matched products
+        if (filteredProducts.length > 0) {
+          return {
+            ...category,
+            products: filteredProducts,
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
+  }, [products, query]);
+
   /** Render List Item (Memoized) */
   const renderItem = useCallback(
     ({item, index}) => (
@@ -134,7 +163,14 @@ const ItemMaster = () => {
 
   return (
     <Layout>
-      <SecondaryHeader title="Item Master" />
+      <SecondaryHeader
+        title="Item Master"
+        query={query}
+        onchangeText={text => setQuery(text)}
+        isRestart={true}
+        handleRestartClick={fetchItems}
+        isQuestion={false}
+      />
 
       {isLoading ? (
         <View style={styles.shimmerWrapper}>
@@ -144,7 +180,8 @@ const ItemMaster = () => {
         <FlatList
           style={styles.list}
           contentContainerStyle={styles.container}
-          data={products}
+          // data={products}
+          data={filterProducts}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
         />
@@ -164,7 +201,6 @@ const ItemMaster = () => {
           )}
         </TouchableOpacity>
       </View>
-
     </Layout>
   );
 };
