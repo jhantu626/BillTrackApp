@@ -371,6 +371,9 @@ const Product = () => {
         }}
         query={searchQuery}
         onchangeText={searchQueryChange}
+        isQuestion={false}
+        isRestart={true}
+        handleRestartClick={onRefresh}
       />
       <FlatList
         key={isColumn ? 'd' : 're'}

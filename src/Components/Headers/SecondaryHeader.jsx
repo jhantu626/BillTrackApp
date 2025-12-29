@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  Touchable,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -78,13 +79,13 @@ const SecondaryHeader = ({
               onChangeText={text => onchangeText(text)}
               autoFocus
             />
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 onchangeText('');
                 setSearchActive(false);
               }}>
               <Text style={styles.cancelText}>Cancel</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         ) : (
           <Text style={styles.title}>{title}</Text>
@@ -93,14 +94,14 @@ const SecondaryHeader = ({
       {!isSearchActive && (
         <View style={styles.rightContainer}>
           {isApps && (
-            <Pressable onPress={handleAppClick}>
+            <TouchableOpacity onPress={handleAppClick}>
               <Octicons name="apps" size={icon(22)} />
-            </Pressable>
+            </TouchableOpacity>
           )}
           {isSearch && (
-            <Pressable onPress={() => setSearchActive(true)}>
+            <TouchableOpacity onPress={() => setSearchActive(true)}>
               <Ionicons name="search" size={icon(22)} />
-            </Pressable>
+            </TouchableOpacity>
           )}
           {isRestart && <RestartButton onPress={handleRestartClick} />}
 

@@ -184,7 +184,7 @@ const AppStack = memo(() => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Invoice"
+      initialRouteName="Product"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
