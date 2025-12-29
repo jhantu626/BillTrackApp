@@ -53,7 +53,7 @@ const plans = [
       {label: 'Sales Analytics', value: true},
       {label: 'Print to Printer', value: false},
       {label: 'SMS Sending', value: false},
-      {label: 'Printer Included & Support', value: false},
+      {label: 'Printer Provided & Support', value: false},
     ],
   },
   {
@@ -67,7 +67,7 @@ const plans = [
       {label: 'Sales Analytics', value: true},
       {label: 'Print to Printer', value: true},
       {label: 'SMS Sending', value: true},
-      {label: 'Printer Included & Support', value: false},
+      {label: 'Printer Provided & Support', value: false},
     ],
   },
   {
@@ -82,7 +82,7 @@ const plans = [
       {label: 'Sales Analytics', value: true},
       {label: 'Print to Printer', value: true},
       {label: 'SMS Sending', value: true},
-      {label: 'Printer Included & Support', value: true},
+      {label: 'Printer Provided & Support', value: true},
     ],
   },
 ];
@@ -304,6 +304,7 @@ const Subscription = memo(() => {
                 style={[
                   styles.payBtn,
                   activeIndex === index && {borderColor: '#000'},
+                  plan.id === subscription?.plan && {backgroundColor: colors.sucess+20,borderColor: colors.sucess},
                 ]}
                 onPress={() => handleScrollTo(index)}>
                 <Text style={styles.payBtnTitleText}>{plan.name}</Text>
