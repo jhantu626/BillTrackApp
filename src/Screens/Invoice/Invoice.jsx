@@ -275,6 +275,9 @@ const Invoice = () => {
           title="Invoice list"
           query={query}
           onchangeText={handleChangeText}
+          isQuestion={false}
+          isRestart={true}
+          handleRestartClick={onRefresh}
         />
         <FlatList
           contentContainerStyle={styles.container}
