@@ -91,7 +91,6 @@ const Subscription = memo(() => {
   const subscription = useSubscription();
   const {resetSubscription} = useAuth();
   const token = useAuthToken();
-  console.log('subscription', subscription);
 
   const scrollRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(

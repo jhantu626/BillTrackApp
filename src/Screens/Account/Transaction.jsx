@@ -19,7 +19,6 @@ const Transaction = () => {
   const fetchTransactions = async () => {
     try {
       const data = await subscriptionService.allSubscriptions(token);
-      console.log(data);
       if (data.status) {
         setTransactions(data.data);
       }

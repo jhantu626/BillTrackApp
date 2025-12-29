@@ -168,9 +168,7 @@ const AuthProvider = ({children}) => {
         }
       }
     } catch (error) {
-    } finally {
-      console.log('subscription call');
-    }
+    } 
   };
 
   const resetSubscription = async (subscriptionData = null) => {

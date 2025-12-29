@@ -228,7 +228,6 @@ const CreateBill = () => {
           type: 'success',
           position: 'top',
         });
-        console.log('invoice', JSON.stringify(data));
         setPhoneNumber('');
         setDiscount(0);
         setQuantity(0);
@@ -238,7 +237,6 @@ const CreateBill = () => {
         handleCloseBottomSheet();
         const printOnCreateBill = getByKey('PRINT_ON_CREATE_BILL');
         if (printOnCreateBill && isPremiumPlanAndActive) {
-          console.log(JSON.stringify(data?.invoice));
           const invoice = data?.invoice;
           const invoiceItems = await invoiceService.getInvoiceItems(
             invoice?.id,
@@ -309,7 +307,6 @@ const CreateBill = () => {
         discount,
       });
       if (data?.status) {
-        console.log('data', JSON.stringify(data));
         addInvoices(data?.invoice);
         ToastService.show({
           message: 'Bill Created Successfully',
@@ -332,7 +329,6 @@ const CreateBill = () => {
             totalAmount: data?.invoice?.totalAmount,
             paymentMode: data?.invoice?.paymentMode,
           });
-          console.log(JSON.stringify(data));
         }
       }
     } catch (error) {

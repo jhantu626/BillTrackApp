@@ -123,9 +123,7 @@ const Invoice = () => {
           setPaginationTotalPage(pagination?.totalPage);
           setPaginationHasNextPage(pagination?.hasNext);
         }
-        console.log(JSON.stringify(data))
       } catch (error) {
-        console.error('Fetch invoices error:', error);
       } finally {
         setIsLoading(false);
       }
@@ -147,7 +145,6 @@ const Invoice = () => {
           setPaginationHasNextPage(pagination?.hasNext);
         }
       } catch (error) {
-        console.error('Fetch more error:', error);
       } finally {
         setIsLoading(false);
       }

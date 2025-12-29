@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useState, useCallback, useMemo} from 'react';
 import {Layout} from '../Layout';
-import {ItemCardShimmer, SecondaryHeader} from '../../Components';
+import {EmptyListCard, ItemCardShimmer, SecondaryHeader} from '../../Components';
 import {font, gap, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import ItemCard from '../../Components/Cards/ItemCard';
@@ -35,7 +35,6 @@ const ItemMaster = () => {
       setIsLoading(true);
       const data = await productService.getProductsSuggestions(token);
       setProducts(data?.data || []);
-      console.log('products', JSON.stringify(data?.data));
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -184,6 +183,7 @@ const ItemMaster = () => {
           data={filterProducts}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
+          ListEmptyComponent={EmptyListCard}
         />
       )}
 

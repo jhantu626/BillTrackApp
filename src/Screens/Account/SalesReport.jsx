@@ -175,10 +175,6 @@ const SalesReport = memo(() => {
     } else {
       handleDownloadReport(reportStartDate, reportEndDate);
     }
-
-    console.log('startDate', startDate.getDate());
-    console.log('endDate', endDate.getDate());
-    console.log('selectedDownloadType', selectedDownloadType);
   };
 
   const handleDownloadReport = async (endDate, startDate) => {
@@ -190,7 +186,6 @@ const SalesReport = memo(() => {
         startDate: formatDateYYYYMMDD(startDate),
         type: selectedDownloadType.toLowerCase(),
       });
-      console.log('data', data);
       let extainsion = '';
       if (selectedDownloadType.toLowerCase() === 'excel') {
         extainsion = '.xlsx';
@@ -207,9 +202,7 @@ const SalesReport = memo(() => {
 
       // write file
       await RNFS.writeFile(filePath, data, 'base64');
-      console.log('filePath', filePath);
     } catch (error) {
-      console.log('error', error);
     } finally {
       setIsDownloadLoading(false);
       ToastService.show({
@@ -489,7 +482,6 @@ const SalesReport = memo(() => {
                   minimumDate: new Date().setDate(new Date().getDate() - 180),
                   onChange: (event, date) => {
                     if (event.type === 'set') {
-                      console.log('date', date);
                       setReportStartDate(date);
                     }
                   },
@@ -509,7 +501,6 @@ const SalesReport = memo(() => {
                   minimumDate: reportStartDate,
                   onChange: (event, date) => {
                     if (event.type === 'set') {
-                      console.log('date', date);
                       setReportEndDate(date);
                     }
                   },

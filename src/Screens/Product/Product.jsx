@@ -80,7 +80,6 @@ const Product = () => {
   const [productPrice, setProductPrice] = useState('');
   const [hsnCode, setHsnCode] = useState('');
 
-  console.log('products', Products);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -252,7 +251,6 @@ const Product = () => {
     }
 
     try {
-      console.log('hsn', hsnCode);
       setIsSaveLoading(true);
       const data = await productService.updateproduct(token, {
         name: productName,

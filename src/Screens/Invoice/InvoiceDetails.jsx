@@ -56,7 +56,6 @@ const InvoiceDetails = () => {
     ],
   };
 
-  console.log(invoice);
 
   // STATE VARIABLES
   const [invoiceItems, setInvoiceItems] = useState([]);
@@ -113,7 +112,6 @@ const InvoiceDetails = () => {
     try {
       setIsLoading(true);
       const data = await invoiceService.getInvoiceItems(invoice.id);
-      console.log('invoice data', data);
       if (data?.status) {
         // Call the calculation function
         const result = calculateInvoiceData(data?.items);
