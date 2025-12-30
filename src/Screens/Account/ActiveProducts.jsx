@@ -48,6 +48,7 @@ const ActiveProducts = () => {
           token,
         );
         if (response?.status) {
+          console.log(JSON.stringify(response.data));
           setProducts(response.data);
           setOriginalProducts(response.data);
         }

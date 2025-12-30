@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: padding(16),
     marginTop: margin(10),
-    paddingBottom: padding(20),
+    paddingBottom: padding(80),
   },
   columnWrapperStyle: {
     gap: GAP_BETWEEN_ITEMS,

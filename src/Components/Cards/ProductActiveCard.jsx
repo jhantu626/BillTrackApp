@@ -14,10 +14,10 @@ import {API_URL} from '../../utils/config';
 const ProductActiveCard = ({item, toggle}) => {
   const imageSource = useMemo(
     () =>
-      item.image
-        ? {uri: `${API_URL}files/product/${item.image}`}
+      item.logo
+        ? {uri: `${API_URL}files/product/${item.logo}`}
         : require('../../../asset/images/emptyimg.jpg'),
-    [item.image],
+    [item.logo],
   );
 
   return (
