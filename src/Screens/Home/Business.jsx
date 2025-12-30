@@ -180,6 +180,8 @@ Proceed only if you have completed the required steps and approvals.`,
         ],
         {cancelable: false},
       );
+    } else {
+      saveBusiness();
     }
   };
 
