@@ -87,7 +87,7 @@ const ActiveProducts = () => {
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return products;
     const query = searchQuery.toLowerCase();
-    return products.filter(item => item.name.toLowerCase().includes(query));
+    return products.filter(item => item?.name.toLowerCase().includes(query) || item?.price.toLowerCase().includes(query) || item?.unitType.toLowerCase().includes(query) || item?.description?.toLowerCase().includes(query));
   }, [products, searchQuery]);
 
   // Stable toggle function
@@ -197,6 +197,8 @@ const ActiveProducts = () => {
           title="Active products"
           query={searchQuery}
           onchangeText={setSearchQuery}
+          isRestart={true}
+          handleRestartClick={fetchProducts}
         />
         <View style={styles.fullLoader}>
           <ActivityIndicator size="large" color={colors.primary} />
@@ -209,9 +211,12 @@ const ActiveProducts = () => {
   return (
     <Layout>
       <MemoizedSecondaryHeader
+
         title="Active products"
         query={searchQuery}
         onchangeText={setSearchQuery}
+        isRestart={true}
+        handleRestartClick={fetchProducts}
       />
 
       <FlatList

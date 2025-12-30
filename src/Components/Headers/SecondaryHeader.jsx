@@ -31,7 +31,7 @@ import Animated, {
 const SecondaryHeader = ({
   title = 'Title',
   isSearch = true,
-  isQuestion = true,
+  isQuestion = false,
   isNotification = true,
   isApps = false,
   isRestart = false,

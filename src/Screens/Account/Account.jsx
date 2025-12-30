@@ -266,14 +266,14 @@ const Account = memo(() => {
             disabled={logoutLoading}
           />
         </View>
-        <View style={styles.deleteContainer}>
+        {/* <View style={styles.deleteContainer}>
           <MaterialIcons
             name="delete-outline"
             size={icon(22)}
             color={colors.error}
           />
           <Text style={styles.deleteText}>Delete Account</Text>
-        </View>
+        </View> */}
       </ScrollView>
       <Modal
         visible={isModalVisible}
