@@ -45,6 +45,7 @@ import { notificationService } from './utils/NotificationService';
 import { AppSettingProvider } from './Contexts/AppSettingContexts';
 import NetworkProvider, { useNetworkContext } from './Contexts/NetworkContext';
 import InvoiceProvider from './Contexts/InvoiceContext';
+import SocketProvider from './Contexts/SocketContext';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -307,12 +308,14 @@ const App = () => {
         <AppSettingProvider>
           <ProductProvider>
             <InvoiceProvider>
-            <PrinterProvider>
-              <NavigationContainer>
-                <AppNav />
-                <ToastContainer />
-              </NavigationContainer>
-            </PrinterProvider>
+              <PrinterProvider>
+                <SocketProvider>
+                  <NavigationContainer>
+                    <AppNav />
+                    <ToastContainer />
+                  </NavigationContainer>
+                </SocketProvider>
+              </PrinterProvider>
             </InvoiceProvider>
           </ProductProvider>
         </AppSettingProvider>
