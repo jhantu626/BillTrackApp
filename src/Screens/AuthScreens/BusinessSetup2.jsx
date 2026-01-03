@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  KeyboardAvoidingView,
   PermissionsAndroid,
   Platform,
   ScrollView,
@@ -167,6 +168,10 @@ const BusinessSetup2 = () => {
 
   return (
     <AuthLayout>
+      <KeyboardAvoidingView
+              style={{flex: 1}}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
       <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
         <Image
           style={styles.image}
@@ -241,6 +246,7 @@ const BusinessSetup2 = () => {
           )}
         </TouchableOpacity>
       </ScrollView>
+      </KeyboardAvoidingView>
     </AuthLayout>
   );
 };

@@ -1,5 +1,6 @@
 import {
   Image,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   Text,
@@ -156,131 +157,138 @@ const BusinessSetup = () => {
 
   return (
     <AuthLayout>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
-          <Image
-            style={styles.image}
-            source={require('./../../../asset/images/business.png')}
-            resizeMode="contain"
-          />
-          <Text style={styles.title}>Set Up Your Business</Text>
-          <View style={styles.inputContainer}>
-            <SimpleTextInput
-              placeholder="Business Name"
-              maxLength={50}
-              value={businessName}
-              setValue={setBusinessName}
-              hasError={
-                businessName.length > 0 && !validateBusinessName(businessName)
-              }
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <ScrollView
+            style={{flex: 1}}
+            contentContainerStyle={styles.container}>
+            <Image
+              style={styles.image}
+              source={require('./../../../asset/images/business.png')}
+              resizeMode="contain"
             />
-            <SimpleTextInput
-              placeholder="GST Number(Optional)"
-              maxLength={15}
-              upperCase={true}
-              value={gstNumber}
-              setValue={setGstNumber}
-              hasError={gstNumber.length > 0 && !validateIndianGST(gstNumber)}
-            />
-            <BottomSheetInput
-              label={
-                businessType
-                  ? businessTypes.find(item => item.id === businessType).name
-                  : 'Business Type'
-              }
-              onPress={() => handleOpenBottomSheet('businessType')}
-            />
-            <SimpleTextInput
-              placeholder="Email(Optional)"
-              maxLength={100}
-              keyboardType="email-address"
-              value={email}
-              setValue={setEmail}
-              hasError={email.length > 0 && !validateEmail(email)}
-            />
-            <SimpleTextInput
-              placeholder="Phone Number(Optional)"
-              maxLength={6}
-              keyboardType="numeric"
-              value={phone}
-              setValue={setPhone}
-              hasError={phone.length > 0 && !validateIndianPhone(phone)}
-            />
-          </View>
-          <TouchableOpacity style={styles.button} onPress={handleContinue}>
-            <Text style={styles.buttonText}>CONTINUE</Text>
-          </TouchableOpacity>
-        </ScrollView>
+            <Text style={styles.title}>Set Up Your Business</Text>
+            <View style={styles.inputContainer}>
+              <SimpleTextInput
+                placeholder="Business Name"
+                maxLength={50}
+                value={businessName}
+                setValue={setBusinessName}
+                hasError={
+                  businessName.length > 0 && !validateBusinessName(businessName)
+                }
+              />
+              <SimpleTextInput
+                placeholder="GST Number(Optional)"
+                maxLength={15}
+                upperCase={true}
+                value={gstNumber}
+                setValue={setGstNumber}
+                hasError={gstNumber.length > 0 && !validateIndianGST(gstNumber)}
+              />
+              <BottomSheetInput
+                label={
+                  businessType
+                    ? businessTypes.find(item => item.id === businessType).name
+                    : 'Business Type'
+                }
+                onPress={() => handleOpenBottomSheet('businessType')}
+              />
+              <SimpleTextInput
+                placeholder="Email(Optional)"
+                maxLength={100}
+                keyboardType="email-address"
+                value={email}
+                setValue={setEmail}
+                hasError={email.length > 0 && !validateEmail(email)}
+              />
+              <SimpleTextInput
+                placeholder="Phone Number(Optional)"
+                maxLength={6}
+                keyboardType="numeric"
+                value={phone}
+                setValue={setPhone}
+                hasError={phone.length > 0 && !validateIndianPhone(phone)}
+              />
+            </View>
+            <TouchableOpacity style={styles.button} onPress={handleContinue}>
+              <Text style={styles.buttonText}>CONTINUE</Text>
+            </TouchableOpacity>
+          </ScrollView>
 
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          enableOverDrag={false}
-          enableContentPanningGesture={false}
-          backdropComponent={renderBackdrop}
-          handleComponent={() => null}
-          animationConfigs={{
-            duration: 300,
-          }}
-          backgroundStyle={{borderRadius: 0}}>
-          <View style={{flex: 1}}>
-            <BottomSheetFlatList
-              ListHeaderComponent={useMemo(
-                () => (
-                  <View style={styles.bottomSheetHeaderContainer}>
-                    <View style={styles.bottomSheetHeader}>
-                      <Text style={styles.bottomSheetTitle}>
-                        Choose Business Type
-                      </Text>
-                      <TouchableOpacity onPress={handleCloseBottomSheet}>
+          <BottomSheet
+            ref={bottomSheetRef}
+            index={-1}
+            snapPoints={snapPoints}
+            enablePanDownToClose
+            enableOverDrag={false}
+            enableContentPanningGesture={false}
+            backdropComponent={renderBackdrop}
+            handleComponent={() => null}
+            animationConfigs={{
+              duration: 300,
+            }}
+            backgroundStyle={{borderRadius: 0}}>
+            <View style={{flex: 1}}>
+              <BottomSheetFlatList
+                ListHeaderComponent={useMemo(
+                  () => (
+                    <View style={styles.bottomSheetHeaderContainer}>
+                      <View style={styles.bottomSheetHeader}>
+                        <Text style={styles.bottomSheetTitle}>
+                          Choose Business Type
+                        </Text>
+                        <TouchableOpacity onPress={handleCloseBottomSheet}>
+                          <Ionicons
+                            name="close"
+                            size={icon(24)}
+                            color={colors.primary}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                      <View style={styles.searchContainer}>
                         <Ionicons
-                          name="close"
+                          name="search"
                           size={icon(24)}
-                          color={colors.primary}
+                          color={colors.border}
                         />
-                      </TouchableOpacity>
+                        <TextInput
+                          placeholder="Search here..."
+                          style={styles.searchInput}
+                          value={query}
+                          onChangeText={text => handleSearch(text)}
+                        />
+                      </View>
                     </View>
-                    <View style={styles.searchContainer}>
-                      <Ionicons
-                        name="search"
-                        size={icon(24)}
-                        color={colors.border}
-                      />
-                      <TextInput
-                        placeholder="Search here..."
-                        style={styles.searchInput}
-                        value={query}
-                        onChangeText={text => handleSearch(text)}
-                      />
-                    </View>
+                  ),
+                  [query],
+                )}
+                contentContainerStyle={styles.bottomSheetContainer}
+                data={suggestions}
+                keyExtractor={(_, index) =>
+                  index + 'bottomsheet_radiobtn_business_types'
+                }
+                renderItem={({item}) => (
+                  <View style={styles.bottomSheetItem}>
+                    <RadioInput
+                      value={item.id}
+                      label={item.name}
+                      setValue={setBusinessType}
+                      isSelected={businessType === item.id}
+                    />
                   </View>
-                ),
-                [query],
-              )}
-              contentContainerStyle={styles.bottomSheetContainer}
-              data={suggestions}
-              keyExtractor={(_, index) =>
-                index + 'bottomsheet_radiobtn_business_types'
-              }
-              renderItem={({item}) => (
-                <View style={styles.bottomSheetItem}>
-                  <RadioInput
-                    value={item.id}
-                    label={item.name}
-                    setValue={setBusinessType}
-                    isSelected={businessType === item.id}
-                  />
-                </View>
-              )}
-              ItemSeparatorComponent={() => <DottedDivider />}
-              stickyHeaderIndices={[0]}
-              nestedScrollEnabled
-            />
-          </View>
-        </BottomSheet>
-      </GestureHandlerRootView>
+                )}
+                ItemSeparatorComponent={() => <DottedDivider />}
+                stickyHeaderIndices={[0]}
+                nestedScrollEnabled
+              />
+            </View>
+          </BottomSheet>
+        </GestureHandlerRootView>
+      </KeyboardAvoidingView>
     </AuthLayout>
   );
 };
