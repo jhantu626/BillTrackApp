@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -54,6 +55,7 @@ const Login = () => {
       ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
     } finally {
       setIsLoading(false);
+      Keyboard.dismiss();
     }
   };
   return (

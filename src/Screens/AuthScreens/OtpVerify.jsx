@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -126,7 +127,9 @@ const OtpVerify = () => {
   };
 
   useEffect(() => {
-    otpRef.current[0].focus();
+    setTimeout(() => {
+      otpRef.current[0].focus();
+    }, 200);
   }, []);
 
   useEffect(() => {
@@ -190,8 +193,12 @@ const OtpVerify = () => {
                       handleChange(text, index);
                     }}
                     onKeyPress={e => {
-                      if (e.nativeEvent.key === 'Backspace' && index > 0 && value==='') {
-                          otpRef.current[index - 1].focus();
+                      if (
+                        e.nativeEvent.key === 'Backspace' &&
+                        index > 0 &&
+                        value === ''
+                      ) {
+                        otpRef.current[index - 1].focus();
                       }
                     }}
                   />
