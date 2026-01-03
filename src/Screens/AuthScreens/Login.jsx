@@ -97,7 +97,7 @@ const Login = () => {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="9775746484"
+                  placeholder="9230996919"
                   maxLength={10}
                   value={mobile}
                   placeholderTextColor={colors.border}
