@@ -39,6 +39,7 @@ const SecondaryHeader = ({
   handleAppClick = () => {},
   query = '',
   onchangeText = text => {},
+  searchPlaceholder="Search"
 }) => {
   const navigation = useNavigation();
 
@@ -74,7 +75,8 @@ const SecondaryHeader = ({
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
-              placeholder="Search"
+              placeholder={searchPlaceholder}
+              placeholderTextColor={colors.border}
               value={query}
               onChangeText={text => onchangeText(text)}
               autoFocus
