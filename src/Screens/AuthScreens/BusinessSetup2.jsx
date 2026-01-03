@@ -35,10 +35,10 @@ const BusinessSetup2 = () => {
   const route = useRoute();
   const {businessName, businessType, email, gstNumber, phone} = route.params;
   const [image, setImage] = useState(null);
-  const [street, setStreet] = useState('Jadav pur');
-  const [city, setCity] = useState('Kolkata');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
   const [state, setState] = useState('');
-  const [pincode, setPincode] = useState('700068');
+  const [pincode, setPincode] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
 

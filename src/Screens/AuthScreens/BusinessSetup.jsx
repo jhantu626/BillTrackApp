@@ -48,7 +48,7 @@ const BusinessSetup = () => {
 
   const bottomSheetRef = useRef(null);
   const [query, setQuery] = useState('');
-  const [businessName, setBusinessName] = useState('Turain Software');
+  const [businessName, setBusinessName] = useState('');
   const [gstNumber, setGstNumber] = useState('');
   const [businessType, setBusinessType] = useState('');
   const [businessTypes, setBusinessTypes] = useState([]);
