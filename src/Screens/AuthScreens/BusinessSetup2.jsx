@@ -170,17 +170,7 @@ const BusinessSetup2 = () => {
     }
   };
 
-  useFocusEffect(() => {
-    const parent = navigation.getParent();
-    parent?.setOptions({
-      tabBarStyle: {display: 'none'},
-    });
-    return () => {
-      parent?.setOptions({
-        tabBarStyle: undefined,
-      });
-    };
-  }, []);
+ 
 
   return (
     <AuthLayout>

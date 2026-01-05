@@ -139,17 +139,6 @@ const BusinessSetup = () => {
     } catch (error) {}
   };
 
-  useFocusEffect(() => {
-    const parent = navigation.getParent();
-    parent?.setOptions({
-      tabBarStyle: {display: 'none'},
-    });
-    return () => {
-      parent?.setOptions({
-        tabBarStyle: undefined,
-      });
-    };
-  }, []);
 
   useEffect(() => {
     getBusinessCategory();
