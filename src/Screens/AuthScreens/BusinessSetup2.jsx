@@ -22,7 +22,11 @@ import {font, gap, icon, margin, padding} from '../../utils/responsive';
 import {validateIndianPincode} from '../../utils/validator';
 import {thirdPartyApiService} from '../../Services/ThirdPartApiService';
 import ToastService from '../../Components/Toasts/ToastService';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {RotateOutDownLeft} from 'react-native-reanimated';
 import {businessService} from '../../Services/BusinessService';
 import {useAuth, useAuthToken} from '../../Contexts/AuthContext';
@@ -166,86 +170,98 @@ const BusinessSetup2 = () => {
     }
   };
 
+  useFocusEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({
+      tabBarStyle: {display: 'none'},
+    });
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: undefined,
+      });
+    };
+  }, []);
+
   return (
     <AuthLayout>
       <KeyboardAvoidingView
-              style={{flex: 1}}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-      <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
-        <Image
-          style={styles.image}
-          source={require('./../../../asset/images/business.png')}
-          resizeMode="contain"
-        />
-        <Text style={styles.title}>Set Up Your Business</Text>
-        <View style={styles.logoContainer}>
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
           <Image
-            source={
-              image
-                ? {
-                    uri: image?.path,
-                  }
-                : require('./../../../asset/images/businessLogo.png')
-            }
-            style={styles.logo}
+            style={styles.image}
+            source={require('./../../../asset/images/business.png')}
             resizeMode="contain"
           />
-
-          <TouchableOpacity
-            style={styles.uploadButton}
-            onPress={handleImagePickcker}>
-            <MaterialIcons
-              name="file-upload"
-              size={16}
-              color={colors.primary}
+          <Text style={styles.title}>Set Up Your Business</Text>
+          <View style={styles.logoContainer}>
+            <Image
+              source={
+                image
+                  ? {
+                      uri: image?.path,
+                    }
+                  : require('./../../../asset/images/businessLogo.png')
+              }
+              style={styles.logo}
+              resizeMode="contain"
             />
-            <Text style={styles.uploadText}>Upload Logo</Text>
+
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleImagePickcker}>
+              <MaterialIcons
+                name="file-upload"
+                size={16}
+                color={colors.primary}
+              />
+              <Text style={styles.uploadText}>Upload Logo</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <SimpleTextInput
+              placeholder="Pincode"
+              keyboardType="numeric"
+              maxLength={6}
+              value={pincode}
+              setValue={setPincode}
+              hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
+            />
+
+            <SimpleTextInput
+              placeholder="Street"
+              maxLength={50}
+              value={street}
+              setValue={setStreet}
+              hasError={street.length > 0 && street.length < 3}
+            />
+
+            <SimpleTextInput
+              placeholder="City"
+              maxLength={50}
+              value={city}
+              setValue={setCity}
+              hasError={city.length > 0 && city.length < 3}
+            />
+
+            <SimpleTextInput
+              placeholder="State"
+              maxLength={50}
+              disabled={true}
+              value={state}
+              setValue={setState}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleProceed}>
+            {isLoading ? (
+              <ActivityIndicator size={'small'} color={'#fff'} />
+            ) : (
+              <Text style={styles.buttonText}>PROCEED</Text>
+            )}
           </TouchableOpacity>
-        </View>
-        <View style={styles.inputContainer}>
-          <SimpleTextInput
-            placeholder="Pincode"
-            keyboardType="numeric"
-            maxLength={6}
-            value={pincode}
-            setValue={setPincode}
-            hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
-          />
-
-          <SimpleTextInput
-            placeholder="Street"
-            maxLength={50}
-            value={street}
-            setValue={setStreet}
-            hasError={street.length > 0 && street.length < 3}
-          />
-
-          <SimpleTextInput
-            placeholder="City"
-            maxLength={50}
-            value={city}
-            setValue={setCity}
-            hasError={city.length > 0 && city.length < 3}
-          />
-
-          <SimpleTextInput
-            placeholder="State"
-            maxLength={50}
-            disabled={true}
-            value={state}
-            setValue={setState}
-          />
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleProceed}>
-          {isLoading ? (
-            <ActivityIndicator size={'small'} color={'#fff'} />
-          ) : (
-            <Text style={styles.buttonText}>PROCEED</Text>
-          )}
-        </TouchableOpacity>
-      </ScrollView>
+        </ScrollView>
       </KeyboardAvoidingView>
     </AuthLayout>
   );

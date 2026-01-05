@@ -26,7 +26,7 @@ import {
   validateIndianPhone,
 } from '../../utils/validator';
 import {colors} from '../../utils/colors';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import BottomSheet, {
   BottomSheetBackdrop,
@@ -138,6 +138,18 @@ const BusinessSetup = () => {
       setSuggestions(data);
     } catch (error) {}
   };
+
+  useFocusEffect(() => {
+    const parent = navigation.getParent();
+    parent?.setOptions({
+      tabBarStyle: {display: 'none'},
+    });
+    return () => {
+      parent?.setOptions({
+        tabBarStyle: undefined,
+      });
+    };
+  }, []);
 
   useEffect(() => {
     getBusinessCategory();
