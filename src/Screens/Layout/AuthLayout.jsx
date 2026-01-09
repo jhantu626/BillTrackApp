@@ -6,13 +6,16 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../../utils/colors';
 
 const AuthLayout = ({ children }) => {
+  const inset = useSafeAreaInsets()
   return (
+        <SafeAreaView style={styles.safeArea}>
+
     <KeyboardAvoidingView
-      style={styles.flex}
+      style={[styles.flex,{paddingBottom: inset.bottom}]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <StatusBar barStyle="dark-content" backgroundColor={colors.primary} />
@@ -21,13 +24,13 @@ const AuthLayout = ({ children }) => {
         source={require('./../../../asset/images/authBack.png')}
         style={styles.flex}
       >
-        <SafeAreaView style={styles.safeArea}>
           {children}
           <View style={styles.circle} />
           <View style={[styles.leftCircle]} />
-        </SafeAreaView>
       </ImageBackground>
     </KeyboardAvoidingView>
+        </SafeAreaView>
+
   );
 };
 

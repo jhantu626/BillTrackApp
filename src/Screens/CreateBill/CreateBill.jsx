@@ -71,6 +71,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {useInvoice} from '../../Contexts/InvoiceContext';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -86,6 +88,7 @@ const ITEM_WIDTH =
 const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
 
 const CreateBill = () => {
+  const inset=useSafeAreaInsets()
   const addInvoices = useInvoice('addInvoice');
   const {printer} = usePrinter();
   const business = useBusiness();
@@ -371,7 +374,7 @@ const CreateBill = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1}}
+      style={{flex: 1,paddingBottom:inset.bottom}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <GestureHandlerRootView style={{flex: 1}}>
         <Layout>

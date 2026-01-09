@@ -46,6 +46,8 @@ import { AppSettingProvider } from './Contexts/AppSettingContexts';
 import NetworkProvider, { useNetworkContext } from './Contexts/NetworkContext';
 import InvoiceProvider from './Contexts/InvoiceContext';
 import SocketProvider from './Contexts/SocketContext';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
@@ -59,13 +61,6 @@ const icons = {
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
-const defaultTabBarStyle = {
-  height: 85,
-  justifyContent: 'center',
-  alignItems: 'center',
-  paddingTop: padding(10),
-};
 
 const AuthStack = memo(() => {
   return (
@@ -177,6 +172,15 @@ const AppStack = memo(() => {
     [],
   );
 
+  const inset = useSafeAreaInsets()
+
+  const defaultTabBarStyle = useMemo(()=>({
+    height: 85 + inset.bottom,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: padding(10),
+  }),[inset.bottom]);
+
   const isOnline = useNetworkContext("isOnline")
   if (!isOnline) {
     return <OfflineScreen />
@@ -254,12 +258,7 @@ const AppStack = memo(() => {
                 ? {
                   display: 'none',
                 }
-                : {
-                  height: 85,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingTop: padding(10),
-                },
+                : defaultTabBarStyle,
           };
         }}
       />
@@ -310,10 +309,12 @@ const App = () => {
             <InvoiceProvider>
               <PrinterProvider>
                 <SocketProvider>
-                  <NavigationContainer>
-                    <AppNav />
-                    <ToastContainer />
-                  </NavigationContainer>
+                    <SafeAreaProvider>
+                      <NavigationContainer>
+                        <AppNav />
+                        <ToastContainer />
+                      </NavigationContainer>
+                    </SafeAreaProvider>
                 </SocketProvider>
               </PrinterProvider>
             </InvoiceProvider>
