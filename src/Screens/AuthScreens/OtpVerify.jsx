@@ -166,7 +166,7 @@ const OtpVerify = () => {
             </Text>
           </View>
           <View style={styles.otpParent}>
-            <Text style={styles.otpText}>Enter Your Otp</Text>
+            <Text style={styles.otpText}>Enter Your OTP</Text>
             <View style={styles.otpContainer}>
               {otp.map((value, index) => (
                 <View

@@ -7,15 +7,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { AuthLayout } from '../Layout';
-import { fonts } from './../../utils/fonts';
-import { colors } from './../../utils/colors';
+import {AuthLayout} from '../Layout';
+import {fonts} from './../../utils/fonts';
+import {colors} from './../../utils/colors';
 
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useRef, useState } from 'react';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import {useRef, useState} from 'react';
+import {StackActions, useNavigation} from '@react-navigation/native';
 
-const { width } = Dimensions.get('screen');
+const {width} = Dimensions.get('screen');
 
 const Onboarding = () => {
   const PAGE_DETAILS = [
@@ -63,7 +63,7 @@ const Onboarding = () => {
       <View style={styles.container}>
         <FlatList
           ref={flatListRef}
-          style={{ flex: 1, width: '100%' }}
+          style={{flex: 1, width: '100%'}}
           data={PAGE_DETAILS}
           keyExtractor={(_, index) => '' + index}
           horizontal={true}
@@ -72,7 +72,7 @@ const Onboarding = () => {
           snapToInterval={width}
           decelerationRate={'fast'}
           scrollEventThrottle={16}
-          renderItem={({ item, index }) => {
+          renderItem={({item, index}) => {
             return (
               <View style={styles.pageContainer}>
                 <Image
@@ -90,14 +90,13 @@ const Onboarding = () => {
                         return (
                           <View
                             style={styles.contentContainer}
-                            key={index + '-content-texts'}
-                          >
+                            key={index + '-content-texts'}>
                             <Ionicons
                               name="arrow-forward-circle-outline"
                               size={16}
                               color={colors.primary}
                             />
-                            <Text style={styles.contentText}>{content}</Text>;
+                            <Text style={styles.contentText}>{content}</Text>
                           </View>
                         );
                       })}
@@ -139,8 +138,7 @@ const Onboarding = () => {
             } else {
               navigation.dispatch(StackActions.replace('Login'));
             }
-          }}
-        >
+          }}>
           <Text style={styles.buttonText}>
             {currentPage === 0
               ? 'NEXT'
@@ -191,14 +189,17 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'row',
     gap: 10,
+    alignItems: 'flex-start',
   },
   contentContainerParent: {
     gap: 10,
     marginTop: 15,
+    width: '100%',
   },
   contentText: {
     fontSize: 14,
     fontFamily: fonts.onMedium,
+    flex: 1,
   },
   indicatorContainer: {
     flexDirection: 'row',
