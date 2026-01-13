@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import React, {useCallback, useEffect, useState, useMemo, useRef} from 'react';
-import {font, icon, margin, padding} from '../../utils/responsive';
+import {font, gap, icon, margin, padding} from '../../utils/responsive';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
 import Octicons from '@react-native-vector-icons/octicons';
@@ -19,15 +19,37 @@ import debounce from 'lodash.debounce';
 // Memoized components to prevent unnecessary re-renders
 const MemoizedSearchInput = React.memo(SearchInput);
 const MemoizedDottedDivider = React.memo(DottedDivider);
+// const MemoizedListItem = React.memo(({item, isSelected, onSelect}) => (
+//   <TouchableOpacity
+//     style={styles.itemContainer}
+//     onPress={onSelect}
+//     delayPressIn={0}>
+//     <Text style={styles.itemText} numberOfLines={2}>
+//       {`${item.hsnCode} - ${item.description} | CGST: ${item.cGst}% | SGST: ${item.sGst}% | IGST: ${item.iGst}%`}
+//     </Text>
+//     {isSelected && <Octicons name="check" size={20} color="#000" />}
+//   </TouchableOpacity>
+// ));
+
 const MemoizedListItem = React.memo(({item, isSelected, onSelect}) => (
   <TouchableOpacity
     style={styles.itemContainer}
     onPress={onSelect}
     delayPressIn={0}>
-    <Text style={styles.itemText} numberOfLines={2}>
+    <View style={styles.hsnItemContainer}>
+      <Text style={styles.hsnText}>{item.hsnCode}</Text>
+      {isSelected && <Octicons name="check" size={24} color={colors.primary} />}
+    </View>
+    <Text style={styles.hsnDescription}>{item.description}</Text>
+    <View style={styles.gstContainer}>
+      <Text style={styles.gstText}>CGST {item.cGst}%</Text>
+      <Text style={styles.gstText}>SGST {item.sGst}%</Text>
+      <Text style={styles.gstText}>IGST {item.iGst}%</Text>
+    </View>
+    {/* <Text style={styles.itemText} numberOfLines={2}>
       {`${item.hsnCode} - ${item.description} | CGST: ${item.cGst}% | SGST: ${item.sGst}% | IGST: ${item.iGst}%`}
     </Text>
-    {isSelected && <Octicons name="check" size={20} color="#000" />}
+    {isSelected && <Octicons name="check" size={20} color="#000" />} */}
   </TouchableOpacity>
 ));
 
@@ -197,7 +219,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f0f0f0',
   },
   cancelBtn: {
-    backgroundColor: '#000',
+    // backgroundColor: '#000',
+    backgroundColor: colors.primary,
     paddingVertical: padding(6),
     paddingHorizontal: padding(10),
     borderRadius: 5,
@@ -225,12 +248,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {flexGrow: 1},
   itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // alignItems: 'center',
     paddingVertical: padding(12),
     paddingHorizontal: padding(16),
     minHeight: 44,
+    gap: gap(5),
+    backgroundColor: '#fff',
   },
   itemText: {
     flex: 1,
@@ -252,6 +277,35 @@ const styles = StyleSheet.create({
     color: '#00000060',
     fontSize: font(14),
     fontFamily: fonts.inRegular,
+  },
+  hsnItemContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  gstContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: gap(10),
+    marginVertical: margin(10),
+  },
+  hsnText: {
+    fontSize: font(16),
+    fontFamily: fonts.inBold,
+    color: colors.primary,
+  },
+  hsnDescription: {
+    fontSize: font(14),
+    fontFamily: fonts.inMedium,
+    color: '#00000090',
+  },
+  gstText: {
+    backgroundColor: colors.primary + 25,
+    paddingVertical: padding(5),
+    paddingHorizontal: padding(10),
+    borderRadius: icon(20),
+    color: colors.primary,
+    fontFamily: fonts.inBold,
+    fontSize: font(12),
   },
 });
 

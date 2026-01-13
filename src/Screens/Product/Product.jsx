@@ -469,7 +469,7 @@ const Product = () => {
                   <BottomSheetInput
                     label={
                       hsnCode
-                        ? `${hsnCode.hsnCode} - ${hsnCode.description}`
+                        ? `${hsnCode.hsnCode} CGST ${hsnCode.cGst}% SGST ${hsnCode.sGst}% IGST ${hsnCode.iGst}%`
                         : 'Select HSN'
                     }
                     onPress={() => {
