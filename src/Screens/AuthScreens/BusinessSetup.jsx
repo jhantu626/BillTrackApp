@@ -158,10 +158,10 @@ const BusinessSetup = () => {
 
   return (
     <AuthLayout>
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
         <GestureHandlerRootView style={{flex: 1}}>
           <ScrollView
             style={{flex: 1}}
@@ -289,7 +289,7 @@ const BusinessSetup = () => {
             </View>
           </BottomSheet>
         </GestureHandlerRootView>
-      </KeyboardAvoidingView>
+      {/* </KeyboardAvoidingView> */}
     </AuthLayout>
   );
 };

@@ -78,11 +78,20 @@ const AuthStack = memo(() => {
   );
 });
 
+const BusinessStack = () => {
+  return <Stack.Navigator initialRouteName='BusinessSetup' screenOptions={{
+    headerShown: false
+  }}>
+    <Stack.Screen name="BusinessSetup" component={BusinessSetup} />
+    <Stack.Screen name="BusinessSetup2" component={BusinessSetup2} />
+  </Stack.Navigator>
+}
+
 const HomeStack = memo(() => {
-  const businessId = useUser('businessId');
+  // const businessId = useUser('businessId');
   return (
     <Stack.Navigator
-      initialRouteName={businessId ? 'Home' : 'BusinessSetup'}
+      initialRouteName={'Home'}
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
@@ -97,8 +106,7 @@ const HomeStack = memo(() => {
           animationDuration: 200,
         }}
       />
-      <Stack.Screen name="BusinessSetup" component={BusinessSetup} />
-      <Stack.Screen name="BusinessSetup2" component={BusinessSetup2} />
+
     </Stack.Navigator>
   );
 });
@@ -173,23 +181,26 @@ const AppStack = memo(() => {
   );
 
   const inset = useSafeAreaInsets()
+  const businessId = useUser('businessId')
 
-  const defaultTabBarStyle = useMemo(()=>({
+  const defaultTabBarStyle = useMemo(() => ({
     height: 85 + inset.bottom,
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: padding(10),
-  }),[inset.bottom]);
+  }), [inset.bottom]);
 
   const isOnline = useNetworkContext("isOnline")
   if (!isOnline) {
     return <OfflineScreen />
   }
 
+  const HiddenTabBarButton = () => null;
+
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={businessId ? "Home" : "BusinessSetup"}
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -274,6 +285,17 @@ const AppStack = memo(() => {
           };
         }}
       />
+      <Tab.Screen
+        name="BusinessSetup"
+        component={BusinessStack}
+        options={{
+          tabBarButton: HiddenTabBarButton,
+          tabBarItemStyle: { display: 'none' },
+          tabBarLabel: () => null,
+          tabBarIcon: () => null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
     </Tab.Navigator>
   );
 });
@@ -309,12 +331,12 @@ const App = () => {
             <InvoiceProvider>
               <PrinterProvider>
                 <SocketProvider>
-                    <SafeAreaProvider>
-                      <NavigationContainer>
-                        <AppNav />
-                        <ToastContainer />
-                      </NavigationContainer>
-                    </SafeAreaProvider>
+                  <SafeAreaProvider>
+                    <NavigationContainer>
+                      <AppNav />
+                      <ToastContainer />
+                    </NavigationContainer>
+                  </SafeAreaProvider>
                 </SocketProvider>
               </PrinterProvider>
             </InvoiceProvider>
