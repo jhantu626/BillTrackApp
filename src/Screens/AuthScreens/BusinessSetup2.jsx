@@ -36,7 +36,7 @@ import {getDeviceDetails} from '../../utils/DeviceInfo';
 const BusinessSetup2 = () => {
   const navigation = useNavigation();
   const token = useAuthToken();
-  const {setUserData, setBusinessData, user,setJustCompletedSetup} = useAuth();
+  const {setUserData, setBusinessData, user} = useAuth();
   const route = useRoute();
   const {businessName, businessType, email, gstNumber, phone} = route.params;
   const [image, setImage] = useState(null);
@@ -139,21 +139,19 @@ const BusinessSetup2 = () => {
         const businessData = await businessService.getBusiness(token);
         const newUser = {...user, businessId: businessData?.data?.id};
         await setUserData(newUser);
-                setJustCompletedSetup(true);
-
         const business = businessData?.data;
         await setBusinessData(business);
-        // navigation.reset({
-        //   index: 0,
-        //   routes: [
-        //     {
-        //       name: 'Account',
-        //       state: {
-        //         routes: [{name: 'ItemMaster'}],
-        //       },
-        //     },
-        //   ],
-        // });
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'Account',
+              state: {
+                routes: [{name: 'ItemMaster'}],
+              },
+            },
+          ],
+        });
         ToastService.show({
           message: data.message,
           type: 'success',
