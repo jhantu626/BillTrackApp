@@ -16,6 +16,7 @@ const AuthProvider = ({children}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [business, setBusiness] = useState(null);
   const [subscription, setSubscription] = useState(null);
+  const [justCompletedSetup, setJustCompletedSetup] = useState(false);
 
   const isOnline = useNetworkContext('isOnline');
 
@@ -74,6 +75,7 @@ const AuthProvider = ({children}) => {
         setUser(null);
         setSubscription(null);
         setBusiness(null);
+        setJustCompletedSetup(false); // ✅ ADD THIS LINE
       } else {
         ToastAndroid.show(data?.message, ToastAndroid.LONG);
       }
@@ -167,8 +169,7 @@ const AuthProvider = ({children}) => {
           }
         }
       }
-    } catch (error) {
-    } 
+    } catch (error) {}
   };
 
   const resetSubscription = async (subscriptionData = null) => {
@@ -218,8 +219,10 @@ const AuthProvider = ({children}) => {
       resetBusiness,
       subscription,
       resetSubscription,
+      justCompletedSetup,
+      setJustCompletedSetup,
     };
-  }, [authToken, user, business, subscription]);
+  }, [authToken, user, business, subscription, justCompletedSetup]);
 
   if (isLoading) {
     return null;
