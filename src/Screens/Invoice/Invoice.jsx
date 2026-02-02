@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -41,10 +42,10 @@ import {useAuthToken, useSubscription} from '../../Contexts/AuthContext';
 const SNAP_POINTS = ['50%'];
 const SHIMMER_DATA = [1, 2, 3];
 const SORT_OPTIONS = [
-  {label: 'Amount high to low', value: 'amount_high_to_low'},
-  {label: 'Amount low to high', value: 'amount_low_to_high'},
-  {label: 'Amount paid', value: 'amount_paid'},
-  {label: 'Amount unpaid', value: 'amount_unpaid'},
+  { label: 'Newest First', value: 'date_desc' },
+  { label: 'Oldest First', value: 'date_asc' },
+  { label: 'Amount High to Low', value: 'amount_high_to_low' },
+  { label: 'Amount Low to High', value: 'amount_low_to_high' },
 ];
 const STICKY_HEADER_INDICES = [0];
 const ANIMATION_CONFIG = {duration: 300};
@@ -79,7 +80,7 @@ const Invoice = () => {
   const subscription = useSubscription();
 
   // STATE VARIABLES
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState('date_desc');
   const [pageNumber, setPageNumber] = useState(0);
   const [invoices, setInvoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,19 +117,20 @@ const Invoice = () => {
     async (page = 0) => {
       try {
         setIsLoading(true);
-        const data = await invoiceService.getInvoices(token, page, 8);
+        const data = await invoiceService.getInvoices(token, page, 8, sortBy);
         if (data?.status) {
           setInvoices(data?.data);
           const pagination = data?.pagination;
           setPaginationTotalPage(pagination?.totalPage);
           setPaginationHasNextPage(pagination?.hasNext);
+          console.log(JSON.stringify(data.data))
         }
       } catch (error) {
       } finally {
         setIsLoading(false);
       }
     },
-    [token],
+    [token,sortBy],
   );
 
   const fetchMore = useCallback(
@@ -137,7 +139,7 @@ const Invoice = () => {
 
       try {
         setIsLoading(true);
-        const data = await invoiceService.getInvoices(token, nextPage, 8);
+        const data = await invoiceService.getInvoices(token, nextPage, 8,sortBy);
         if (data?.status) {
           setInvoices(prev => [...prev, ...data?.data]);
           const pagination = data?.pagination;
@@ -167,6 +169,7 @@ const Invoice = () => {
     setIsRefreshing(true);
     await fetchInvoices(0);
     setIsRefreshing(false);
+    setSortBy('date_desc');
   }, [fetchInvoices]);
 
   const onEndReached = useCallback(() => {
@@ -265,6 +268,16 @@ const Invoice = () => {
     );
   }, [isLoading, pageNumber, invoices, query]);
 
+  const applySorting=async()=>{
+    setPageNumber(0);
+    setIsRefreshing(true);
+    await fetchInvoices(0);
+    setTimeout(() => {
+      bottomSheetRef.current?.close();
+    }, 100);
+    setIsRefreshing(false);
+  }
+
   return (
     <GestureHandlerRootView style={styles.rootView}>
       <Layout>
@@ -318,8 +331,9 @@ const Invoice = () => {
             keyExtractor={sortOptionsKeyExtractor}
             renderItem={renderSortOption}
           />
-          <TouchableOpacity style={styles.applyButton}>
-            <Text style={styles.applyText}>APPLY</Text>
+          <TouchableOpacity style={styles.applyButton} onPress={applySorting} 
+          disabled={isRefreshing}>
+            {isRefreshing?<ActivityIndicator size={'small'} color={'#fff'} />:<Text style={styles.applyText}>APPLY</Text>}
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>

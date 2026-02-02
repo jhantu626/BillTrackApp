@@ -38,9 +38,9 @@ class InvoiceService {
   }
 
   // GET - INVOICE
-  async getInvoices(token, page = 0, limit = 10) {
+  async getInvoices(token, page = 0, limit = 10, sortBy = 'date_desc') {
     try {
-      const uri = `${this.baseUrl}?page=${page}&limit=${limit}`;
+      const uri = `${this.baseUrl}?page=${page}&limit=${limit}&sortBy=${sortBy}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${token}`,
