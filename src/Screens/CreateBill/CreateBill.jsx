@@ -73,6 +73,7 @@ import Animated, {
 import {useInvoice} from '../../Contexts/InvoiceContext';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -113,6 +114,12 @@ const CreateBill = () => {
       stiffness: 100,
     });
   }, [isDiscountOpen]);
+
+  useFocusEffect(useCallback(()=>{
+    return ()=>{
+      restartClickOfHeader()
+    }
+  },[]))
 
   const floatingButtonAnimStyle = useAnimatedStyle(() => {
     return {
