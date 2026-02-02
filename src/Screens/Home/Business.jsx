@@ -92,6 +92,38 @@ const Business = () => {
       return;
     }
 
+    if (!state) {
+      ToastService.show({
+        message: 'Please select state',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (!street) {
+      ToastService.show({
+        message: 'Please enter street',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (!city) {
+      ToastService.show({
+        message: 'Please enter city',
+        type: 'error',
+      });
+      return;
+    }
+
+    if (!pincode) {
+      ToastService.show({
+        message: 'Please enter pincode',
+        type: 'error',
+      });
+      return;
+    }
+
     if (mobileNumber && !validateIndianPhone(mobileNumber)) {
       ToastService.show({
         message: 'Invalid Phone Number',
