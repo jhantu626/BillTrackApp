@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {AuthLayout} from '../Layout';
 import {fonts} from '../../utils/fonts';
 import {colors} from '../../utils/colors';
@@ -28,6 +28,7 @@ import {
 } from '../../utils/responsive';
 import {validateIndianPhone} from '../../utils/validator';
 import {authService} from '../../Services/AuthService';
+import {showPhoneNumberHint} from '@shayrn/react-native-android-phone-number-hint';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -35,18 +36,41 @@ const Login = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendOtp = async () => {
-    if (!validateIndianPhone(mobile)) {
+  const selectPhoneNumber = async () => {
+    try {
+      const phone = await showPhoneNumberHint({
+        showGuidanceDialog: true,
+      });
+      const finalSelectedMobileNo = getTenDigitNumber(phone);
+      if (validateIndianPhone(finalSelectedMobileNo)) {
+        setMobile(finalSelectedMobileNo);
+        setTimeout(() => {
+          sendOtp(finalSelectedMobileNo);
+        }, 400);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      selectPhoneNumber();
+    }, 400);
+  }, []);
+
+  const sendOtp = async number => {
+    if (!validateIndianPhone(number)) {
       setError('Please enter a valid mobile number');
       return;
     }
     setError('');
     try {
       setIsLoading(true);
-      const data = await authService.login(mobile);
+      const data = await authService.login(number);
       if (data?.status) {
         navigation.navigate('Otp', {
-          mobile,
+          mobile: number,
         });
       } else {
         ToastAndroid.show(data?.message, ToastAndroid.SHORT);
@@ -58,6 +82,15 @@ const Login = () => {
       Keyboard.dismiss();
     }
   };
+
+  function getTenDigitNumber(phone) {
+    if (!phone) return null;
+
+    const digits = phone.replace(/\D/g, '');
+
+    return digits.slice(-10);
+  }
+
   return (
     <AuthLayout>
       <KeyboardAvoidingView
@@ -115,7 +148,9 @@ const Login = () => {
               </View>
             </View>
             {error && <Text style={styles.errorText}>{error}</Text>}
-            <TouchableOpacity style={styles.button} onPress={sendOtp}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => sendOtp(mobile)}>
               {isLoading ? (
                 <ActivityIndicator size="small" color={'#fff'} />
               ) : (
