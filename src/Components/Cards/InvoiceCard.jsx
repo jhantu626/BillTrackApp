@@ -70,7 +70,7 @@ const InvoiceCard = ({invoice}) => {
     if (!sentSmsEnabled || !isPremiumPlanAndActive) {
       Alert.alert(
         'Send SMS Not Enabled',
-        'To continue, please enable Send SMS in the appsettings.',
+        'To continue, please enable Send SMS in the app settings.',
       );
       return;
     }
