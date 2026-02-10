@@ -177,6 +177,7 @@ const Business = () => {
           pinCode: pincode,
           email: email,
           phone: mobileNumber,
+          prefix: prefix,
         });
         if (data.status) {
           ToastService.show({
@@ -358,6 +359,7 @@ Proceed only if you have completed the required steps and approvals.`,
     pincode,
     state,
     initialValues,
+    prefix
   ]);
 
   return (
