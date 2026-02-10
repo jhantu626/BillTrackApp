@@ -302,7 +302,17 @@ Proceed only if you have completed the required steps and approvals.`,
       default:
         return null;
     }
-  }, [modalType, mobileNumber, email, gstNumber, state, city, pincode, street]);
+  }, [
+    modalType,
+    mobileNumber,
+    email,
+    gstNumber,
+    state,
+    city,
+    pincode,
+    street,
+    prefix,
+  ]);
 
   // Store original values for comparison
   const initialValues = useMemo(
