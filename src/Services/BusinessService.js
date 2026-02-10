@@ -86,6 +86,7 @@ class BusinessService {
     pinCode,
     email,
     phone,
+    prefix,
   }) {
     const uri = this.baseUrl + '/update';
     const payload = {};
@@ -109,6 +110,9 @@ class BusinessService {
     }
     if (phone) {
       payload.phone = phone;
+    }
+    if (prefix) {
+      payload.prefix = prefix;
     }
     try {
       const response = await axios.put(uri, payload, {
