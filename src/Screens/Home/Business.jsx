@@ -125,6 +125,14 @@ const Business = () => {
       return;
     }
 
+    if (!prefix) {
+      ToastService.show({
+        message: 'Please enter prefix',
+        type: 'error',
+      });
+      return;
+    }
+
     if (mobileNumber && !validateIndianPhone(mobileNumber)) {
       ToastService.show({
         message: 'Invalid Phone Number',
