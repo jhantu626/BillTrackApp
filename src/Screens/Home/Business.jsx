@@ -59,6 +59,7 @@ const Business = () => {
   const [city, setCity] = useState(business?.city || '');
   const [pincode, setPincode] = useState(business?.pinCode || '');
   const [state, setState] = useState(business?.state || '');
+  const [prefix, setPrefix] = useState(business?.prefix || '');
 
   // LOADING STATE
   const [isSaveLoading, setIsSaveLoading] = useState(false);
@@ -289,6 +290,15 @@ Proceed only if you have completed the required steps and approvals.`,
             keyboardType="default"
           />
         );
+      case 'Prefix':
+        return (
+          <SimpleTextInput
+            label="Enter Prefix"
+            value={prefix}
+            setValue={setPrefix}
+            keyboardType="default"
+          />
+        );
       default:
         return null;
     }
@@ -304,6 +314,7 @@ Proceed only if you have completed the required steps and approvals.`,
       city: business?.city || '',
       pincode: business?.pinCode || '',
       state: business?.state || '',
+      prefix: business?.prefix || '',
     }),
     [business],
   );
@@ -317,7 +328,8 @@ Proceed only if you have completed the required steps and approvals.`,
       street !== initialValues.street ||
       city !== initialValues.city ||
       pincode !== initialValues.pincode ||
-      state !== initialValues.state
+      state !== initialValues.state ||
+      prefix !== initialValues.prefix
     );
   }, [
     mobileNumber,
@@ -377,6 +389,20 @@ Proceed only if you have completed the required steps and approvals.`,
               <View style={styles.rowContainer}>
                 <Text>Primary Information</Text>
                 <View style={styles.primaryInfoContainer}>
+                  <NavigationCardWithValue
+                    mainIcon={
+                      <MaterialIcons
+                        name="phone"
+                        size={icon(20)}
+                        color={colors.primary}
+                      />
+                    }
+                    title="Prefix"
+                    onpress={() => handleOpenModal({type: 'Prefix'})}
+                    textFontSize={14}
+                    disabled={false}
+                    value={prefix}
+                  />
                   <NavigationCardWithValue
                     mainIcon={
                       <MaterialIcons
