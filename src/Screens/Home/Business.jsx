@@ -133,6 +133,14 @@ const Business = () => {
       return;
     }
 
+    if (prefix.length >= 6) {
+      ToastService.show({
+        message: 'Prefix should be less than 6 characters',
+        type: 'error',
+      });
+      return;
+    }
+
     if (mobileNumber && !validateIndianPhone(mobileNumber)) {
       ToastService.show({
         message: 'Invalid Phone Number',
@@ -306,6 +314,8 @@ Proceed only if you have completed the required steps and approvals.`,
             value={prefix}
             setValue={setPrefix}
             keyboardType="default"
+            maxLength={6}
+            upperCase={true}
           />
         );
       default:
@@ -359,7 +369,7 @@ Proceed only if you have completed the required steps and approvals.`,
     pincode,
     state,
     initialValues,
-    prefix
+    prefix,
   ]);
 
   return (
