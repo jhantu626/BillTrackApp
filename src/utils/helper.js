@@ -78,7 +78,7 @@ const calculateInvoiceData = items => {
       // Helper function to find or create GST entry
       const addOrUpdateGst = (type, percentage, amount, baseRate) => {
         const existing = gstListCalculate.find(
-          g => g.gstType === type && g.gstPercentage === percentage
+          g => g.gstType === type && g.gstPercentage === percentage,
         );
 
         if (existing) {
@@ -99,7 +99,7 @@ const calculateInvoiceData = items => {
         'CGST',
         gstPercentage / 2,
         (gstAmount / 2) * quantity,
-        actualRate * quantity
+        actualRate * quantity,
       );
 
       // Add or update SGST
@@ -107,7 +107,7 @@ const calculateInvoiceData = items => {
         'SGST',
         gstPercentage / 2,
         (gstAmount / 2) * quantity,
-        actualRate * quantity
+        actualRate * quantity,
       );
     } else {
       actualRate = rate;
@@ -129,4 +129,32 @@ const calculateInvoiceData = items => {
   };
 };
 
-export {requestPermission, formatDate, formatTime12Hour, calculateInvoiceData};
+function generateInvoices(prefix, count) {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+
+  let startYear = year;
+  if (month < 4) {
+    startYear = year - 1;
+  }
+
+  const financialYear =
+    String(startYear).slice(-2) + String(startYear + 1).slice(-2);
+
+  const invoices = [];
+  for (let i = 1; i <= count; i++) {
+    const numberPart = String(i).padStart(5, '0');
+    invoices.push(`${prefix}${financialYear}${numberPart}`);
+  }
+
+  return invoices;
+}
+
+export {
+  requestPermission,
+  formatDate,
+  formatTime12Hour,
+  calculateInvoiceData,
+  generateInvoices,
+};
