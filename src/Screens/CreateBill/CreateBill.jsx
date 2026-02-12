@@ -313,7 +313,7 @@ const CreateBill = () => {
           };
         });
 
-        const invoiceNo = generateInvoices(
+      const invoiceNo = generateInvoices(
         business?.prefix,
         business?.numberOfInvoices,
       );
@@ -438,7 +438,7 @@ const CreateBill = () => {
             cashButtonFunction={openPaymentModal}
             paymentMode={paymentMethod}
           />
-          {quantity > 0 && (
+          {quantity > 0 && !business?.gstNumber && (
             <Animated.View
               // This automatically animates width/height changes smoothly
               layout={LinearTransition.springify().damping(15).stiffness(120)}
