@@ -376,250 +376,238 @@ Proceed only if you have completed the required steps and approvals.`,
     <KeyboardAvoidingView
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled={!isModal}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
       <GestureHandlerRootView style={{flex: 1}}>
         <Layout>
-          <KeyboardAvoidingView
+          <SecondaryHeader title="Business Setting" isSearch={false} />
+          <ScrollView
             style={{flex: 1}}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}>
-            <SecondaryHeader title="Business Setting" isSearch={false} />
-            <ScrollView
-              style={{flex: 1}}
-              contentContainerStyle={styles.container}>
-              <View style={[styles.rowContainer, styles.profileContainer]}>
-                <LinearGradient
-                  colors={[
-                    '#FF6B6B',
-                    '#4ECDC4',
-                    '#45B7D1',
-                    '#FFA07A',
-                    '#98D8C8',
-                  ]}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 1}}
-                  style={styles.gradientBorder}>
-                  <Image
-                    style={styles.profileImage}
-                    resizeMode="contain"
-                    source={{uri: `${API_URL}files/logo/${business?.logoUrl}`}}
-                  />
-                </LinearGradient>
-                <View style={styles.profileSubContainer}>
-                  <Text style={styles.label}>
-                    Business Name <Text style={styles.required}>*</Text>
-                  </Text>
-                  <View style={styles.businessNameContainer}>
-                    <Text style={styles.businessNameText}>
-                      {business?.name}
-                    </Text>
-                  </View>
+            contentContainerStyle={styles.container}>
+            <View style={[styles.rowContainer, styles.profileContainer]}>
+              <LinearGradient
+                colors={['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}
+                style={styles.gradientBorder}>
+                <Image
+                  style={styles.profileImage}
+                  resizeMode="contain"
+                  source={{uri: `${API_URL}files/logo/${business?.logoUrl}`}}
+                />
+              </LinearGradient>
+              <View style={styles.profileSubContainer}>
+                <Text style={styles.label}>
+                  Business Name <Text style={styles.required}>*</Text>
+                </Text>
+                <View style={styles.businessNameContainer}>
+                  <Text style={styles.businessNameText}>{business?.name}</Text>
                 </View>
               </View>
-              <View style={styles.rowContainer}>
-                <Text>Primary Information</Text>
-                <View style={styles.primaryInfoContainer}>
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="phone"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Prefix"
-                    onpress={() => handleOpenModal({type: 'Prefix'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={prefix}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="phone"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Phone Number"
-                    onpress={() => handleOpenModal({type: 'Phone Number'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={mobileNumber}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="email"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Email Address"
-                    onpress={() => handleOpenModal({type: 'Email Address'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={email}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <Lucide
-                        name="layout-dashboard"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Business Category"
-                    onpress={() => {
-                      ToastAndroid.show(
-                        'Business category changes are not allowed. Kindly contact the support team for assistance',
-                        ToastAndroid.SHORT,
-                      );
-                    }}
-                    textFontSize={14}
-                    disabled={false}
-                    value={
-                      businessCategory.find(
-                        item => item.id === business?.businessCategoryId,
-                      )?.name
-                    }
-                  />
-                </View>
-              </View>
-              <View style={styles.rowContainer}>
-                <Text>Business Information</Text>
-                <View style={styles.primaryInfoContainer}>
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <Lucide
-                        name="badge-percent"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="GST Number"
-                    textFontSize={14}
-                    disabled={false}
-                    value={gstNumber}
-                    onpress={() => {
-                      if (!business?.gstNumber) {
-                        handleOpenModal({type: 'GST Number'});
-                      } else {
-                        ToastAndroid.show(
-                          'GST number changes are not allowed. Kindly contact the support team for assistance',
-                          ToastAndroid.SHORT,
-                        );
-                      }
-                    }}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <Ionicons
-                        name="location-outline"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Street"
-                    onpress={() => handleOpenModal({type: 'Street'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={street}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="location-city"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="City"
-                    onpress={() => handleOpenModal({type: 'City'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={city}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="confirmation-number"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="Pincode"
-                    onpress={() => handleOpenModal({type: 'Pincode'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={pincode}
-                  />
-                  <NavigationCardWithValue
-                    mainIcon={
-                      <MaterialIcons
-                        name="public"
-                        size={icon(20)}
-                        color={colors.primary}
-                      />
-                    }
-                    title="State"
-                    onpress={() => handleOpenModal({type: 'State'})}
-                    textFontSize={14}
-                    disabled={false}
-                    value={state}
-                  />
-                </View>
-              </View>
-            </ScrollView>
-            {!isModal && (
-              <Pressable
-                style={[styles.saveChangesContainer]}
-                onPress={handleSave}
-                disabled={isSaveLoading}>
-                {isSaveLoading ? (
-                  <ActivityIndicator size="small" color={'#fff'} />
-                ) : (
-                  <Text style={styles.saveChangesText}>SAVE CHANGES</Text>
-                )}
-              </Pressable>
-            )}
-            <CommonModal
-              visible={isModal}
-              handleClose={handleCloseModal}
-              animationType="fade">
-              <View style={styles.modalContainer}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>Change {modalType}</Text>
-                  <TouchableOpacity onPress={handleCloseModal}>
-                    <Ionicons
-                      name="close"
-                      size={icon(24)}
+            </View>
+            <View style={styles.rowContainer}>
+              <Text>Primary Information</Text>
+              <View style={styles.primaryInfoContainer}>
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="phone"
+                      size={icon(20)}
                       color={colors.primary}
                     />
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    borderBottomColor: '#ccc',
-                    borderBottomWidth: 0.7,
-                    marginTop: 10,
+                  }
+                  title="Prefix"
+                  onpress={() => handleOpenModal({type: 'Prefix'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={prefix}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="phone"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Phone Number"
+                  onpress={() => handleOpenModal({type: 'Phone Number'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={mobileNumber}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="email"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Email Address"
+                  onpress={() => handleOpenModal({type: 'Email Address'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={email}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Lucide
+                      name="layout-dashboard"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Business Category"
+                  onpress={() => {
+                    ToastAndroid.show(
+                      'Business category changes are not allowed. Kindly contact the support team for assistance',
+                      ToastAndroid.SHORT,
+                    );
+                  }}
+                  textFontSize={14}
+                  disabled={false}
+                  value={
+                    businessCategory.find(
+                      item => item.id === business?.businessCategoryId,
+                    )?.name
+                  }
+                />
+              </View>
+            </View>
+            <View style={styles.rowContainer}>
+              <Text>Business Information</Text>
+              <View style={styles.primaryInfoContainer}>
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Lucide
+                      name="badge-percent"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="GST Number"
+                  textFontSize={14}
+                  disabled={false}
+                  value={gstNumber}
+                  onpress={() => {
+                    if (!business?.gstNumber) {
+                      handleOpenModal({type: 'GST Number'});
+                    } else {
+                      ToastAndroid.show(
+                        'GST number changes are not allowed. Kindly contact the support team for assistance',
+                        ToastAndroid.SHORT,
+                      );
+                    }
                   }}
                 />
-                <View style={styles.inputContainer}>
-                  <Text style={styles.label}>
-                    Enter Your {modalType}
-                    <Text style={styles.required}>*</Text>
-                  </Text>
-                  {renderModalContent}
-                </View>
-                <TouchableOpacity
-                  onPress={handleCloseModal}
-                  style={styles.submitButton}>
-                  <Text style={styles.submitButtonText}>SUBMIT</Text>
+                <NavigationCardWithValue
+                  mainIcon={
+                    <Ionicons
+                      name="location-outline"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Street"
+                  onpress={() => handleOpenModal({type: 'Street'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={street}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="location-city"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="City"
+                  onpress={() => handleOpenModal({type: 'City'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={city}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="confirmation-number"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="Pincode"
+                  onpress={() => handleOpenModal({type: 'Pincode'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={pincode}
+                />
+                <NavigationCardWithValue
+                  mainIcon={
+                    <MaterialIcons
+                      name="public"
+                      size={icon(20)}
+                      color={colors.primary}
+                    />
+                  }
+                  title="State"
+                  onpress={() => handleOpenModal({type: 'State'})}
+                  textFontSize={14}
+                  disabled={false}
+                  value={state}
+                />
+              </View>
+            </View>
+          </ScrollView>
+          {/* {!isModal && ( */}
+          <Pressable
+            style={[styles.saveChangesContainer, {opacity: isModal ? 0 : 1}]}
+            onPress={handleSave}
+            disabled={isSaveLoading}>
+            {isSaveLoading ? (
+              <ActivityIndicator size="small" color={'#fff'} />
+            ) : (
+              <Text style={styles.saveChangesText}>SAVE CHANGES</Text>
+            )}
+          </Pressable>
+          {/* )} */}
+          <CommonModal
+            visible={isModal}
+            handleClose={handleCloseModal}
+            animationType="fade">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Change {modalType}</Text>
+                <TouchableOpacity onPress={handleCloseModal}>
+                  <Ionicons
+                    name="close"
+                    size={icon(24)}
+                    color={colors.primary}
+                  />
                 </TouchableOpacity>
               </View>
-            </CommonModal>
-          </KeyboardAvoidingView>
+              <View
+                style={{
+                  borderBottomColor: '#ccc',
+                  borderBottomWidth: 0.7,
+                  marginTop: 10,
+                }}
+              />
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>
+                  Enter Your {modalType}
+                  <Text style={styles.required}>*</Text>
+                </Text>
+                {renderModalContent}
+              </View>
+              <TouchableOpacity
+                onPress={handleCloseModal}
+                style={styles.submitButton}>
+                <Text style={styles.submitButtonText}>SUBMIT</Text>
+              </TouchableOpacity>
+            </View>
+          </CommonModal>
         </Layout>
       </GestureHandlerRootView>
     </KeyboardAvoidingView>
