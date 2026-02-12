@@ -197,7 +197,6 @@ const CreateBill = () => {
   };
 
   const printData = async () => {
-    console.log('number of invoices', business?.numberOfInvoices);
     if (phoneNumber && !validateIndianPhone(phoneNumber)) {
       ToastService.show({
         message: 'Please enter a valid phone number',
@@ -313,12 +312,18 @@ const CreateBill = () => {
               : null,
           };
         });
+
+        const invoiceNo = generateInvoices(
+        business?.prefix,
+        business?.numberOfInvoices,
+      );
       const payload = {
         token,
         customerNumber: phoneNumber,
         items: selectedItems,
         paymentMode: paymentMethod,
         discount,
+        invoiceNumber: invoiceNo,
       };
 
       const data = await invoiceService.createInvoice({
@@ -327,6 +332,7 @@ const CreateBill = () => {
         items: selectedItems,
         paymentMode: paymentMethod,
         discount,
+        invoiceNumber: invoiceNo,
       });
       if (data?.status) {
         addInvoices(data?.invoice);
@@ -342,6 +348,7 @@ const CreateBill = () => {
         setIsDiscountOpen(false);
         resetProductCount();
         handleCloseBottomSheet();
+        await updateNumberOfInvoices(business?.numberOfInvoices + 1);
         if (sentWhatAppEnabled) {
           await sendToWhatsApp({
             businessName: business?.name,
