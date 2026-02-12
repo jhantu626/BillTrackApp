@@ -13,6 +13,7 @@ class InvoiceService {
     items = [],
     paymentMode = 'cash',
     discount,
+    invoiceNumber
   }) {
     try {
       const uri = this.baseUrl;
@@ -22,6 +23,7 @@ class InvoiceService {
         items: items,
         paymentMode: paymentMode,
         discount,
+        invoiceNumber
       };
       console.log('final paylod', payload);
       const response = await axios.post(uri, payload, {

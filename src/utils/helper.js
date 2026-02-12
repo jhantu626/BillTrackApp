@@ -129,7 +129,7 @@ const calculateInvoiceData = items => {
   };
 };
 
-function generateInvoices(prefix, count) {
+function generateInvoices(prefix = 'INV/', count = 1) {
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth() + 1;
@@ -139,16 +139,10 @@ function generateInvoices(prefix, count) {
     startYear = year - 1;
   }
 
-  const financialYear =
-    String(startYear).slice(-2) + String(startYear + 1).slice(-2);
+  const fy = String(startYear).slice(-2) + String(startYear + 1).slice(-2);
+  const numberPart = String(count).padStart(5, '0');
 
-  const invoices = [];
-  for (let i = 1; i <= count; i++) {
-    const numberPart = String(i).padStart(5, '0');
-    invoices.push(`${prefix}${financialYear}${numberPart}`);
-  }
-
-  return invoices;
+  return `${prefix}${fy}${numberPart}`;
 }
 
 export {

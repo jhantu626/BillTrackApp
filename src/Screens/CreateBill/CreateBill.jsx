@@ -56,7 +56,7 @@ import {
   useAppSettingsValue,
 } from '../../Contexts/AppSettingContexts';
 import {usePrinter} from '../../Contexts/PrinterContext';
-import {calculateInvoiceData} from '../../utils/helper';
+import {calculateInvoiceData, generateInvoices} from '../../utils/helper';
 import printerService from '../../utils/PrinterService';
 import {sendToWhatsApp} from '../../utils/WhatsappShare';
 import AntDesign from '@react-native-vector-icons/ant-design';
@@ -228,12 +228,18 @@ const CreateBill = () => {
               : null,
           };
         });
+
+      const invoiceNo = generateInvoices(
+        business?.prefix,
+        business?.numberOfInvoices,
+      );
       const payload = {
         token,
         items: selectedItems,
         paymentMode: paymentMethod,
         customerNumber: phoneNumber,
         discount,
+        invoiceNumber: invoiceNo,
       };
       const data = await invoiceService.createInvoice(payload);
       if (data?.status) {
