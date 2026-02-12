@@ -274,7 +274,7 @@ const Invoice = () => {
     await fetchInvoices(0);
     setTimeout(() => {
       bottomSheetRef.current?.close();
-    }, 100);
+    }, 10);
     setIsRefreshing(false);
   }
 
