@@ -61,6 +61,17 @@ const AuthProvider = ({children}) => {
     } catch (error) {}
   };
 
+  const updateNumberOfInvoices = async number => {
+    try {
+      console.log('number', number);
+      await AsyncStorage.setItem(
+        'business',
+        JSON.stringify({...business, numberOfInvoices: number}),
+      );
+      setBusiness({...business, numberOfInvoices: number});
+    } catch (error) {}
+  };
+
   const logout = async () => {
     try {
       const {deviceUniqueKey} = await getDeviceDetails();
@@ -167,8 +178,7 @@ const AuthProvider = ({children}) => {
           }
         }
       }
-    } catch (error) {
-    } 
+    } catch (error) {}
   };
 
   const resetSubscription = async (subscriptionData = null) => {
@@ -218,6 +228,7 @@ const AuthProvider = ({children}) => {
       resetBusiness,
       subscription,
       resetSubscription,
+      updateNumberOfInvoices
     };
   }, [authToken, user, business, subscription]);
 
