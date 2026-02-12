@@ -46,6 +46,7 @@ import {useProduct} from '../../Contexts/ProductContexts';
 import ToastService from '../../Components/Toasts/ToastService';
 import {invoiceService} from '../../Services/InvoiceService';
 import {
+  useAuth,
   useAuthToken,
   useBusiness,
   useSubscription,
@@ -71,9 +72,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import {useInvoice} from '../../Contexts/InvoiceContext';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useFocusEffect } from '@react-navigation/native';
+import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useFocusEffect} from '@react-navigation/native';
 
 const {width: screenWidth} = Dimensions.get('window');
 const NUM_COLUMNS = isTabletDevice ? 4 : 3;
@@ -89,10 +90,11 @@ const ITEM_WIDTH =
 const PAYMENT_OPTIONS = ['cash', 'card', 'upi'];
 
 const CreateBill = () => {
-  const inset=useSafeAreaInsets()
+  const inset = useSafeAreaInsets();
   const addInvoices = useInvoice('addInvoice');
   const {printer} = usePrinter();
   const business = useBusiness();
+  const {updateNumberOfInvoices} = useAuth();
   const {getByKey} = useAppSettings();
   const token = useAuthToken();
   const {Products, resetProductCount} = useProduct();
@@ -115,11 +117,13 @@ const CreateBill = () => {
     });
   }, [isDiscountOpen]);
 
-  useFocusEffect(useCallback(()=>{
-    return ()=>{
-      restartClickOfHeader()
-    }
-  },[]))
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        restartClickOfHeader();
+      };
+    }, []),
+  );
 
   const floatingButtonAnimStyle = useAnimatedStyle(() => {
     return {
@@ -193,6 +197,7 @@ const CreateBill = () => {
   };
 
   const printData = async () => {
+    console.log('number of invoices', business?.numberOfInvoices);
     if (phoneNumber && !validateIndianPhone(phoneNumber)) {
       ToastService.show({
         message: 'Please enter a valid phone number',
@@ -263,6 +268,7 @@ const CreateBill = () => {
             business,
           );
         }
+        await updateNumberOfInvoices(business?.numberOfInvoices + 1);
       }
     } catch (error) {
     } finally {
@@ -381,7 +387,7 @@ const CreateBill = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{flex: 1,paddingBottom:inset.bottom}}
+      style={{flex: 1, paddingBottom: inset.bottom}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <GestureHandlerRootView style={{flex: 1}}>
         <Layout>
