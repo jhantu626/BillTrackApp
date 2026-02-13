@@ -63,7 +63,6 @@ const AuthProvider = ({children}) => {
 
   const updateNumberOfInvoices = async number => {
     try {
-      console.log('number', number);
       await AsyncStorage.setItem(
         'business',
         JSON.stringify({...business, numberOfInvoices: number}),

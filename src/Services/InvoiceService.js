@@ -25,7 +25,6 @@ class InvoiceService {
         discount,
         invoiceNumber,
       };
-      console.log('final paylod', payload);
       const response = await axios.post(uri, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
