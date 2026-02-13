@@ -39,7 +39,6 @@ const SocketProvider = ({children}) => {
       },
     });
     socketRef.current.on('connect', () => {
-      console.log('socket connected', socketRef.current.id);
     });
 
     socketRef.current.on('logout', async data => {
@@ -49,7 +48,6 @@ const SocketProvider = ({children}) => {
           item => item.deviceUniqueKey === deviceUniqueKey,
         );
         if (device) {
-          console.log('yes bro this this device', device);
           await handleLogout();
         }
       }

@@ -49,7 +49,6 @@ const Login = () => {
         }, 400);
       }
     } catch (error) {
-      console.log(error);
     }
   };
 
