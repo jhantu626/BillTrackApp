@@ -13,7 +13,7 @@ class InvoiceService {
     items = [],
     paymentMode = 'cash',
     discount,
-    invoiceNumber
+    invoiceNumber,
   }) {
     try {
       const uri = this.baseUrl;
@@ -23,7 +23,7 @@ class InvoiceService {
         items: items,
         paymentMode: paymentMode,
         discount,
-        invoiceNumber
+        invoiceNumber,
       };
       console.log('final paylod', payload);
       const response = await axios.post(uri, payload, {
@@ -61,6 +61,23 @@ class InvoiceService {
     try {
       const uri = `${this.baseUrl}/items/${invoiceId}`;
       const response = await axios.get(uri);
+      const data = await response.data;
+      return data;
+    } catch (error) {
+      const data = await error.response.data;
+      return data;
+    }
+  }
+
+  // GET - INVOICE COUNT
+  async getInvoiceCount(token, businessId) {
+    try {
+      const uri = `${this.baseUrl}/count/${businessId}`;
+      const response = await axios.get(uri, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const data = await response.data;
       return data;
     } catch (error) {
