@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -13,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState, useRef} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   CommonModal,
@@ -41,6 +42,8 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import ToastService from '../../Components/Toasts/ToastService';
 import {businessService} from '../../Services/BusinessService';
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const Business = () => {
   const business = useBusiness();
   const token = useAuthToken();
@@ -60,6 +63,9 @@ const Business = () => {
   const [pincode, setPincode] = useState(business?.pinCode || '');
   const [state, setState] = useState(business?.state || '');
   const [prefix, setPrefix] = useState(business?.prefix || '');
+
+  // ANIMATION STATE
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // LOADING STATE
   const [isSaveLoading, setIsSaveLoading] = useState(false);
@@ -83,6 +89,23 @@ const Business = () => {
   const handleCloseModal = () => {
     setIsModal(false);
   };
+
+  useEffect(() => {
+    if (isModal) {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 1000,
+        delay: 500,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isModal]);
 
   const handleSave = async () => {
     if (!isChanged) {
@@ -561,8 +584,8 @@ Proceed only if you have completed the required steps and approvals.`,
             </View>
           </ScrollView>
           {/* {!isModal && ( */}
-          <Pressable
-            style={[styles.saveChangesContainer, {opacity: isModal ? 0 : 1}]}
+          <AnimatedPressable
+            style={[styles.saveChangesContainer, {opacity: fadeAnim}]}
             onPress={handleSave}
             disabled={isSaveLoading}>
             {isSaveLoading ? (
@@ -570,7 +593,7 @@ Proceed only if you have completed the required steps and approvals.`,
             ) : (
               <Text style={styles.saveChangesText}>SAVE CHANGES</Text>
             )}
-          </Pressable>
+          </AnimatedPressable>
           {/* )} */}
           <CommonModal
             visible={isModal}
