@@ -196,6 +196,28 @@ const CreateBill = () => {
     handleOpenBottomSheet();
   };
 
+  const updateInvoiceNumber = async numberOfInvoices => {
+    const safeNumber = Number(numberOfInvoices) + 1;
+    await updateNumberOfInvoices(safeNumber);
+  };
+
+  const getBusinessInvoiceNumber = async () => {
+    try {
+      const safeNumber = Number(business?.numberOfInvoices);
+      if (Number.isFinite(safeNumber)) {
+        return safeNumber;
+      } else {
+        const data = await invoiceService.getInvoiceCount(token, business?.id);
+        if (data?.status) {
+          return Number(data?.count) + 1;
+        }
+        return 1;
+      }
+    } catch (error) {
+      return 1;
+    }
+  };
+
   const printData = async () => {
     if (phoneNumber && !validateIndianPhone(phoneNumber)) {
       ToastService.show({
@@ -228,10 +250,9 @@ const CreateBill = () => {
           };
         });
 
-      const invoiceNo = generateInvoices(
-        business?.prefix,
-        business?.numberOfInvoices,
-      );
+      const numberOfInvoices = await getBusinessInvoiceNumber();
+
+      const invoiceNo = generateInvoices(business?.prefix, numberOfInvoices);
       const payload = {
         token,
         items: selectedItems,
@@ -273,7 +294,7 @@ const CreateBill = () => {
             business,
           );
         }
-        await updateNumberOfInvoices(business?.numberOfInvoices + 1);
+        await updateInvoiceNumber(numberOfInvoices);
       }
     } catch (error) {
     } finally {
@@ -313,10 +334,9 @@ const CreateBill = () => {
           };
         });
 
-      const invoiceNo = generateInvoices(
-        business?.prefix,
-        business?.numberOfInvoices,
-      );
+      const numberOfInvoices = await getBusinessInvoiceNumber();
+
+      const invoiceNo = generateInvoices(business?.prefix, numberOfInvoices);
       const payload = {
         token,
         customerNumber: phoneNumber,
@@ -348,7 +368,7 @@ const CreateBill = () => {
         setIsDiscountOpen(false);
         resetProductCount();
         handleCloseBottomSheet();
-        await updateNumberOfInvoices(business?.numberOfInvoices + 1);
+        await updateInvoiceNumber(numberOfInvoices);
         if (sentWhatAppEnabled) {
           await sendToWhatsApp({
             businessName: business?.name,
