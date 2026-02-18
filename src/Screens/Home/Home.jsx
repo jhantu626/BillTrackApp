@@ -110,6 +110,28 @@ const Home = () => {
               source={require('../../../asset/images/rupeeRed.png')}
             />
           </LinearGradient>
+          <View style={styles.secondCard}>
+            <View style={styles.secondChildCard}>
+              <View style={styles.secondChildCardLeft}>
+                <Text style={styles.secondCardAmountText}>129</Text>
+                <Text style={styles.secondCardRevenueText}>Total Invoices</Text>
+              </View>
+              <Image
+                style={styles.rupeeIcon}
+                source={require('./../../../asset/images/billimage.png')}
+              />
+            </View>
+            <View style={styles.secondChildCard}>
+              <View style={styles.secondChildCardLeft}>
+                <Text style={styles.secondCardAmountText}>129</Text>
+                <Text style={styles.secondCardRevenueText}>Total Invoices</Text>
+              </View>
+              <Image
+                style={styles.rupeeIcon}
+                source={require('./../../../asset/images/billimage.png')}
+              />
+            </View>
+          </View>
         </View>
 
         <View style={styles.invoiceContainer}>
@@ -140,6 +162,38 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
+  secondCard:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: gap(16),
+    marginTop: margin(16),
+  },
+  secondChildCard:{
+    flex: 1,
+    padding: padding(14),
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: icon(5),
+    borderWidth: 2,
+    borderColor: colors.primary+40
+  },
+  secondChildCardLeft:{
+    flex: 1,
+  },
+  secondCardAmountText: {
+    fontSize: font(24),
+    fontFamily: fonts.inBold,
+    color: colors.primary,
+  },
+  secondCardRevenueText: {
+    fontSize: font(12),
+    fontFamily: fonts.inMedium,
+    color: '#000',
+  },
   topContainer: {
     marginVertical: margin(16),
     marginHorizontal: margin(16),
