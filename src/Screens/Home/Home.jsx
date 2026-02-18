@@ -1,4 +1,6 @@
 import {
+  Image,
+  ImageBackground,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -23,12 +25,14 @@ import {
   font,
   gap,
   heightResponsive,
+  icon,
   margin,
   padding,
 } from '../../utils/responsive';
 import {invoiceService} from '../../Services/InvoiceService';
 import {useAuthToken} from '../../Contexts/AuthContext';
 import {useInvoice} from '../../Contexts/InvoiceContext';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Home = () => {
   const {invoices, resetInvoices} = useInvoice();
@@ -86,11 +90,27 @@ const Home = () => {
             tintColor={colors.primary}
           />
         }>
-        {isInitialLoad ? (
+        {/* {isInitialLoad ? (
           <HomeChartShimmer />
         ) : (
           <HomeChartComponent refreshTrigger={refreshTrigger} />
-        )}
+        )} */}
+        <View style={styles.topContainer}>
+          <LinearGradient
+            style={styles.topCard}
+            colors={[colors.primary, '#FFB084']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 1}}>
+            <View>
+              <Text style={styles.amountText}>5,12,589.00</Text>
+              <Text style={styles.revenueText}>Today’s Revenue</Text>
+            </View>
+            <Image
+              style={styles.rupeeIcon}
+              source={require('../../../asset/images/rupeeRed.png')}
+            />
+          </LinearGradient>
+        </View>
 
         <View style={styles.invoiceContainer}>
           <View style={styles.invoiceHeader}>
@@ -120,6 +140,32 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
+  topContainer: {
+    marginVertical: margin(16),
+    marginHorizontal: margin(16),
+  },
+  topCard: {
+    paddingHorizontal: padding(16),
+    paddingVertical: padding(16),
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  rupeeIcon: {
+    width: icon(40),
+    height: icon(40),
+  },
+  amountText: {
+    fontSize: font(24),
+    fontFamily: fonts.inBold,
+    color: '#fff',
+  },
+  revenueText: {
+    fontSize: font(14),
+    fontFamily: fonts.inMedium,
+    color: '#fff',
+  },
   invoiceContainer: {
     marginHorizontal: margin(16),
     gap: gap(15),
