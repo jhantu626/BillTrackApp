@@ -123,12 +123,12 @@ const Home = () => {
             </View>
             <View style={styles.secondChildCard}>
               <View style={styles.secondChildCardLeft}>
-                <Text style={styles.secondCardAmountText}>129</Text>
-                <Text style={styles.secondCardRevenueText}>Total Invoices</Text>
+                <Text style={styles.secondCardAmountText}>83</Text>
+                <Text style={styles.secondCardRevenueText}>Total Customer</Text>
               </View>
               <Image
                 style={styles.rupeeIcon}
-                source={require('./../../../asset/images/billimage.png')}
+                source={require('./../../../asset/images/userimage.png')}
               />
             </View>
           </View>
