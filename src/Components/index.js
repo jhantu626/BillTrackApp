@@ -23,6 +23,7 @@ import NavigationCardWithValue from './Cards/NavigationCardWithValue';
 import ProductActiveCard from './Cards/ProductActiveCard';
 import SettingSwitchCard from './Cards/SettingSwitchCard';
 import EmptyListCard from './Cards/EmptyListCard';
+import HomeTopCard from './Cards/HomeTopCard';
 
 // CHARTS
 import SalesAreaChart from './Charts/SalesAreaChart';
@@ -79,5 +80,6 @@ export {
   NavigationCardWithValue,
   ProductActiveCard,
   SettingSwitchCard,
-  EmptyListCard
+  EmptyListCard,
+  HomeTopCard
 };
