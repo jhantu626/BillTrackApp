@@ -458,7 +458,7 @@ const CreateBill = () => {
             cashButtonFunction={openPaymentModal}
             paymentMode={paymentMethod}
           />
-          {quantity > 0 && !business?.gstNumber && (
+          {quantity > 0 && (
             <Animated.View
               // This automatically animates width/height changes smoothly
               layout={LinearTransition.springify().damping(15).stiffness(120)}
