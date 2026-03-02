@@ -112,11 +112,11 @@ const SecondaryHeader = ({
               <Octicons name="question" size={icon(22)} />
             </Pressable>
           )}
-          {isNotification && (
+          {/* {isNotification && (
             <Pressable>
               <Octicons name="bell" size={icon(22)} />
             </Pressable>
-          )}
+          )} */}
         </View>
       )}
     </View>
