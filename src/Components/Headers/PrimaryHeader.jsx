@@ -49,10 +49,10 @@ const PrimaryHeader = memo(() => {
           <Text style={styles.name}>{name}</Text>
         </View>
       </Pressable>
-      <TouchableOpacity style={styles.rightContainer}>
+      {/* <TouchableOpacity style={styles.rightContainer}>
         <Octicons name="bell" size={24} />
         <View style={styles.dot} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 });
