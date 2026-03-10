@@ -43,6 +43,21 @@ class PrinterService {
     }
   }
 
+  convertTo12Hour=(datetime)=> {
+    const date = new Date(datetime.replace(" ", "T"));
+    
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 becomes 12
+    
+    const mins = minutes < 10 ? "0" + minutes : minutes;
+    
+    return `${hours}:${mins} ${ampm}`;
+}
+
   async printInvoice(
     printer,
     invoice,
@@ -120,7 +135,7 @@ class PrinterService {
       printData += ALIGN_LEFT;
       printData += `Invoice No: ${invoice.invoiceNumber}${LINE_FEED}`;
       printData += `Date: ${formatDate(invoice.createdAt)}${LINE_FEED}`;
-      printData += `Time: ${formatTime12Hour(invoice.createdAt)}${LINE_FEED}`;
+      printData += `Time: ${this.convertTo12Hour(invoice.createdAt)}${LINE_FEED}`;
 
       if (invoice.customerNumber) {
         printData += `Customer: +91 ${invoice.customerNumber}${LINE_FEED}`;
