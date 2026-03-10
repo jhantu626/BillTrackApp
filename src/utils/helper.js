@@ -59,9 +59,11 @@ const calculateInvoiceData = items => {
   const gstListCalculate = [];
   let totalQuantity = 0;
   let subTotalAmount = 0;
+  console.log("before calculation",items)
 
   items.forEach(item => {
-    const rate = parseFloat(item?.rate);
+    // const rate = parseFloat(item?.rate);
+    const rate = parseFloat(item?.originalPrice);
     let actualRate;
     const quantity = Number(item?.quantity);
     totalQuantity += quantity;
@@ -118,6 +120,7 @@ const calculateInvoiceData = items => {
       name: item?.productName,
       quantity: item?.quantity,
       rate: actualRate,
+      gstPercentage: item?.gstPercentage
     });
   });
 

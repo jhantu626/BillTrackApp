@@ -115,6 +115,7 @@ const InvoiceDetails = () => {
       if (data?.status) {
         // Call the calculation function
         const result = calculateInvoiceData(data?.items);
+        console.log("after calculation the result ",result)
         // Update all states with the returned values
         setTotalQuantity(result.totalQuantity);
         setSubTotalAmount(result.subTotalAmount);
@@ -244,7 +245,7 @@ const InvoiceDetails = () => {
                 styles.invoiceTitle,
                 {width: '35%', fontSize: sizes.invoiceTitleFontSize},
               ]}>
-              Name
+              Item/GST
             </Text>
             <Text
               style={[
@@ -288,7 +289,7 @@ const InvoiceDetails = () => {
                   styles.invoiceItem,
                   {width: '40%', fontSize: sizes.invoiceItemFontSize},
                 ]}>
-                {item.name}
+                {item.name} / {item?.gstPercentage && `${item?.gstPercentage}%`}
               </Text>
               <Text
                 style={[
