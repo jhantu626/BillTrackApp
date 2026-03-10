@@ -14,7 +14,6 @@ class SmsService {
   }) {
     try {
       const uri = `${this.baseUrl}/sent-invoice`;
-      console.log('uri', uri);
       const payload = {
         phone,
         invoiceNumber,

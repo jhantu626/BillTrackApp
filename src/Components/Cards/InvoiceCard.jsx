@@ -99,6 +99,7 @@ const InvoiceCard = ({invoice}) => {
               phone: customerNumber,
               invoiceNumber: invoiceNumber,
               totalAmount: totalAmount,
+              businessId: business?.id,
             });
             if (data?.status) {
               ToastAndroid.show('SMS sent successfully', ToastAndroid.SHORT);
