@@ -141,7 +141,9 @@ const InvoiceDetails = () => {
     } catch (error) {
       // Handle error
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 200);
     }
   };
 

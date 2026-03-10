@@ -260,16 +260,22 @@ const AppStack = memo(() => {
       <Tab.Screen
         name="Invoice"
         component={InvoiceStack}
+        // options={({ route }) => {
+        //   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Invoice';
+        //   return {
+        //     tabBarIcon: renderTabIcon(icons.Invoice),
+        //     tabBarStyle:
+        //       routeName === 'InvoiceDetails'
+        //         ? {
+        //           display: 'none',
+        //         }
+        //         : defaultTabBarStyle,
+        //   };
+        // }}
         options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Invoice';
           return {
             tabBarIcon: renderTabIcon(icons.Invoice),
-            tabBarStyle:
-              routeName === 'InvoiceDetails'
-                ? {
-                  display: 'none',
-                }
-                : defaultTabBarStyle,
+            tabBarStyle: defaultTabBarStyle,
           };
         }}
       />
