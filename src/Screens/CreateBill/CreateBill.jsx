@@ -377,6 +377,7 @@ const CreateBill = () => {
             customerNumber: data?.invoice?.customerNumber,
             totalAmount: data?.invoice?.totalAmount,
             paymentMode: data?.invoice?.paymentMode,
+            businessId: business?.id,
           });
         }
       }

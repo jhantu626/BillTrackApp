@@ -316,13 +316,20 @@ class PrinterService {
     return result;
   }
 
+  // formatLine(col1, col2, col3, col4, config) {
+  //   const c1 = this.padRight(col1, config.itemNameWidth);
+  //   const c2 = this.padLeft(col2, config.qtyWidth);
+  //   const c3 = this.padLeft(col3, config.rateWidth);
+  //   const c4 = this.padLeft(col4, config.amountWidth);
+  //   return `${c1}${c2} ${c3} ${c4}\n`;
+  // }
   formatLine(col1, col2, col3, col4, config) {
-    const c1 = this.padRight(col1, config.itemNameWidth);
-    const c2 = this.padLeft(col2, config.qtyWidth);
-    const c3 = this.padLeft(col3, config.rateWidth);
-    const c4 = this.padLeft(col4, config.amountWidth);
-    return `${c1}${c2} ${c3} ${c4}\n`;
-  }
+  const c1 = this.padRight(col1, config.itemNameWidth);
+  const c2 = this.padLeft(col2, config.qtyWidth);
+  const c3 = this.padLeft(col3, config.rateWidth);
+  const c4 = this.padLeft(col4, config.amountWidth);
+  return `${c1}  ${c2}  ${c3}  ${c4}\n`;
+}
 
   // Helper function to format total lines (Label: Value)
   formatTotalLine(label, value, config) {

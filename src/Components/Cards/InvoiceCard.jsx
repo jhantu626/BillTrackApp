@@ -63,6 +63,7 @@ const InvoiceCard = ({invoice}) => {
       totalAmount: invoice?.totalAmount,
       paymentMode: invoice?.paymentMode,
       customerNumber: invoice?.customerNumber,
+      businessId: business?.id,
     });
   };
 

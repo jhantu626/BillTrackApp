@@ -8,6 +8,7 @@ const sendToWhatsApp = async ({
   totalAmount,
   paymentMode,
   businessName,
+  businessId,
 }) => {
   // Safety check
   if (!customerNumber) {
@@ -43,12 +44,14 @@ Paid via:          ${paymentMode || 'Cash'}
 Thank you for your payment!
 
 Download Invoice:
-https://parlour.billtrack.co.in/bill_admin/bill_print1/OTA%3D
+https://bill.billtrack.co.in/invoice-details/${invoiceNumber}9876543210/${businessId}1234567890
 
 Need help? Just reply here.
 
 Warm regards,
 Team ${businessName}`;
+
+  console.log(message);
 
   const whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
     message,
