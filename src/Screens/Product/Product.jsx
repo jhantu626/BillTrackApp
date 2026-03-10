@@ -241,7 +241,7 @@ const Product = () => {
           await addProduct(data?.data);
           setTimeout(() => {
             handleCloseModal();
-          }, 500);
+          }, 1);
         } else {
         }
       } catch (error) {
@@ -276,7 +276,7 @@ const Product = () => {
         await addProduct(data?.data);
         setTimeout(() => {
           handleCloseModal();
-        }, 500);
+        }, 1);
       } else {
         ToastService.show({
           message: 'Something went wrong',
