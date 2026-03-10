@@ -11,6 +11,7 @@ class SmsService {
     invoiceNumber,
     totalAmount,
     businessName,
+    businessId
   }) {
     try {
       const uri = `${this.baseUrl}/sent-invoice`;
@@ -19,6 +20,7 @@ class SmsService {
         invoiceNumber,
         totalAmount,
         businessName,
+        businessId
       };
       const response = await axios.post(uri, payload, {
         headers: {

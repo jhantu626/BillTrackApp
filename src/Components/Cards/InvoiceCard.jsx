@@ -91,7 +91,8 @@ const InvoiceCard = ({invoice}) => {
         onPress: async () => {
           try {
             setIsSmsLoading(true);
-            const {invoiceNumber, totalAmount, customerNumber} = invoice;
+            console.log("invoice",invoice)
+            const {invoiceNumber, totalAmount, customerNumber,businessId} = invoice;
 
             const data = await smsService.sendInvoiceSms({
               token: token,
@@ -99,7 +100,7 @@ const InvoiceCard = ({invoice}) => {
               phone: customerNumber,
               invoiceNumber: invoiceNumber,
               totalAmount: totalAmount,
-              businessId: business?.id,
+              businessId: businessId,
             });
             if (data?.status) {
               ToastAndroid.show('SMS sent successfully', ToastAndroid.SHORT);
