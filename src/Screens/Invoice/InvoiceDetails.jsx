@@ -21,10 +21,27 @@ import {
   formatTime12Hour,
 } from '../../utils/helper';
 
+
+function convertTo12Hour(datetime) {
+    const date = new Date(datetime.replace(" ", "T"));
+    
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 becomes 12
+    
+    const mins = minutes < 10 ? "0" + minutes : minutes;
+    
+    return `${hours}:${mins} ${ampm}`;
+}
+
 const InvoiceDetails = () => {
   // ROUTE - NAVIGATION
   const route = useRoute();
   const {invoice} = route.params;
+  console.log(invoice)
   const business = useBusiness();
   const invoiceData = {
     businessName: 'Turain Software',
@@ -115,7 +132,6 @@ const InvoiceDetails = () => {
       if (data?.status) {
         // Call the calculation function
         const result = calculateInvoiceData(data?.items);
-        console.log("after calculation the result ",result)
         // Update all states with the returned values
         setTotalQuantity(result.totalQuantity);
         setSubTotalAmount(result.subTotalAmount);
@@ -220,7 +236,7 @@ const InvoiceDetails = () => {
                 {/* Billed By : {invoiceData.billedBy} */}
               </Text>
               <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
-                Time : {formatTime12Hour(invoice?.createdAt)}
+                Time : {convertTo12Hour(invoice?.createdAt)}
               </Text>
             </View>
           </View>
