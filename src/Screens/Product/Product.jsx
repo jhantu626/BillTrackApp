@@ -169,11 +169,11 @@ const Product = () => {
   };
 
   const handlePickImag = async () => {
-    const hasPermission = await requestPermission();
-    if (!hasPermission) {
-      ToastAndroid.show('Permission denied', ToastAndroid.SHORT);
-      return;
-    }
+    // const hasPermission = await requestPermission();
+    // if (!hasPermission) {
+    //   ToastAndroid.show('Permission denied', ToastAndroid.SHORT);
+    //   return;
+    // }
 
     ImageCropPicker.openPicker({
       width: 1200,
@@ -181,6 +181,7 @@ const Product = () => {
       compressImageQuality: 0.8,
       avoidEmptySpaceAroundImage: true,
       cropping: true,
+      mediaType: 'photo'
     })
       .then(image => {
         setProductImage(image);

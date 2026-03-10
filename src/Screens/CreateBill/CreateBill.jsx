@@ -552,7 +552,7 @@ const CreateBill = () => {
                   fontFamily: fonts.popMedium,
                   color: '#000',
                 }}>
-                Phone number(Optional)
+                Phone number(Optional for Printing)
               </Text>
               <SimpleTextInput
                 maxLength={10}

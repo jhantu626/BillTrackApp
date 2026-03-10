@@ -48,16 +48,17 @@ const BusinessSetup2 = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleImagePickcker = async () => {
-    const hasPermission = await requestPermission();
-    if (!hasPermission) {
-      ToastAndroid.show('Permission denied', ToastAndroid.SHORT);
-      return;
-    }
+    // const hasPermission = await requestPermission();
+    // if (!hasPermission) {
+    //   ToastAndroid.show('Permission denied', ToastAndroid.SHORT);
+    //   return;
+    // }
     ImageCropPicker.openPicker({
       width: 200,
       height: 200,
       cropping: true,
       avoidEmptySpaceAroundImage: true,
+      mediaType: 'photo',
     }).then(image => {
       setImage(image);
     });
@@ -141,14 +142,22 @@ const BusinessSetup2 = () => {
         await setUserData(newUser);
         const business = businessData?.data;
         await setBusinessData(business);
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [
+        //     {
+        //       name: 'Product',
+        //       state: {
+        //         routes: [{name: 'ItemMaster'}],
+        //       },
+        //     },
+        //   ],
+        // });
         navigation.reset({
           index: 0,
           routes: [
             {
-              name: 'Account',
-              state: {
-                routes: [{name: 'ItemMaster'}],
-              },
+              name: 'Product'
             },
           ],
         });
@@ -170,88 +179,85 @@ const BusinessSetup2 = () => {
     }
   };
 
- 
-
   return (
     <AuthLayout>
       {/* <KeyboardAvoidingView
         style={{flex: 1}}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}> */}
-        <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
+      <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
+        <Image
+          style={styles.image}
+          source={require('./../../../asset/images/business.png')}
+          resizeMode="contain"
+        />
+        <Text style={styles.title}>Set Up Your Business</Text>
+        <View style={styles.logoContainer}>
           <Image
-            style={styles.image}
-            source={require('./../../../asset/images/business.png')}
+            source={
+              image
+                ? {
+                    uri: image?.path,
+                  }
+                : require('./../../../asset/images/businessLogo.png')
+            }
+            style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>Set Up Your Business</Text>
-          <View style={styles.logoContainer}>
-            <Image
-              source={
-                image
-                  ? {
-                      uri: image?.path,
-                    }
-                  : require('./../../../asset/images/businessLogo.png')
-              }
-              style={styles.logo}
-              resizeMode="contain"
-            />
 
-            <TouchableOpacity
-              style={styles.uploadButton}
-              onPress={handleImagePickcker}>
-              <MaterialIcons
-                name="file-upload"
-                size={16}
-                color={colors.primary}
-              />
-              <Text style={styles.uploadText}>Upload Logo</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.inputContainer}>
-            <SimpleTextInput
-              placeholder="Pincode"
-              keyboardType="numeric"
-              maxLength={6}
-              value={pincode}
-              setValue={setPincode}
-              hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
+          <TouchableOpacity
+            style={styles.uploadButton}
+            onPress={handleImagePickcker}>
+            <MaterialIcons
+              name="file-upload"
+              size={16}
+              color={colors.primary}
             />
-
-            <SimpleTextInput
-              placeholder="Street"
-              maxLength={50}
-              value={street}
-              setValue={setStreet}
-              hasError={street.length > 0 && street.length < 3}
-            />
-
-            <SimpleTextInput
-              placeholder="City"
-              maxLength={50}
-              value={city}
-              setValue={setCity}
-              hasError={city.length > 0 && city.length < 3}
-            />
-
-            <SimpleTextInput
-              placeholder="State"
-              maxLength={50}
-              disabled={true}
-              value={state}
-              setValue={setState}
-            />
-          </View>
-
-          <TouchableOpacity style={styles.button} onPress={handleProceed}>
-            {isLoading ? (
-              <ActivityIndicator size={'small'} color={'#fff'} />
-            ) : (
-              <Text style={styles.buttonText}>PROCEED</Text>
-            )}
+            <Text style={styles.uploadText}>Upload Logo</Text>
           </TouchableOpacity>
-        </ScrollView>
+        </View>
+        <View style={styles.inputContainer}>
+          <SimpleTextInput
+            placeholder="Pincode"
+            keyboardType="numeric"
+            maxLength={6}
+            value={pincode}
+            setValue={setPincode}
+            hasError={pincode.length > 0 && !validateIndianPincode(pincode)}
+          />
+
+          <SimpleTextInput
+            placeholder="Street"
+            maxLength={50}
+            value={street}
+            setValue={setStreet}
+            hasError={street.length > 0 && street.length < 3}
+          />
+
+          <SimpleTextInput
+            placeholder="City"
+            maxLength={50}
+            value={city}
+            setValue={setCity}
+            hasError={city.length > 0 && city.length < 3}
+          />
+
+          <SimpleTextInput
+            placeholder="State"
+            maxLength={50}
+            value={state}
+            setValue={setState}
+          />
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleProceed}>
+          {isLoading ? (
+            <ActivityIndicator size={'small'} color={'#fff'} />
+          ) : (
+            <Text style={styles.buttonText}>PROCEED</Text>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
       {/* </KeyboardAvoidingView> */}
     </AuthLayout>
   );

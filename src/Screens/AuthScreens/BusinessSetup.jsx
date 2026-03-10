@@ -223,7 +223,7 @@ const BusinessSetup = () => {
             />
             <SimpleTextInput
               placeholder="Phone Number(Optional)"
-              maxLength={6}
+              maxLength={10}
               keyboardType="numeric"
               value={phone}
               setValue={setPhone}
