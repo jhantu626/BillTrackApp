@@ -42,7 +42,6 @@ const InvoiceDetails = () => {
   // ROUTE - NAVIGATION
   const route = useRoute();
   const {invoice} = route.params;
-  console.log(invoice);
   const business = useBusiness();
   const invoiceData = {
     businessName: 'Turain Software',
@@ -77,6 +76,7 @@ const InvoiceDetails = () => {
   // STATE VARIABLES
   const [invoiceItems, setInvoiceItems] = useState([]);
   const [gstList, setGstList] = useState([]);
+  const [groupedGstList, setGroupedGstList] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
   const [subTotalAmount, setSubTotalAmount] = useState(0);
 
@@ -137,6 +137,35 @@ const InvoiceDetails = () => {
         setSubTotalAmount(result.subTotalAmount);
         setInvoiceItems(result.items);
         setGstList(result.gstListCalculate);
+        console.log(JSON.stringify(result.gstListCalculate));
+        const grouped = Object.values(
+          result.gstListCalculate.reduce((acc, item) => {
+            const key = item.gstPercentage;
+
+            if (!acc[key]) {
+              acc[key] = {
+                gstPercentage: key,
+                items: [],
+                totalRate: 0,
+                totalGstAmount: 0,
+              };
+            }
+
+            acc[key].items.push(item);
+
+            // GST amount should sum normally
+            acc[key].totalGstAmount += item.gstAmount;
+
+            // Rate should count only once per product
+            if (item.gstType === 'CGST') {
+              acc[key].totalRate += item.rate;
+            }
+
+            return acc;
+          }, {}),
+        );
+        console.log(JSON.stringify(grouped));
+        setGroupedGstList(grouped);
       }
     } catch (error) {
       // Handle error
@@ -409,7 +438,7 @@ const InvoiceDetails = () => {
               </View>
             )}
             <DottedDivider borderWidth={0.8} />
-            {gstList.map((item, index) => (
+            {/* {gstList.map((item, index) => (
               <View
                 key={index + 'gst_list'}
                 style={[
@@ -429,6 +458,67 @@ const InvoiceDetails = () => {
                 </View>
               </View>
             ))}
+            <DottedDivider borderWidth={0.8} /> */}
+
+            {groupedGstList.map((item, index) => (
+              <View style={{marginBottom: 10}} key={index+"gruped_gst_parent"}>
+                <View
+                  style={[
+                    styles.secondContainerForGSTPercentage,
+                    {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+                  ]}>
+                  <View style={styles.subSecondContainer}>
+                    <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                      {item.gstPercentage}% GST Items
+                    </Text>
+                  </View>
+                  <View style={styles.subSecondContainer}>
+                    <Text
+                      style={[styles.invoiceText, {fontSize: font(14)}]}></Text>
+                  </View>
+                </View>
+                <View
+                  key={index + 'gst_list'}
+                  style={[
+                    styles.secondContainer,
+                    {paddingHorizontal: sizes.secondContainerPaddingHorizontal},
+                  ]}>
+                  <View style={styles.subSecondContainer}>
+                    <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                      Taxable Value
+                    </Text>
+                  </View>
+                  <View style={styles.subSecondContainer}>
+                    <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                      {item?.totalRate.toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+                {item?.items.map((gstitem, i) => (
+                  <View
+                    key={i + 'gst_list'}
+                    style={[
+                      styles.secondContainer,
+                      {
+                        paddingHorizontal:
+                          sizes.secondContainerPaddingHorizontal,
+                      },
+                    ]}>
+                    <View style={styles.subSecondContainer}>
+                      <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                        {gstitem?.gstType} {gstitem?.gstPercentage}%
+                      </Text>
+                    </View>
+                    <View style={styles.subSecondContainer}>
+                      <Text style={[styles.invoiceText, {fontSize: font(14)}]}>
+                        {gstitem?.gstAmount.toFixed(2)}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ))}
+
             <DottedDivider borderWidth={0.8} />
             <View
               style={[
@@ -492,6 +582,12 @@ const styles = StyleSheet.create({
   },
   secondContainer: {
     marginVertical: 5,
+    // paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  secondContainerForGSTPercentage: {
     // paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
