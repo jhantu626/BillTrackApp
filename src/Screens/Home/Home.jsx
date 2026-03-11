@@ -56,7 +56,6 @@ const Home = () => {
       if (data?.status) {
         // setInvoices(data?.data || []);
         resetInvoices(data?.data || []);
-        console.log("data",data)
       }
     } catch (error) {
     } finally {
